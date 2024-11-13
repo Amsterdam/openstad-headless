@@ -48,7 +48,6 @@ RUN npm --prefix=apps/${APP} run build --if-present && \
 # Release image
 FROM node:18-slim AS release
 ARG APP
-ARG PORT
 ENV WORKSPACE=apps/${APP}
 
 WORKDIR /opt/openstad-headless
@@ -63,14 +62,13 @@ COPY --from=prepare-production --chown=node:node /opt/openstad-headless/apps/${A
 
 USER node
 
-EXPOSE ${PORT}
+EXPOSE 31410
 
 # Run the application
 CMD ["npm", "run", "start", "--prefix=${WORKSPACE}"]
 
 FROM release AS release-with-packages
 ARG APP
-ARG PORT
 ENV WORKSPACE=apps/${APP}
 
 WORKDIR /opt/openstad-headless
@@ -80,7 +78,7 @@ COPY --from=prepare-production --chown=node:node /opt/openstad-headless/packages
 
 USER node
 
-EXPOSE ${PORT}
+EXPOSE 31410
 
 # Run the application
 CMD ["npm", "run", "start", "--prefix=${WORKSPACE}"]

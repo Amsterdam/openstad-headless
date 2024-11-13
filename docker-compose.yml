@@ -53,7 +53,6 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=api-server
-        - PORT="31410"
     image: openstad/headless-api-server:${RELEASE_VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
