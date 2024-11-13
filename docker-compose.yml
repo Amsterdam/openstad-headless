@@ -123,7 +123,7 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=auth-server
-        - PORT=${AUTH_PORT}
+        - PORT=${AUTH_PORT:-31430}
     image: openstad/headless-auth-server:${RELEASE_VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
@@ -133,7 +133,7 @@ services:
     restart: unless-stopped
     environment:
       - APP_URL=${AUTH_APP_URL}
-      - PORT=${AUTH_PORT}
+      - PORT=${AUTH_PORT:-31430}
       # - ADMIN_REDIRECT_URL=${AUTH_ADMIN_REDIRECT_URL}
       - DB_HOST=${AUTH_DB_HOST}
       - DB_USER=${AUTH_DB_USER}
@@ -160,7 +160,7 @@ services:
       - ENVIRONMENT_NAME=${ENVIRONMENT_NAME}
       - NODE_ENV=development
     ports:
-      - '${AUTH_PORT}:${AUTH_PORT}'
+      - '${AUTH_PORT:-31430}:${AUTH_PORT:-31430}'
     volumes:
       - ./apps/auth-server:/opt/openstad-headless/apps/auth-server
       - openstad-auth-server-node_modules:/opt/openstad-headless/apps/auth-server/node_modules
@@ -174,7 +174,7 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=image-server
-        - PORT=${IMAGE_PORT_API}
+        - PORT=${IMAGE_PORT_API:-31450}
     image: openstad/headless-image-server:${RELEASE_VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
@@ -184,7 +184,7 @@ services:
     restart: unless-stopped
     environment:
       - APP_URL=${IMAGE_APP_URL}
-      - PORT_API=${IMAGE_PORT_API}
+      - PORT_API=${IMAGE_PORT_API:-31450}
       - PORT_IMAGE_SERVER=${IMAGE_PORT_IMAGE_SERVER}
       - IMAGES_DIR=${IMAGE_IMAGES_DIR}
       - DOCUMENTS_DIR=${DOCUMENTS_DIR}
@@ -196,7 +196,7 @@ services:
       - IMAGE_VERIFICATION_TOKEN=${IMAGE_VERIFICATION_TOKEN}
       - FORCE_HTTP=${FORCE_HTTP}
     ports:
-      - '${IMAGE_PORT_API}:${IMAGE_PORT_API}'
+      - '${IMAGE_PORT_API:-31450}:${IMAGE_PORT_API:-31450}'
     volumes:
       - ./apps/image-server:/opt/openstad-headless/apps/image-server
       - openstad-image-server-node_modules:/opt/openstad-headless/apps/image-server/node_modules
@@ -210,7 +210,7 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=admin-server
-        - PORT=${ADMIN_PORT}
+        - PORT=${ADMIN_PORT:-31470}
     image: openstad/headless-admin-server:${RELEASE_VERSION:-latest}
     container_name: openstad-admin-server
     restart: unless-stopped
@@ -224,10 +224,10 @@ services:
       - API_URL=${API_URL}
       - API_URL_INTERNAL=http://openstad-api-server:${API_PORT:-31410}
       - API_FIXED_AUTH_KEY=${API_FIXED_AUTH_KEY}
-      - PORT=${ADMIN_PORT}
+      - PORT=${ADMIN_PORT:-31470}
       - EMAIL_ASSETS_URL=${EMAIL_ASSETS_URL}
     ports:
-      - '${ADMIN_PORT}:${ADMIN_PORT}'
+      - '${ADMIN_PORT:-31470}:${ADMIN_PORT:-31470}'
     volumes:
       - ./apps/admin-server:/opt/openstad-headless/apps/admin-server
       - openstad-admin-server-node_modules:/opt/openstad-headless/apps/admin-server/node_modules
@@ -240,7 +240,7 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=cms-server
-        - PORT=${CMS_PORT}
+        - PORT=${CMS_PORT:-31490}
     image: openstad/headless-cms-server:${RELEASE_VERSION:-latest}
     depends_on:
       openstad-redis:
@@ -251,7 +251,7 @@ services:
     container_name: openstad-cms-server
     restart: unless-stopped
     environment:
-      - PORT=${CMS_PORT}
+      - PORT=${CMS_PORT:-31490}
       - OVERWRITE_URL=${CMS_OVERWRITE_URL}
       - MONGODB_URI=${CMS_MONGODB_URI}
       - MESSAGESTREAMING_REDIS_URL=${MESSAGESTREAMING_REDIS_URL}
@@ -262,7 +262,7 @@ services:
       - API_KEY=${API_FIXED_AUTH_KEY}
       - FORCE_HTTP=${FORCE_HTTP}
     ports:
-      - '${CMS_PORT}:${CMS_PORT}'
+      - '${CMS_PORT:-31490}:${CMS_PORT:-31490}'
     volumes:
       - ./apps/cms-server:/opt/openstad-headless/apps/cms-server
       - openstad-cms-server-node_modules:/opt/openstad-headless/apps/cms-server/node_modules
