@@ -53,7 +53,7 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=api-server
-        - PORT=${API_PORT}
+        - PORT=${API_PORT:-31410}
     image: openstad/headless-api-server:${RELEASE_VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
@@ -93,7 +93,7 @@ services:
       - ADMIN_DOMAIN=${ADMIN_DOMAIN}
       - FORCE_HTTP=${FORCE_HTTP}
     ports:
-      - '${API_PORT}:${API_PORT}'
+      - '${API_PORT:-31410}:${API_PORT:-31410}'
     volumes:
       - ./apps/api-server:/opt/openstad-headless/apps/api-server
       - openstad-api-server-node_modules:/opt/openstad-headless/apps/api-server/node_modules
