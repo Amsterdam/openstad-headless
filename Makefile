@@ -16,7 +16,7 @@ requirements:
 	npm i --package-lock-only
 
 build/%:                              ## Build docker image
-	$(dc) build $(NAME)
+	API_PORT=31410 $(dc) build $(NAME)
 
 push/%:                               ## Push docker image to registry
 	$(dc) push $(NAME)
