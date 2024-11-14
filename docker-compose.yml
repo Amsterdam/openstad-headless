@@ -211,7 +211,7 @@ services:
       dockerfile: Dockerfile
       args:
         - APP=admin-server
-        - PORT=${ADMIN_PORT:-31470}
+        - PORT=${ADMIN_PORT}
     image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-opdrachten/openstadheadless-admin}:${VERSION:-latest}
     container_name: openstad-admin-server
     restart: unless-stopped
@@ -225,10 +225,10 @@ services:
       - API_URL=${API_URL}
       - API_URL_INTERNAL=http://openstad-api-server:${API_PORT:-31410}
       - API_FIXED_AUTH_KEY=${API_FIXED_AUTH_KEY}
-      - PORT=${ADMIN_PORT:-31470}
+      - PORT=${ADMIN_PORT}
       - EMAIL_ASSETS_URL=${EMAIL_ASSETS_URL}
     ports:
-      - '${ADMIN_PORT:-31470}:${ADMIN_PORT:-31470}'
+      - '${ADMIN_PORT}:${ADMIN_PORT}'
     volumes:
       - ./apps/admin-server:/opt/openstad-headless/apps/admin-server
       - openstad-admin-server-node_modules:/opt/openstad-headless/apps/admin-server/node_modules
