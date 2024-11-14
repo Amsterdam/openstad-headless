@@ -6,6 +6,12 @@
 
 NAME = $*
 
+API_PORT=31410
+AUTH_PORT=31430
+IMAGE_PORT_API=31450
+ADMIN_PORT=31470
+CMS_PORT=31490
+
 dc = docker compose
 run = $(dc) run --rm
 
