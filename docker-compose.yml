@@ -54,7 +54,7 @@ services:
       args:
         - APP=api-server
         - PORT=${API_PORT}
-    image: openstad/headless-api-server:${RELEASE_VERSION:-latest}
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-opdrachten/openstadheadless-api}:${VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
       openstad-mysql:
@@ -125,7 +125,7 @@ services:
       args:
         - APP=auth-server
         - PORT=${AUTH_PORT}
-    image: openstad/headless-auth-server:${RELEASE_VERSION:-latest}
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-opdrachten/openstadheadless-auth}:${VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
       openstad-mysql:
@@ -176,7 +176,7 @@ services:
       args:
         - APP=image-server
         - PORT=${IMAGE_PORT_API}
-    image: openstad/headless-image-server:${RELEASE_VERSION:-latest}
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-opdrachten/openstadheadless-image}:${VERSION:-latest}
     # TODO: dit moet conditional: alleen als we deze db gebruiken
     depends_on:
       openstad-mysql:
@@ -212,7 +212,7 @@ services:
       args:
         - APP=admin-server
         - PORT=${ADMIN_PORT}
-    image: openstad/headless-admin-server:${RELEASE_VERSION:-latest}
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-opdrachten/openstadheadless-admin}:${VERSION:-latest}
     container_name: openstad-admin-server
     restart: unless-stopped
     environment:
@@ -242,7 +242,7 @@ services:
       args:
         - APP=cms-server
         - PORT=${CMS_PORT}
-    image: openstad/headless-cms-server:${RELEASE_VERSION:-latest}
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-opdrachten/openstadheadless-cms}:${VERSION:-latest}
     depends_on:
       openstad-redis:
         condition: service_healthy
