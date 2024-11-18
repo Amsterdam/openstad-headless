@@ -6,11 +6,11 @@
 
 NAME = $*
 
-API_PORT=31410
-AUTH_PORT=31430
-IMAGE_PORT_API=31450
-ADMIN_PORT=31470
-CMS_PORT=31490
+export API_PORT=31410
+export AUTH_PORT=31430
+export IMAGE_PORT_API=31450
+export ADMIN_PORT=31470
+export CMS_PORT=31490
 
 dc = docker compose
 run = $(dc) run --rm
@@ -22,7 +22,7 @@ requirements:
 	npm i --package-lock-only
 
 build/%:                              ## Build docker image
-	$(dc) build $(NAME)
+	$(dc) build $(NAME) 
 
 push/%:                               ## Push docker image to registry
 	$(dc) push $(NAME)
