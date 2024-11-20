@@ -2,6 +2,8 @@
 
 const { Sequelize } = require('sequelize');
 
+const { getAzureAuthToken } = require('./util/azure')
+
 let dialectOptions;
 if (process.env.MYSQL_CA_CERT) {
   dialectOptions = {
@@ -11,12 +13,22 @@ if (process.env.MYSQL_CA_CERT) {
   }
 }
 
-let sequelize = new Sequelize({
+const getDbPassword = async () => {
+  switch(process.env.DB_AUTH_METHOD) {
+    case 'azure-auth-token':
+      return await getAzureAuthToken()
+    default:
+      return process.env.DB_PASSWORD
+  }
+}
 
+let sequelize = new Sequelize({
+  hooks: {
+    beforeConnect: async (config) => config.password = await getDbPassword()
+  },
   host:     process.env.DB_HOST,
   database: process.env.DB_NAME,
   username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
   port:     process.env.DB_PORT || '3306',
 
   dialect: process.env.DB_DIALECT || 'mysql',
@@ -35,7 +47,6 @@ let sequelize = new Sequelize({
 
 let db = {};
 db.Sequelize = Sequelize;
-db.sequelize = sequelize;
 
 // add models
 db.AccessToken = require('./model/access-token')(db, sequelize, Sequelize);
