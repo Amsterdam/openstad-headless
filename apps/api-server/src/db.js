@@ -36,7 +36,19 @@ if (dbConfig.MYSQL_CA_CERT && dbConfig.MYSQL_CA_CERT.trim && dbConfig.MYSQL_CA_C
 	}
 }
 
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
+const getDbPassword = async () => {
+	switch(dbConfig.authMethod) {
+		case 'azure-auth-token':
+			return await getAzureAuthToken()
+		default:
+			return dbConfig.password
+	}
+}
+
+var sequelize = new Sequelize(dbConfig.database, dbConfig.user, {
+	hooks: {
+		beforeConnect: async (config) => config.password = await getDbPassword()
+	  },
 	dialect        : dbConfig.dialect,
 	host           : dbConfig.host,
 	port					 : dbConfig.port || 3306,
