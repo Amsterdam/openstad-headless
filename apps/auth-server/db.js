@@ -2,8 +2,6 @@
 
 const { Sequelize } = require('sequelize');
 
-const { getAzureAuthToken } = require('./util/azure')
-
 let dialectOptions;
 if (process.env.MYSQL_CA_CERT) {
   dialectOptions = {
@@ -16,6 +14,7 @@ if (process.env.MYSQL_CA_CERT) {
 const getDbPassword = async () => {
   switch(process.env.DB_AUTH_METHOD) {
     case 'azure-auth-token':
+      const { getAzureAuthToken } = require('./utils/azure')
       return await getAzureAuthToken()
     default:
       return process.env.DB_PASSWORD

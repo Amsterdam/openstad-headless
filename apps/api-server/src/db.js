@@ -39,28 +39,28 @@ if (dbConfig.MYSQL_CA_CERT && dbConfig.MYSQL_CA_CERT.trim && dbConfig.MYSQL_CA_C
 const getDbPassword = async () => {
 	switch(dbConfig.authMethod) {
 		case 'azure-auth-token':
+			const { getAzureAuthToken } = require('./util/azure')
 			return await getAzureAuthToken()
 		default:
 			return dbConfig.password
 	}
 }
 
-console.log(`===> DEBUG: Configured sequelize dialect: ${dbConfig.dialect}`)
-console.log(`===> DEBUG: ... but overwriting it with hardcoded 'mysql' for debugging purposes.`)
-
-var sequelize = new Sequelize(dbConfig.database, dbConfig.user, {
+var sequelize = new Sequelize({
 	hooks: {
 		beforeConnect: async (config) => config.password = await getDbPassword()
 	  },
-	dialect        : 'mysql',
-	host           : dbConfig.host,
-	port					 : dbConfig.port || 3306,
+	dialect        	: dbConfig.dialect,
+	database		: dbConfig.database,
+	username		: dbConfig.user,
+	host           	: dbConfig.host,
+	port		 	: dbConfig.port || 3306,
 	dialectOptions,
-	timeZone       : config.timeZone,
-	logging        : require('debug')('app:db:query'),
- 	//logging				 : console.log,
+	timeZone       	: config.timeZone,
+	logging        	: require('debug')('app:db:query'),
+	//logging				 : console.log,
 	typeValidation : true,
-
+	
 	define: {
 		charset        : 'utf8',
 		underscored    : false, // preserve columName casing.

@@ -9,4 +9,6 @@ const scope = 'https://ossrdbms-aad.database.windows.net/.default'
 // AZURE_FEDERATED_TOKEN_FILE: (Injected by the webhook)
 const credential = new WorkloadIdentityCredential()
 
-export const getAzureAuthToken = async () => (await credential.getToken(scope)).token
+const getAzureAuthToken = async () => (await credential.getToken(scope)).token
+
+module.exports = { getAzureAuthToken };
