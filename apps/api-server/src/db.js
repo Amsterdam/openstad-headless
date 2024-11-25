@@ -45,11 +45,14 @@ const getDbPassword = async () => {
 	}
 }
 
+console.log(`===> DEBUG: Configured sequelize dialect: ${dbConfig.dialect}`)
+console.log(`===> DEBUG: ... but overwriting it with hardcoded 'mysql' for debugging purposes.`)
+
 var sequelize = new Sequelize(dbConfig.database, dbConfig.user, {
 	hooks: {
 		beforeConnect: async (config) => config.password = await getDbPassword()
 	  },
-	dialect        : dbConfig.dialect,
+	dialect        : 'mysql',
 	host           : dbConfig.host,
 	port					 : dbConfig.port || 3306,
 	dialectOptions,
