@@ -22,7 +22,7 @@ requirements:
 	npm i --package-lock-only
 
 build/%:                              ## Build docker image
-	$(dc) build $(NAME) 
+	$(dc) build $(NAME) --target release
 
 push/%:                               ## Push docker image to registry
 	$(dc) push $(NAME)
