@@ -4,11 +4,10 @@ const { Sequelize } = require('sequelize');
 
 let dialectOptions;
 if (process.env.MYSQL_CA_CERT) {
-  dialectOptions = {
-    ssl: {
-      ca: process.env.MYSQL_CA_CERT
-    }
-  }
+  dialectOptions.ssl.ca = process.env.MYSQL_CA_CERT
+}
+if (process.env.DB_REQUIRE_SSL) {
+  dialectOptions.ssl.require = true
 }
 
 const getDbPassword = async () => {
