@@ -11,7 +11,7 @@ export AUTH_PORT=31430
 export IMAGE_PORT_API=31450
 export ADMIN_PORT=31470
 export CMS_PORT=31490
-export BUILD_TARGET='release'
+export BUILD_TARGET=release
 
 dc = docker compose
 run = $(dc) run --rm
