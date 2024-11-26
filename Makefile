@@ -11,6 +11,7 @@ export AUTH_PORT=31430
 export IMAGE_PORT_API=31450
 export ADMIN_PORT=31470
 export CMS_PORT=31490
+export BUILD_TARGET='release'
 
 dc = docker compose
 run = $(dc) run --rm
@@ -22,7 +23,7 @@ requirements:
 	npm i --package-lock-only
 
 build/%:                              ## Build docker image
-	$(dc) build $(NAME) --target release
+	$(dc) build $(NAME)
 
 push/%:                               ## Push docker image to registry
 	$(dc) push $(NAME)

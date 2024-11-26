@@ -48,7 +48,7 @@ services:
 
   openstad-api-server:
     build:
-      target: development
+      target: ${BUILD_TARGET:-development}
       context: .
       dockerfile: Dockerfile
       args:
@@ -119,7 +119,7 @@ services:
 
   openstad-auth-server:
     build:
-      target: development
+      target: ${BUILD_TARGET:-development}
       context: .
       dockerfile: Dockerfile
       args:
@@ -170,7 +170,7 @@ services:
 
   openstad-image-server:
     build:
-      target: development
+      target: ${BUILD_TARGET:-development}
       context: .
       dockerfile: Dockerfile
       args:
@@ -206,7 +206,7 @@ services:
 
   openstad-admin-server:
     build:
-      target: development
+      target: ${BUILD_TARGET:-development}
       context: .
       dockerfile: Dockerfile
       args:
@@ -236,7 +236,7 @@ services:
 
   openstad-cms-server:
     build:
-      target: development
+      target: ${BUILD_TARGET:-development}
       context: .
       dockerfile: Dockerfile
       args:
