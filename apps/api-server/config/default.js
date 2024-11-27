@@ -43,6 +43,7 @@ let defaultConfig = {
     mysqlCaCert: process.env.DB_MYSQL_CA_CERT || process.env.API_DB_MYSQL_CA_CERT || process.env.MYSQL_CA_CERT,
     multipleStatements: true,
     authMethod: process.env.DB_AUTH_METHOD,
+    requireSsl: process.env.DB_REQUIRE_SSL,
   },
 
 	express: {

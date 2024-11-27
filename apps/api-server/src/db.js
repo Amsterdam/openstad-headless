@@ -26,14 +26,15 @@ if (dbConfig.mysqlSTGeoMode == 'on') {
 const dialectOptions = {
 	charset            : 'utf8',
 	multipleStatements : dbConfig.multipleStatements,
-	socketPath         : dbConfig.socketPath
+	socketPath         : dbConfig.socketPath,
+	ssl: {
+		require: dbConfig.requireSsl
+	}
 }
 
 if (dbConfig.MYSQL_CA_CERT && dbConfig.MYSQL_CA_CERT.trim && dbConfig.MYSQL_CA_CERT.trim()) {
-	dialectOptions.ssl = {
-		rejectUnauthorized: true,
-		ca: [ dbConfig.MYSQL_CA_CERT ]
-	}
+	dialectOptions.ssl.rejectUnauthorized = true;
+	dialectOptions.ssl.ca = [ dbConfig.MYSQL_CA_CERT ];
 }
 
 const getDbPassword = async () => {
