@@ -2,7 +2,10 @@
 
 const { Sequelize } = require('sequelize');
 
-let dialectOptions;
+let dialectOptions = {
+  ssl: {}
+};
+
 if (process.env.MYSQL_CA_CERT) {
   dialectOptions.ssl.ca = process.env.MYSQL_CA_CERT
 }
