@@ -23,18 +23,20 @@ if (dbConfig.mysqlSTGeoMode == 'on') {
 	}
 }
 
+let ssl = {
+	require: dbConfig.requireSsl
+}
+
+if (dbConfig.MYSQL_CA_CERT?.trim?.()) {
+	ssl.rejectUnauthorized = true;
+	ssl.ca = [ dbConfig.MYSQL_CA_CERT ];
+}
+
 const dialectOptions = {
 	charset            : 'utf8',
 	multipleStatements : dbConfig.multipleStatements,
 	socketPath         : dbConfig.socketPath,
-	ssl: {
-		require: dbConfig.requireSsl
-	}
-}
-
-if (dbConfig.MYSQL_CA_CERT && dbConfig.MYSQL_CA_CERT.trim && dbConfig.MYSQL_CA_CERT.trim()) {
-	dialectOptions.ssl.rejectUnauthorized = true;
-	dialectOptions.ssl.ca = [ dbConfig.MYSQL_CA_CERT ];
+	ssl
 }
 
 const getDbPassword = async () => {
@@ -51,17 +53,15 @@ var sequelize = new Sequelize({
 	hooks: {
 		beforeConnect: async (config) => config.password = await getDbPassword()
 	},
-	username	   : dbConfig.user,
-	database	   : dbConfig.database,
-	dialect        : dbConfig.dialect,
-	host           : dbConfig.host,
-	port					 : dbConfig.port || 3306,
+	username		: dbConfig.user,
+	database		: dbConfig.database,
+	dialect			: dbConfig.dialect,
+	host			: dbConfig.host,
+	port			: dbConfig.port || 3306,
 	dialectOptions,
-	timeZone       : config.timeZone,
-	logging        : require('debug')('app:db:query'),
- 	//logging				 : console.log,
-	typeValidation : true,
-
+	timeZone		: config.timeZone,
+	logging			: require('debug')('app:db:query'),
+	typeValidation	: true,
 	define: {
 		charset        : 'utf8',
 		underscored    : false, // preserve columName casing.
