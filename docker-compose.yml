@@ -170,7 +170,7 @@ services:
 
   openstad-image-server:
     build:
-      target: development
+      target: ${BUILD_TARGET:-development}
       context: .
       dockerfile: Dockerfile
       args:
