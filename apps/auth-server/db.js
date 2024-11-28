@@ -2,35 +2,46 @@
 
 const { Sequelize } = require('sequelize');
 
-let dialectOptions;
+let ssl = {};
+
 if (process.env.MYSQL_CA_CERT) {
-  dialectOptions = {
-    ssl: {
-      ca: process.env.MYSQL_CA_CERT
-    }
+  ssl.ca = process.env.MYSQL_CA_CERT
+}
+
+if (process.env.DB_REQUIRE_SSL) {
+  ssl.require = true
+}
+
+const dialectOptions = {
+  ssl
+}
+
+const getDbPassword = async () => {
+  switch(process.env.DB_AUTH_METHOD) {
+    case 'azure-auth-token':
+      const { getAzureAuthToken } = require('./utils/azure')
+      return await getAzureAuthToken()
+    default:
+      return process.env.DB_PASSWORD
   }
 }
 
 let sequelize = new Sequelize({
-
-  host:     process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  port:     process.env.DB_PORT || '3306',
-
-  dialect: process.env.DB_DIALECT || 'mysql',
+  hooks: {
+    beforeConnect: async (config) => config.password = await getDbPassword()
+  },
+  host:           process.env.DB_HOST,
+  database:       process.env.DB_NAME,
+  username:       process.env.DB_USER,
+  password:       process.env.DB_PASSWORD,
+  port:           process.env.DB_PORT || '3306',
+  dialect:        process.env.DB_DIALECT || 'mysql',
   dialectOptions,
-
-  dialectModule: require('mysql2'),
-
-  logging: null,
-  // logging: console.log,
-
+  dialectModule:  require('mysql2'),
+  logging:        null,
   pool: {
     max: parseInt(process.env.DB_MAX_POOL_SIZE || process.env.maxPoolSize) || 5,
   },
-
 });
 
 let db = {};
