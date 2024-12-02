@@ -59,6 +59,7 @@ let defaultConfig = {
 			{ "route": "/notification", "router": "./routes/notification" },
       { "route": "/stats", "router": "./routes/stats" },
       { "route": "/widget", "router": "./routes/widget" },
+      { "route": "/health", "router": "./routes/health"},
 		]
 	},
 
