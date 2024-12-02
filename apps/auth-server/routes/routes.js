@@ -155,6 +155,14 @@ module.exports = function (app) {
 
     app.get('/', authLocal.index);
 
+    app.get('/health', (req, res) => {
+      res.status(200).json({
+        status: 'UP',
+        message: 'Server is healthy',
+        timestamp: new Date().toISOString(),
+      });
+    });
+
     /**
      * Login routes for clients,
      * checks if one or more options of authentications is available
