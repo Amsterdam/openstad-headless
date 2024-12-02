@@ -2,7 +2,7 @@ const express = require('express');
 let router = express.Router();
 
 router
-  .route('(/health')
+  .route('/health')
   .get(async function (req, res) {
     res.status(200).json({
         status: 'UP',
