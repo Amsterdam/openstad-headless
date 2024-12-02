@@ -38,6 +38,14 @@ module.exports  = {
       this._initBasicMiddleware();
       this._initSessionMiddleware();
 
+	  this.app.get('/health', (req, res) => {
+		res.status(200).json({
+		  status: 'UP',
+		  message: 'Server is healthy',
+		  timestamp: new Date().toISOString(),
+		});
+	  });
+
       var middleware = config.express.middleware;
 
       middleware.forEach(( entry ) => {
