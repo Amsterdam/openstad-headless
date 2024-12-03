@@ -31,13 +31,6 @@ module.exports  = {
   //  this
       // this.app.use(cors());
 
-      // Register statics first...
-      this._initStatics();
-
-      // ... then middleware everyone needs...
-      this._initBasicMiddleware();
-      this._initSessionMiddleware();
-
 	  this.app.get('/health', (req, res) => {
 		res.status(200).json({
 		  status: 'UP',
@@ -45,6 +38,14 @@ module.exports  = {
 		  timestamp: new Date().toISOString(),
 		});
 	  });
+
+      // Register statics first...
+      this._initStatics();
+
+      // ... then middleware everyone needs...
+      this._initBasicMiddleware();
+      this._initSessionMiddleware();
+
 
       var middleware = config.express.middleware;
 
