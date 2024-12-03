@@ -46,7 +46,6 @@ module.exports  = {
       this._initBasicMiddleware();
       this._initSessionMiddleware();
 
-
       var middleware = config.express.middleware;
 
       middleware.forEach(( entry ) => {
