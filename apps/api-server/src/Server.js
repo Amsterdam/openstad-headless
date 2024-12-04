@@ -31,6 +31,14 @@ module.exports  = {
   //  this
       // this.app.use(cors());
 
+	  this.app.get('/health', (req, res) => {
+		res.status(200).json({
+		  status: 'UP',
+		  message: 'Server is healthy',
+		  timestamp: new Date().toISOString(),
+		});
+	  });
+
       // Register statics first...
       this._initStatics();
 
