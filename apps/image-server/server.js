@@ -267,6 +267,13 @@ app.post('/documents',
     })));
   });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'UP',
+    message: 'Server is healthy',
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.use(function (err, req, res, next) {
   const status = err.status ? err.status : 500;
