@@ -48,6 +48,9 @@ async function initializeApp() {
         database: process.env.DB_NAME || process.env.DB_SESSIONS,
         user:     process.env.DB_USER,
         password: dbPassword,
+        ssl: {
+          require: true
+        }
     });
     
     let sessionCookieConfig;
