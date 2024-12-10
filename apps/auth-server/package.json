@@ -33,7 +33,7 @@
     "mjml": "^4.15.3",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.23",
-    "mysql2": "^3.9.7",
+    "mysql2": "^3.11.5",
     "node-2fa": "^2.0.2",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.6.1",

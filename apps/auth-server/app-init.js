@@ -22,6 +22,7 @@ const expressSession              = require('express-session');
 // const MemoryStore = expressSession.MemoryStore;
 const MySQLStore                  = require('express-mysql-session')(expressSession);
 const getDbPassword               = require('./utils/getDbPassword')
+const mysql                       = require('mysql2/promise')
 
 // Express configuration
 const app = express();
@@ -41,17 +42,19 @@ async function initializeApp() {
     });
 
     const dbPassword = await getDbPassword();
+
+    const dbConnection = await mysql.createPool({
+      port:     3306,
+      host:     process.env.DB_HOST,
+      database: process.env.DB_NAME || process.env.DB_SESSIONS,
+      user:     process.env.DB_USER,
+      password: dbPassword,
+      ssl: {
+        require: true
+      }
+    })
     
-    const sessionStore = new MySQLStore({
-        port:     3306,
-        host:     process.env.DB_HOST,
-        database: process.env.DB_NAME || process.env.DB_SESSIONS,
-        user:     process.env.DB_USER,
-        password: dbPassword,
-        ssl: {
-          require: true
-        }
-    });
+    const sessionStore = new MySQLStore({}, dbConnection);
     
     let sessionCookieConfig;
     
