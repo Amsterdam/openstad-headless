@@ -21,6 +21,8 @@ const flash                       = require('express-flash');
 const expressSession              = require('express-session');
 // const MemoryStore = expressSession.MemoryStore;
 const MySQLStore                  = require('express-mysql-session')(expressSession);
+const mysql                       = require('mysql2/promise')
+const getDbPassword               = require('./utils/getDbPassword')
 
 const initializeApp = async () => {
   try {
@@ -37,14 +39,16 @@ const initializeApp = async () => {
       req.nunjucksEnv = nunjucksEnv;
       next();
     });
+
+    const mysqlConnectionPool = mysql.createPool({
+      port:     process.env.DB_PORT || 3306,
+      host:     process.env.DB_HOST,
+      database: process.env.DB_NAME || process.env.DB_SESSIONS,
+      user:     process.env.DB_USER,
+      password: await getDbPassword(),
+    })
     
-    const sessionStore = new MySQLStore({
-        port:     3306,
-        host:     process.env.DB_HOST,
-        database: process.env.DB_NAME || process.env.DB_SESSIONS,
-        user:     process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-    });
+    const sessionStore = new MySQLStore({}, mysqlConnectionPool);
     
     let sessionCookieConfig;
     
