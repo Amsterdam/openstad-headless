@@ -40,12 +40,27 @@ const initializeApp = async () => {
       next();
     });
 
+    let ssl = {
+      rejectUnauthorized: false
+    };
+    
+    if (process.env.MYSQL_CA_CERT) {
+      ssl.ca = process.env.MYSQL_CA_CERT
+      ssl.rejectUnauthorized = true
+    }
+    
+    if (process.env.DB_REQUIRE_SSL) {
+      ssl.require = true
+      ssl.rejectUnauthorized = true
+    }
+
     const mysqlConnectionPool = mysql.createPool({
       port:     process.env.DB_PORT || 3306,
       host:     process.env.DB_HOST,
       database: process.env.DB_NAME || process.env.DB_SESSIONS,
       user:     process.env.DB_USER,
       password: await getDbPassword(),
+      ssl,
     })
     
     const sessionStore = new MySQLStore({}, mysqlConnectionPool);

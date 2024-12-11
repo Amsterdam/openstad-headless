@@ -3,14 +3,18 @@
 const { Sequelize } = require('sequelize');
 const getDbPassword = require('./utils/getDbPassword');
 
-let ssl = {};
+let ssl = {
+  rejectUnauthorized: false
+};
 
 if (process.env.MYSQL_CA_CERT) {
   ssl.ca = process.env.MYSQL_CA_CERT
+  ssl.rejectUnauthorized = true
 }
 
 if (process.env.DB_REQUIRE_SSL) {
   ssl.require = true
+  ssl.rejectUnauthorized = true
 }
 
 const dialectOptions = {
