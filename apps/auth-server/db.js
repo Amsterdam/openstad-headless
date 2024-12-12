@@ -1,29 +1,24 @@
 'use strict';
 
 const { Sequelize } = require('sequelize');
+const getDbPassword = require('./utils/getDbPassword');
 
-let ssl = {};
+let ssl = {
+  rejectUnauthorized: false
+};
 
 if (process.env.MYSQL_CA_CERT) {
   ssl.ca = process.env.MYSQL_CA_CERT
+  ssl.rejectUnauthorized = true
 }
 
 if (process.env.DB_REQUIRE_SSL) {
   ssl.require = true
+  ssl.rejectUnauthorized = true
 }
 
 const dialectOptions = {
   ssl
-}
-
-const getDbPassword = async () => {
-  switch(process.env.DB_AUTH_METHOD) {
-    case 'azure-auth-token':
-      const { getAzureAuthToken } = require('./utils/azure')
-      return await getAzureAuthToken()
-    default:
-      return process.env.DB_PASSWORD
-  }
 }
 
 let sequelize = new Sequelize({
@@ -33,7 +28,6 @@ let sequelize = new Sequelize({
   host:           process.env.DB_HOST,
   database:       process.env.DB_NAME,
   username:       process.env.DB_USER,
-  password:       process.env.DB_PASSWORD,
   port:           process.env.DB_PORT || '3306',
   dialect:        process.env.DB_DIALECT || 'mysql',
   dialectOptions,
