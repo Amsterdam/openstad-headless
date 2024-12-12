@@ -2,7 +2,6 @@
 require('dotenv').config();
 
 const bodyParser                  = require('body-parser');
-//const client                      = require('./client');
 const cookieParser                = require('cookie-parser');
 const config                      = require('./config');
 const express                     = require('express');
@@ -19,7 +18,6 @@ const timestampFilter             = require('./nunjucks/timestamp');
 const replaceResourceVariablesFilter  = require('./nunjucks/replaceResourceVariables');
 const flash                       = require('express-flash');
 const expressSession              = require('express-session');
-// const MemoryStore = expressSession.MemoryStore;
 const MySQLStore                  = require('express-mysql-session')(expressSession);
 const mysql                       = require('mysql2/promise')
 const getDbPassword               = require('./utils/getDbPassword')
