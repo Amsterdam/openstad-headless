@@ -30,6 +30,8 @@ const initializeApp = async () => {
     app.set('view engine', 'html');
     app.set('port', process.env.PORT || 4000);
     app.use(express.static(path.join(__dirname, 'public')));
+
+    require('./routes/routesWithoutMiddleware')(app)
     
     app.use(cookieParser());
     
