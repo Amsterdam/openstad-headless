@@ -107,14 +107,6 @@ const addCsrfGlobal = (req, res, next) => {
 
 module.exports = function (app) {
 
-    app.get('/health', (req, res) => {
-      res.status(200).json({
-        status: 'UP',
-        message: 'Server is healthy',
-        timestamp: new Date().toISOString(),
-      });
-    });
-
     app.use(function (req, res, next) {
         // load env sheets that have been set for complete Environment, not specific for just one client
         if (process.env.STYLESHEETS) {
