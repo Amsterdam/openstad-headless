@@ -31,7 +31,7 @@ const initializeApp = async () => {
     app.set('port', process.env.PORT || 4000);
     app.use(express.static(path.join(__dirname, 'public')));
     
-    require('./routes/routesWithoutMiddleware')(app)
+    require('./routes/healthRoute')(app)
     
     app.use(cookieParser());
     
