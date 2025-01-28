@@ -51,7 +51,7 @@ module.exports  = {
 		} catch (error) {
 			console.error('Unable to connect to the database:', error);
 			res.status(500).json({
-				status: 'ERROR',
+				status: 'CONNECTION_ERROR',
 				message: 'Unable to connect to the database. See the logs for details.',
 				timestamp: new Date().toISOString(),
 			});
