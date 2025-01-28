@@ -5,6 +5,7 @@ var config       = require('config')
 var util         = require('./util');
 var log          = require('debug')('app:http');
 const morgan     = require('morgan')
+const db		 = require('./db')
 
 module.exports  = {
 	app: undefined,
@@ -37,6 +38,24 @@ module.exports  = {
 		  message: 'Server is healthy',
 		  timestamp: new Date().toISOString(),
 		});
+	  });
+
+	  this.app.get('/db-health', async (req, res) => {
+		try {
+			await db.sequelize.authenticate();
+			res.status(200).json({
+				status: 'UP',
+				message: 'Database connection has been established successfully.',
+				timestamp: new Date().toISOString(),
+			  });
+		} catch (error) {
+			console.error('Unable to connect to the database:', error);
+			res.status(500).json({
+				status: 'ERROR',
+				message: 'Unable to connect to the database. See the logs for details.',
+				timestamp: new Date().toISOString(),
+			});
+		}
 	  });
 
       // Register statics first...
