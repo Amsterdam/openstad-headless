@@ -36,17 +36,17 @@ async function buildAllPackages() {
   // Write new hash to file
   fs.writeFileSync(hashFile, currentHash.hash);
 
-  const packages = Object.keys(widgetDefinitions);
+  const widgetPackages = Object.keys(widgetDefinitions);
   const dependencyPackages = await getDependencyPackages();
 
   // Build all dependency packages
-  dependencyPackages.forEach((package) => {
-    buildPackageByDirectory(package);
+  dependencyPackages.forEach((dependencyPackage) => {
+    buildPackageByDirectory(dependencyPackage);
   });
 
   // Build all non-dependency packages
-  packages.forEach((package) => {
-    buildPackage(package);
+  widgetPackages.forEach((widgetPackage) => {
+    buildPackage(widgetPackage);
   });
 }
 
