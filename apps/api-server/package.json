@@ -2,7 +2,6 @@
   "name": "@openstad-headless/api-server",
   "version": "1.0.0",
   "description": "OpenStad API server",
-  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -23,7 +22,7 @@
   },
   "dependencies": {
     "@azure/identity": "^4.6.0",
-    "@kubernetes/client-node": "^1.1.0",
+    "@kubernetes/client-node": "^0.22.3",
     "@openstad-headless/account": "file:../../packages/account",
     "@openstad-headless/activity": "file:../../packages/activity",
     "@openstad-headless/agenda": "file:../../packages/agenda",
