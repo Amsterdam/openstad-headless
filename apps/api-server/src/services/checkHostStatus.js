@@ -1,6 +1,6 @@
 const dns = require('dns');
 const db = require('../db');
-import k8s from '@kubernetes/client-node'
+const k8s = require('@kubernetes/client-node')
 const ip = require('ip');
 
 const getK8sApi = () => {
