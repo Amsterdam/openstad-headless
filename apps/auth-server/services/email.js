@@ -11,7 +11,7 @@ const mjml2html         = require('mjml');
 
 
 const formatTransporter = function ({ host, port, secure, auth }) {
-  return {
+  const config = {
     host:   host ? host : process.env.MAIL_SERVER_URL,
     port:   port ? port : process.env.MAIL_SERVER_PORT,
     secure: secure ? secure : process.env.MAIL_SERVER_SECURE && process.env.MAIL_SERVER_SECURE !== 'false',
@@ -20,6 +20,10 @@ const formatTransporter = function ({ host, port, secure, auth }) {
       pass: (auth && auth.pass) ? auth.pass : process.env.MAIL_SERVER_PASSWORD,
     },
   };
+
+  console.log('config', config);
+
+  return config;
 };
 
 exports.send = async function ({subject, toName, toEmail, templateString, template, variables, fromEmail, fromName, replyTo, transporterConfig}) {
