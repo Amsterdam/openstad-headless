@@ -18,7 +18,8 @@ if (process.env.DB_REQUIRE_SSL === "true" || process.env.DB_REQUIRE_SSL === true
 }
 
 const dialectOptions = {
-  ssl
+  ssl,
+  multipleStatements: true
 };
 
 let sequelize = new Sequelize({
@@ -33,13 +34,17 @@ let sequelize = new Sequelize({
   dialect: process.env.DB_DIALECT || 'mysql',
   dialectOptions,
 
-  dialectModule: require('mysql2'),
+  // logging: null,
+  logging: console.log,
 
-  logging: null,
-  // logging: console.log,
+  define: {
+		charset        : 'utf8',
+  },
 
   pool: {
+    min: 0,
     max: parseInt(process.env.DB_MAX_POOL_SIZE || process.env.maxPoolSize) || 5,
+    idle: 10000
   },
 
 });
