@@ -60,7 +60,7 @@ module.exports  = {
 
 	  // TEMPORARY DEBUGGING ROUTE
 		this.app.get('/debug/db', (req, res) => {
-		res.json(db.sequelize)
+		res.json(db.sequelize.options)
 		})
 
       // Register statics first...
