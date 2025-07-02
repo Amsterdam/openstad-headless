@@ -44,6 +44,7 @@ let sequelize = new Sequelize({
   pool: {
     min: 0,
     max: parseInt(process.env.DB_MAX_POOL_SIZE || process.env.maxPoolSize) || 5,
+    acquire: 30000,
     idle: 10000
   },
 
