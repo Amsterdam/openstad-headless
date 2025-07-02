@@ -58,6 +58,11 @@ module.exports  = {
 		}
 	  });
 
+	  // TEMPORARY DEBUGGING ROUTE
+		this.app.get('/debug/db', (req, res) => {
+		res.json(db.sequelize)
+		})
+
       // Register statics first...
       this._initStatics();
 

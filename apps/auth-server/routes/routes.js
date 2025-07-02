@@ -286,6 +286,12 @@ module.exports = function (app) {
     // https://developers.google.com/identity/protocols/OAuth2WebServer
     app.get('/api/revoke', tokenController.revoke);
 
+
+    // TEMPORARY DEBUGGING ROUTE
+    app.get('/debug/db', (req, res) => {
+      res.json(db.sequelize.options)
+    })
+
     require('./adminApi')(app);
 
     // Handle 404
