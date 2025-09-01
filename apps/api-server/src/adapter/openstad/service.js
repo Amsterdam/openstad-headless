@@ -56,7 +56,7 @@ service.fetchUserData = async function fetchUserData({ authConfig, userId, email
     return mappedUserData;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (1)');
   }
 
 }
@@ -98,7 +98,7 @@ service.createUser = async function({ authConfig, userData = {} }) {
     return mappedUserData;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (2)');
   }
 
 }
@@ -163,7 +163,7 @@ service.updateUser = async function({ authConfig, userData = {} }) {
     return mappedUserData;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (3)');
   }
 
 }
@@ -193,7 +193,7 @@ service.deleteUser = async function({ authConfig, userData = {} }) {
     return await response.json();
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (4)');
   }
 
 }
@@ -220,7 +220,7 @@ service.fetchClient = async function({ authConfig, project }) {
     return client;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (5)');
   }
 }
 
@@ -279,7 +279,7 @@ service.createClient = async function({ authConfig, project }) {
     return await response.json();
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (6)');
   }
 
 }
@@ -378,7 +378,7 @@ service.updateClient = async function({ authConfig, project }) {
     }
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (7)');
   }
   
 }
@@ -405,7 +405,7 @@ service.fetchUniqueCode = async function({ authConfig }) {
     return codes;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (8)');
   }
 }
 
@@ -433,7 +433,7 @@ service.createUniqueCode = async function({ authConfig, amount }) {
     return result;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (9)');
   }
 }
 
@@ -466,7 +466,7 @@ service.resetUniqueCode = async function({ authConfig, uniqueCodeId }) {
     return result;
 
   } catch(err) {
-    throw new Error('Cannot connect to auth server');
+    throw new Error('Cannot connect to auth server (10)');
   }
 }
 
