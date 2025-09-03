@@ -20,7 +20,7 @@ const securityHeadersMw        = require('../middleware/security-headers');
 module.exports = (app) => {
   app.use('/api/admin', securityHeadersMw);
   app.use('/api/admin', (req, res, next) => {
-      passport.authenticate(['basic', 'oauth2-client-pw'], { session: false }, (err, user, info) => {
+      passport.authenticate(['basic', 'oauth2-client-password'], { session: false }, (err, user, info) => {
           if (err) {
               console.error('Authentication error:', err);
               return res.status(500).send('Internal Server Error'); // Return 500 for unexpected errors
