@@ -177,6 +177,14 @@ passport.use(new BasicStrategy((clientId, clientSecret, done) => {
     .findOne({ where: { clientId } })
     .then(client => {
       console.log('Found client row:', client ? { clientId: client.clientId, secretLength: client.clientSecret?.length } : 'not found');
+      
+      console.log(
+        'Incoming secret length:', clientSecret?.length,
+        'Stored secret length:', client.clientSecret?.length,
+        'Incoming first3:', clientSecret?.slice(0,3),
+        'Stored first3:', client.clientSecret?.slice(0,3),
+        'Strict equality:', client.clientSecret === clientSecret
+      );
 
       let isValid;
       try {
