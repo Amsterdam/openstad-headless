@@ -26,7 +26,12 @@ module.exports = (app) => {
               return res.status(500).send('Internal Server Error'); // Return 500 for unexpected errors
           }
           if (!user) {
-              console.warn('Authentication failed:', info);
+            // Safely log request headers
+            const headers = { ...req.headers };
+            if (headers.authorization) {
+                headers.authorization = `${headers.authorization.slice(0, 10)}...`; // Truncate the Authorization header
+            }
+            console.warn('Authentication failed:', info, 'Request headers:', headers);
               return res.status(401).send('Unauthorized'); // Return 401 for failed authentication
           }
           req.user = user; // Attach the authenticated user to the request
