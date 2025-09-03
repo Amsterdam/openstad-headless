@@ -171,26 +171,53 @@ passport.use('phonenumber', new TokenStrategy({
  */
 
 passport.use(new BasicStrategy((clientId, clientSecret, done) => {
+  console.log('BasicStrategy attempt:', { clientId, secretLength: clientSecret.length });
+
   db.Client
     .findOne({ where: { clientId } })
-    .then(client => validate.client(client, clientSecret))
-    .then(client => done(null, client))
-    .catch(() => done(null, false));
+    .then(client => {
+      console.log('Found client row:', client ? { clientId: client.clientId, secretLength: client.clientSecret?.length } : 'not found');
+
+      let isValid;
+      try {
+        isValid = validate.client(client, clientSecret);
+      } catch (err) {
+        console.error('Validation threw error:', err);
+        return done(null, false);
+      }
+
+      console.log('Validation result:', !!isValid);
+      done(null, isValid ? client : false);
+    })
+    .catch(err => {
+      console.error('BasicStrategy DB error:', err);
+      done(null, false);
+    });
 }));
 
-/**
- * Client Password strategy
- *
- * The OAuth 2.0 client password authentication strategy authenticates clients
- * using a client ID and client secret. The strategy requires a verify callback,
- * which accepts those credentials and calls done providing a client.
- */
 passport.use(new ClientPasswordStrategy((clientId, clientSecret, done) => {
+  console.log('ClientPasswordStrategy attempt:', { clientId, secretLength: clientSecret.length });
+
   db.Client
     .findOne({ where: { clientId } })
-    .then(client => validate.client(client, clientSecret))
-    .then(client => done(null, client))
-    .catch(() => done(null, false));
+    .then(client => {
+      console.log('Found client row:', client ? { clientId: client.clientId, secretLength: client.clientSecret?.length } : 'not found');
+
+      let isValid;
+      try {
+        isValid = validate.client(client, clientSecret);
+      } catch (err) {
+        console.error('Validation threw error:', err);
+        return done(null, false);
+      }
+
+      console.log('Validation result:', !!isValid);
+      done(null, isValid ? client : false);
+    })
+    .catch(err => {
+      console.error('ClientPasswordStrategy DB error:', err);
+      done(null, false);
+    });
 }));
 
 /**
