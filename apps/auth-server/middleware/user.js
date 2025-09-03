@@ -48,6 +48,7 @@ exports.withAll = (req, res, next) => {
 }
 
 exports.withOne = (req, res, next) => {
+  console.log("reachedwithOne");
   const userId = req.body.userId ? req.body.userId : req.params.userId;
   db.User
     .scope(['includeUserRoles'])
@@ -168,7 +169,7 @@ exports.create =  (req, res, next) => {
 
 exports.update = (req, res, next) => {
   const keysToUpdate = ['name', 'email', 'streetName', 'houseNumber', 'suffix', 'postcode', 'city', 'phoneNumber', 'hashedPhoneNumber', 'password', 'requiredFields', 'exposedFields', 'authTypes', 'twoFactorConfigured', 'twoFactorToken'];
-
+  console.log("reachedUpdate");
   let data = {};
   keysToUpdate.forEach((key) => {
     if (req.body[key] || req.body[key] === 0 || req.body[key] === null  || req.body[key] === false) {
@@ -194,6 +195,7 @@ exports.update = (req, res, next) => {
 }
 
 exports.saveRoles = (req, res, next) => {
+  console.log("reachedSaveRoles");
   const roles = req.body.roles;
 
   // console.log(' typeof req.body.roles',  typeof req.body.roles,  req.body.roles)

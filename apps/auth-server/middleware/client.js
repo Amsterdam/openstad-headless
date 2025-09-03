@@ -7,6 +7,7 @@ const getClientIdFromRequest = require('../utils/getClientIdFromRequest');
 const configAuthTypes = require('../config/auth.js').types;
 
 exports.withAll = (req, res, next) => {
+  console.log("reached withAll1");
   db.Client
     .findAll()
     .then((clients) => {

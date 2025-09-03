@@ -1,6 +1,7 @@
 const db = require('../db');
 
 exports.withAll = (req, res, next) => {
+  console.log("reachedWithall2");
   db.Role
   .findAll()
   .then((roles) => {

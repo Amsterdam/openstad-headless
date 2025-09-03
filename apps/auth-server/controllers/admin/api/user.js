@@ -5,6 +5,7 @@ const getClientIdFromRequest = require('../../../utils/getClientIdFromRequest');
 const outputUser = (req, res, next) => {
   let result = { ...req.userObject };
   result = result.dataValues;
+  console.log("reached outputUser");
   delete result.password;
   delete result.hashedPhoneNumber;
   if (result.roles) {
