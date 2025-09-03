@@ -2,7 +2,7 @@ const config = require('config');
 const URL    = require('url').URL;
 
 module.exports = function( req, res, next ) {
-
+	console.log("reachedSecurityHeaders");
 	let origin = req.headers && req.headers.origin;
 
 	let domain = ''

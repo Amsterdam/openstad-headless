@@ -19,8 +19,20 @@ const securityHeadersMw        = require('../middleware/security-headers');
 
 module.exports = (app) => {
   app.use('/api/admin', securityHeadersMw);
-  app.use('/api/admin', [passport.authenticate(['basic', 'oauth2-client-password'], { session: false })]);
-
+  app.use('/api/admin', (req, res, next) => {
+      passport.authenticate(['basic', 'oauth2-client-pw'], { session: false }, (err, user, info) => {
+          if (err) {
+              console.error('Authentication error:', err);
+              return res.status(500).send('Internal Server Error'); // Return 500 for unexpected errors
+          }
+          if (!user) {
+              console.warn('Authentication failed:', info);
+              return res.status(401).send('Unauthorized'); // Return 401 for failed authentication
+          }
+          req.user = user; // Attach the authenticated user to the request
+          next(); // Proceed to the next middleware
+      })(req, res, next);
+  });
   /**
    *  Simple CRUD API for users
    */
