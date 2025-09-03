@@ -32,7 +32,6 @@ service.fetchUserData = async function fetchUserData({ authConfig, userId, email
     let response = await fetch(url, {
 	    headers,
     })
-    console.log(response)
     if (!response.ok) {
       throw new Error('Fetch failed')
     }
@@ -153,6 +152,7 @@ service.updateUser = async function({ authConfig, userData = {} }) {
       method: 'post',
       body,
     })
+    console.log(response)
     if (!response.ok) {
       throw new Error('Fetch failed')
     }
