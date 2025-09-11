@@ -136,6 +136,9 @@ export default function ProjectResources() {
             <Button className="text-xs p-2 w-fit" type="submit" onClick={transform}>
               Exporteer inzendingen
             </Button>
+            <Button className="text-xs p-2 w-fit" type="submit" onClick={transform}>
+              Importeer inzendingen
+            </Button>
           </div>
         }>
         <div className="container py-6"><div className="float-left mb-4 flex gap-4">
