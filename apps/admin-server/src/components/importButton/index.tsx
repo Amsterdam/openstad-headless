@@ -232,16 +232,13 @@ const onFileAdded = async (e: React.ChangeEvent<HTMLInputElement>) => {
       >
         {dialogStatus === 'importFinished' ? (
           <>
-            <h3>Import complete!</h3>
+            <h3>Import voltooid!</h3>
             <p>
-              Imported{' '}
-              <b>
-                {totalRows - countFailedImportRows(fileValidationNotifications)}
-              </b>{' '}
-              from a total of <b>{totalRows}</b> rows
+              <b>{totalRows - countFailedImportRows(fileValidationNotifications)}</b>{' '}
+              van de <b>{totalRows}</b> rijen succesvol geïmporteerd
             </p>
             <h5 style={{ color: 'red' }}>
-              {countFailedImportRows(fileValidationNotifications)} failed rows:
+              {countFailedImportRows(fileValidationNotifications)} mislukte rijen:
             </h5>
             <ImportNotifications
               {...{ fileValidationNotifications, dialogStatus }}
@@ -250,25 +247,22 @@ const onFileAdded = async (e: React.ChangeEvent<HTMLInputElement>) => {
         ) : (
           <>
             <p style={{ marginBottom: '10px' }}>
-              Upload an xls(x) file for bulk editing or creation.
+              Upload een xls(x)-bestand voor bulkbewerking of bulkaanmaak.
             </p>
             <ul style={{ marginBottom: '10px' }} className="list-disc pl-5">
-              <li>For creating: use a file without 'id' column.</li>
-              <li >
-                For editing: use a file with 'id' column. (for instance export
-                here, edit in excel and upload again)
+              <li>Voor aanmaken: gebruik een bestand zonder 'id'-kolom.</li>
+              <li>
+                Voor bewerken: gebruik een bestand met 'id'-kolom (bijvoorbeeld eerst exporteren, in Excel bewerk en opnieuw uploaden).
               </li>
             </ul>
-            <p style={{ marginBottom: '5px' }}>Data file requirements</p>
+            <p style={{ marginBottom: '5px' }}>Vereisten voor het databestand</p>
             <ol className="list-decimal pl-5">
-              <li>Must be an '.xls(x)' file</li>
+              <li>Het bestand moet een '.xls(x)'-bestand zijn</li>
               <li>
-                Only columns corresponding to the data model will be imported,
-                columns with user or aggregated data etc. will be ignored.
+                Alleen kolommen die overeenkomen met het datamodel worden geïmporteerd; kolommen met gebruikers- of geaggregeerde gegevens worden genegeerd.
               </li>
               <li>
-                For setting a specific user to a row use a header named userId in
-                your csv.
+                Om een specifieke gebruiker aan een rij toe te wijzen, gebruik een kolomkop genaamd 'userId' in je csv.
               </li>
             </ol>
             <ImportUseIdCheckboxLine
