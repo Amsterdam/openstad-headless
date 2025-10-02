@@ -1,22 +1,23 @@
 import React from 'react';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Checkbox } from '../ui/checkbox';
 
-export default (props) => {
+export default (props: { 
+  checked: boolean; 
+  handleCheckBoxChange: (checked: boolean) => void 
+}) => {
   const { checked, handleCheckBoxChange } = props;
 
   return (
-    <div style={{ margin: '10px 0' }}>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={!!checked}
-            onChange={handleCheckBoxChange}
-            name="useId"
-            color="primary"
-          />
-        }
-        label="Use ID for import"
+    <div style={{ margin: '10px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <Checkbox
+        id="useId"
+        checked={checked}
+        onCheckedChange={(value) => handleCheckBoxChange(!!value)}
+        name="useId"
       />
-    </div>);
-}
+      <label htmlFor="useId" style={{ cursor: 'pointer' }}>
+        Use ID for import
+      </label>
+    </div>
+  );
+};

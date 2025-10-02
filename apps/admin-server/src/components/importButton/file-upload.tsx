@@ -1,36 +1,37 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import { Button } from '../ui/button';
+import { Trash } from 'lucide-react';
 
 export default (props) => {
   const { onFileAdded, clear, fileName } = props;
 
-  return (<div>
-    <Button variant='contained' component='label'>
-      <span>Choose File</span>
-      <GetAppIcon style={{ transform: 'rotate(180deg)', fontSize: '20' }}/>
+  return (
+    <div className="flex items-center gap-3">
+      <label htmlFor="file-upload" className="cursor-pointer">
+        <Button asChild variant="default">
+          <span>Choose File</span>
+        </Button>
+      </label>
       <input
-        type='file'
-        style={{ display: 'none' }}
+        id="file-upload"
+        type="file"
+        className="hidden"
         onChange={onFileAdded}
-        accept='.csv,.tsv,.xls,.xlsx,.txt'
+        accept=".csv,.tsv,.xls,.xlsx,.txt"
       />
-    </Button>
-    <span style={{
-      verticalAlign: 'middle',
-      paddingLeft: '8px',
-    }}>{fileName}</span>
-    <span
-      style={{
-        verticalAlign: 'middle',
-        padding: '4px',
-        cursor: fileName && fileName !== '' ? 'pointer' : 'not-allowed',
-        color: fileName && fileName !== '' ? 'red' : 'grey',
-      }}
-      onClick={clear}
-    >
-      <DeleteForeverIcon/>
-    </span>
-  </div>);
-}
+
+      <span className="flex items-center gap-2">
+        {fileName}
+        <span
+          style={{
+            cursor: fileName ? 'pointer' : 'not-allowed',
+            color: fileName ? 'red' : 'grey',
+          }}
+          onClick={clear}
+        >
+          <Trash className="inline-block mr-2 h-5 w-5" />
+        </span>
+      </span>
+    </div>
+  );
+};

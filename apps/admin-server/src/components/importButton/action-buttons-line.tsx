@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-  Button,
-  CircularProgress,
-} from '@material-ui/core';
+import { Button } from '../ui/button';
+
 
 export default (props) => {
   const {
@@ -20,16 +18,19 @@ export default (props) => {
   if (dialogStatus === 'importFinished') {
     return (
       <>
-        <Button onClick={handleClose}>
-          <span>{'close'}</span>
-        </Button>
+      <Button 
+        onClick={handleClose}
+        variant='ghost'
+      >
+        <span>{'CLOSE'}</span>
+      </Button>
 
         <Button
           onClick={handleReload}
           color='secondary'
-          variant='contained'
+          variant='default'
         >
-          {importing && <CircularProgress size={18} thickness={2}/>}
+          {/* {importing && <CircularProgress size={18} thickness={2}/>} */}
           <span>{'Import another'}</span>
         </Button>
       </>
@@ -38,26 +39,29 @@ export default (props) => {
 
   return (
     <>
-      <Button onClick={handleClose}>
-        <span>{'close'}</span>
+      <Button 
+        onClick={handleClose}
+        variant='ghost'
+      >
+        <span>{'CLOSE'}</span>
       </Button>
       <Button
         disabled={(!values || values.length < 1) || importing}
         onClick={handleSubmitCreate}
         color='secondary'
-        variant='contained'
+        variant='default'
       >
-        {importing && <CircularProgress size={18} thickness={2}/>}
-        <span>{'Create rows'}</span>
+        {/* {importing && <CircularProgress size={18} thickness={2}/>} */}
+        <span>{'CREATE ROWS'}</span>
       </Button>
       <Button
         disabled={!values || values.length < 1 || importing || !idPresent || (idPresent && !useId)}
         onClick={handleSubmitOverwrite}
         color='primary'
-        variant='contained'
+        variant='default'
       >
-        {importing && <CircularProgress size={18} thickness={2}/>}
-        <span>{'Update rows'}</span>
+        {/* {importing && <CircularProgress size={18} thickness={2}/>} */}
+        <span>{'UPDATE ROWS'}</span>
       </Button>
     </>
   );

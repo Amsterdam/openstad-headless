@@ -3,6 +3,7 @@
 // import over from "ramda/src/over";
 
 import XLSX from 'xlsx';
+import { translateHeaders } from './translate-headers';
 
 
 
@@ -46,11 +47,12 @@ export async function getXlsData( file, inputConfig = {} ) {
 
 export function processXlsData(data) {
 
-  data.forEach(row => {
-    row = processXlsRow(row)
-  });
-  
-  return data;
+  if (!data || !data.length) return data;
+
+  // translate headers of the first row only
+  data[0] = translateHeaders(data[0]);
+
+  return data.map(row => processXlsRow(row));
 
 }
 
