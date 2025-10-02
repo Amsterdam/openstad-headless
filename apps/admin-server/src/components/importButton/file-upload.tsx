@@ -9,7 +9,7 @@ export default (props) => {
     <div className="flex items-center gap-3">
       <label htmlFor="file-upload" className="cursor-pointer">
         <Button asChild variant="default">
-          <span>Choose File</span>
+          <span>Kies bestand</span>
         </Button>
       </label>
       <input

@@ -16,7 +16,7 @@ export default (props: {
         name="useId"
       />
       <label htmlFor="useId" style={{ cursor: 'pointer' }}>
-        Use ID for import
+        Gebruik ID tijdens import
       </label>
     </div>
   );
