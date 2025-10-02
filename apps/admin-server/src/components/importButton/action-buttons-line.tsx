@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
+import { Loader } from 'lucide-react';
 
 
 export default (props) => {
@@ -22,7 +23,7 @@ export default (props) => {
         onClick={handleClose}
         variant='ghost'
       >
-        <span>{'CLOSE'}</span>
+        <span>{'SLUIT'}</span>
       </Button>
 
         <Button
@@ -30,8 +31,10 @@ export default (props) => {
           color='secondary'
           variant='default'
         >
-          {/* {importing && <CircularProgress size={18} thickness={2}/>} */}
-          <span>{'Import another'}</span>
+          {importing && (
+            <Loader className="animate-spin" size={18} strokeWidth={2} />
+          )}
+          <span>{'Meer importeren'}</span>
         </Button>
       </>
     );
@@ -43,7 +46,7 @@ export default (props) => {
         onClick={handleClose}
         variant='ghost'
       >
-        <span>{'CLOSE'}</span>
+        <span>{'SLUIT'}</span>
       </Button>
       <Button
         disabled={(!values || values.length < 1) || importing}
@@ -51,8 +54,10 @@ export default (props) => {
         color='secondary'
         variant='default'
       >
-        {/* {importing && <CircularProgress size={18} thickness={2}/>} */}
-        <span>{'CREATE ROWS'}</span>
+          {importing && (
+            <Loader className="animate-spin" size={18} strokeWidth={2} />
+          )}
+          <span>{'RIJEN CREËREN'}</span>
       </Button>
       <Button
         disabled={!values || values.length < 1 || importing || !idPresent || (idPresent && !useId)}
@@ -60,8 +65,10 @@ export default (props) => {
         color='primary'
         variant='default'
       >
-        {/* {importing && <CircularProgress size={18} thickness={2}/>} */}
-        <span>{'UPDATE ROWS'}</span>
+          {importing && (
+            <Loader className="animate-spin" size={18} strokeWidth={2} />
+          )}        
+          <span>{'RIJEN BIJWERKEN'}</span>
       </Button>
     </>
   );
