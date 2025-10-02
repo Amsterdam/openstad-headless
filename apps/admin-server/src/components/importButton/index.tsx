@@ -58,6 +58,7 @@ export const ImportButton = ({ project }: { project: string }) => {
     const handleClose = () => {
         clear();
         setOpen(false);
+        window.location.reload();
     };
 
     const handleSubmit = (callback: (value: any) => Promise<any>) => {
@@ -105,7 +106,6 @@ export const ImportButton = ({ project }: { project: string }) => {
             setFileValidationNotifications(apiValidationErrors);
             setImporting(false);
             setDialogStatus('importFinished');
-            console.log('refresh');
         });
     };
 
@@ -146,8 +146,7 @@ export const ImportButton = ({ project }: { project: string }) => {
             // add Id key to remove
             value = prepareData(value, ['id']);
             value.tags = value.tags ? value.tags.split(",").map((name: string) => name.trim()) : [];
-            console.log(value);
-            console.log("b");
+
             return fetch(`/api/openstad/api/project/${project}/resource`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
