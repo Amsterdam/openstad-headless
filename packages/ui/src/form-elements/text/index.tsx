@@ -22,7 +22,7 @@ export type TextInputProps = {
     fieldRequired?: boolean;
     requiredWarning?: string;
     fieldKey: string;
-    variant?: 'text input' | 'textarea';
+    variant?: 'text input' | 'textarea' | 'richtext';
     placeholder?: string;
     defaultValue?: string;
     disabled?: boolean;
@@ -43,10 +43,16 @@ export type TextInputProps = {
     fieldOptions?: { value: string; label: string }[];
 }
 
+const RichText = () => {
+    return (
+        <p>Hier komt de rich text editor</p>
+    );
+};
+
 const TextInput: FC<TextInputProps> = ({
     title,
     description,
-    variant,
+    variant = 'textarea',
     fieldKey,
     fieldRequired = false,
     placeholder,
@@ -66,7 +72,14 @@ const TextInput: FC<TextInputProps> = ({
     randomId = '',
     fieldInvalid = false,
 }) => {
-    const InputComponent = variant === 'textarea' ? Textarea : Textbox;
+    const variantMap = {
+        'text input': Textbox,
+        'textarea': Textarea,
+        'richtext': RichText
+    }
+    const InputComponent = variantMap[variant];
+
+    
 
     class HtmlContent extends React.Component<{ html: any }> {
         render() {
