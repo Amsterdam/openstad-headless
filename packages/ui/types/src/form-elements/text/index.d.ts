@@ -1,6 +1,17 @@
-import { FC } from "react";
+import React, { FC } from "react";
 import './style.css';
 import { FormValue } from "@openstad-headless/form/src/form";
+import "trix";
+import 'trix/dist/trix.css';
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            'trix-editor': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+                input?: string;
+            }, HTMLElement>;
+        }
+    }
+}
 export type TextInputProps = {
     title: string;
     description?: string;
