@@ -37,6 +37,10 @@ function RawResource(props: RawResourceWidgetProps) {
 
   const { data: resource } = resourceId ? datastore.useResource(updatedProps) : { data: null };
 
+  if (resource.images && resource.images[0] && resource.images[0].url) {
+    resource.firstImageUrl = resource.images[0].url
+  }
+
   const stylingClasses =
     updatedProps.stylingClasses?.map((stylingClass) => stylingClass.value).join(' ') ||
     '';
