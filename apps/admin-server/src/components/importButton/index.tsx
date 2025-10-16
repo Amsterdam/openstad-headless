@@ -99,7 +99,7 @@ export const ImportButton = ({ project }: { project: string }) => {
                     apiValidationErrors.push({
                         messageType: 'apiValidationError',
                         color: 'red',
-                        message: 'Failed to import row: ' + formattedFirstValue + '; ' + formattedSecondValue + ', because of error: ' + error.message,
+                        message: 'Kon rij niet importeren: ' + formattedFirstValue + '; ' + formattedSecondValue + ', fout: ' + error.message,
                     });
                 })),
         ).then(() => {
@@ -140,32 +140,66 @@ export const ImportButton = ({ project }: { project: string }) => {
     }
 
     const handleSubmitCreate = async () => {
-        const callback = (value: any) => {
+        const callback = async (value: any) => {
             // translate headers
             value = translateHeaders(value);
             // add Id key to remove
             value = prepareData(value, ['id']);
             value.tags = value.tags ? value.tags.split(",").map((name: string) => name.trim()) : [];
 
-            return fetch(`/api/openstad/api/project/${project}/resource`, {
+            const response = await fetch(`/api/openstad/api/project/${project}/resource`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(value),
             });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                let errorMessage = 'Onbekende fout';
+                
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    errorMessage = errorJson.message || errorJson.error || errorText;
+                } catch (e) {
+                    errorMessage = errorText;
+                }
+                
+                throw new Error(errorMessage);
+            }
+            
+            return response;
         };
 
         handleSubmit(callback);
     };
 
     const handleSubmitOverwrite = async () => {
-        const callback = (value: any) => {
+        const callback = async (value: any) => {
+            value = translateHeaders(value);
             value = prepareData(value);
+          
             value.tags = value.tags ? value.tags.split(",").map((name: string) => name.trim()) : [];
-            return fetch(`/api/openstad/api/project/${project}/resource/${value.id}`, {
+            const response = await fetch(`/api/openstad/api/project/${project}/resource/${value.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(value),
             });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                let errorMessage = 'Onbekende fout';
+                
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    errorMessage = errorJson.message || errorJson.error || errorText;
+                } catch (e) {
+                    errorMessage = errorText;
+                }
+                
+                throw new Error(errorMessage);
+            }
+            
+            return response;
         }
 
         handleSubmit(callback);
