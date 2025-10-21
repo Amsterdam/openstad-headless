@@ -1,9 +1,9 @@
 import React from 'react';
-import { Select } from '../ui/select';
+import { Select, SelectItem } from '../ui/select';
 
 interface ImportDelimiterProps {
   delimiter: string;
-  handleImportDelimiterChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleImportDelimiterChange: (value: string) => void;
 }
 
 const ImportDelimiter: React.FC<ImportDelimiterProps> = ({ delimiter, handleImportDelimiterChange }) => {
@@ -12,13 +12,12 @@ const ImportDelimiter: React.FC<ImportDelimiterProps> = ({ delimiter, handleImpo
       <label htmlFor="delimiter-select">Delimiter (csv/tsv only): </label>
       <br />
       <Select
-        id="delimiter-select"
+        onValueChange={handleImportDelimiterChange}
         value={delimiter}
-        onChange={handleImportDelimiterChange}
       >
-        <option value="">Auto detect</option>
-        <option value=",">Comma (,)</option>
-        <option value=";">Semicolon (;)</option>
+        <SelectItem value="">Auto detect</SelectItem>
+        <SelectItem value=",">Comma (,)</SelectItem>
+        <SelectItem value=";">Semicolon (;)</SelectItem>
       </Select>
     </div>
   );

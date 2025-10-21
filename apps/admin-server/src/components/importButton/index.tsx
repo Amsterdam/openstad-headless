@@ -35,13 +35,12 @@ interface FileValidationNotification {
 }
 
 export const ImportButton = ({ project }: { project: string }) => {
-
-    const [open, setOpen] = React.useState(false);
-    const [importing, setImporting] = React.useState(false);
-    const [fileName, setFileName] = React.useState('');
+    const [open, setOpen] = React.useState<boolean>(false);
+    const [importing, setImporting] = React.useState<boolean>(false);
+    const [fileName, setFileName] = React.useState<string>('');
     const [values, setValues] = React.useState([]);
-    const [useId, setUseId] = React.useState(true);
-    const [dialogStatus, setDialogStatus] = React.useState('base');
+    const [useId, setUseId] = React.useState<boolean>(true);
+    const [dialogStatus, setDialogStatus] = React.useState<'base' | 'importFinished'>('base');
     const [fileValidationNotifications, setFileValidationNotifications] = React.useState<FileValidationNotification[]>([]);
 
     const openImportDialog = () => {
@@ -284,19 +283,19 @@ const onFileAdded = async (e: React.ChangeEvent<HTMLInputElement>) => {
               Upload een xls(x)-bestand voor bulkbewerking of bulkaanmaak.
             </p>
             <ul style={{ marginBottom: '10px' }} className="list-disc pl-5">
-              <li>Voor aanmaken: gebruik een bestand zonder 'id'-kolom.</li>
+              <li>Voor aanmaken: gebruik een bestand zonder &apos;id&apos;-kolom.</li>
               <li>
-                Voor bewerken: gebruik een bestand met 'id'-kolom (bijvoorbeeld eerst exporteren, in Excel bewerk en opnieuw uploaden).
+                Voor bewerken: gebruik een bestand met &apos;id&apos;-kolom (bijvoorbeeld eerst exporteren, in Excel bewerk en opnieuw uploaden).
               </li>
             </ul>
             <p style={{ marginBottom: '5px' }}>Vereisten voor het databestand</p>
             <ol className="list-decimal pl-5">
-              <li>Het bestand moet een '.xls(x)'-bestand zijn</li>
+              <li>Het bestand moet een &apos;.xls(x)&apos;-bestand zijn</li>
               <li>
                 Alleen kolommen die overeenkomen met het datamodel worden geïmporteerd; kolommen met gebruikers- of geaggregeerde gegevens worden genegeerd.
               </li>
               <li>
-                Om een specifieke gebruiker aan een rij toe te wijzen, gebruik een kolomkop genaamd 'userId' in je csv.
+                Om een specifieke gebruiker aan een rij toe te wijzen, gebruik een kolomkop genaamd &apos;userId&apos; in je csv.
               </li>
             </ol>
             <ImportUseIdCheckboxLine
