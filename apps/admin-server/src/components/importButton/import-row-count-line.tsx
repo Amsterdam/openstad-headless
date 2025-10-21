@@ -1,7 +1,7 @@
 import React from 'react';
 import { Info } from 'lucide-react';
 
-export default (props: { values: any[] }) => {
+const ImportRowCount = (props: { values: any[] }) => {
   const { values } = props;
 
   if (!values || values.length < 1) return <></>;
@@ -33,3 +33,5 @@ export default (props: { values: any[] }) => {
     </div>
   );
 };
+
+export default ImportRowCount;

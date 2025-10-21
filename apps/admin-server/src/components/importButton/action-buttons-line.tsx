@@ -3,7 +3,16 @@ import { Button } from '../ui/button';
 import { Loader } from 'lucide-react';
 
 
-export default (props) => {
+const ActionButtonsLine = (props: {
+  handleClose: () => void;
+  handleSubmitCreate: () => void;
+  handleSubmitOverwrite: () => void;
+  handleReload: () => void;
+  values: any[];
+  importing: boolean;
+  useId: boolean;
+  idPresent: boolean;
+}) => {
   const {
     handleClose,
     handleSubmitCreate,
@@ -73,3 +82,5 @@ export default (props) => {
     </>
   );
 }
+
+export default ActionButtonsLine;

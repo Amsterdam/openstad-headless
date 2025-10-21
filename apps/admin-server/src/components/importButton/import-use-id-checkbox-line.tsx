@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checkbox } from '../ui/checkbox';
 
-export default (props: { 
+const ImportUseIdCheckboxLine = (props: { 
   checked: boolean; 
   handleCheckBoxChange: (checked: boolean) => void 
 }) => {
@@ -21,3 +21,5 @@ export default (props: {
     </div>
   );
 };
+
+export default ImportUseIdCheckboxLine;

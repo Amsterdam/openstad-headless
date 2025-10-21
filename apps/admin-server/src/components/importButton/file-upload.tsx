@@ -2,8 +2,16 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 
-export default (props) => {
-  const { onFileAdded, clear, fileName } = props;
+const FileUpload = (props: {
+  onFileAdded: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  clear: () => void;
+  fileName: string;
+}) => {
+  const { onFileAdded, clear, fileName }: {
+    onFileAdded: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    clear: () => void;
+    fileName: string;
+  } = props;
 
   return (
     <div className="flex items-center gap-3">
@@ -35,3 +43,5 @@ export default (props) => {
     </div>
   );
 };
+
+export default FileUpload;
