@@ -150,7 +150,10 @@ export const StemBegrootResourceList = ({
 
   // Use ref to track previous filtered value to avoid infinite loops
   const prevFilteredRef = useRef<string>('');
-  
+   
+  console.log(groupedTags, 'groupedTags in stem-begroot-resource-list.tsx')
+  console.log(tags, 'tags in stem-begroot-resource-list.tsx')
+  console.log(filtered, 'filtered in stem-begroot-resource-list.tsx')
   // Update filtered resources in useEffect to avoid infinite loops
   useEffect(() => {
     if (setFilteredResources && filtered) {
@@ -161,14 +164,14 @@ export const StemBegrootResourceList = ({
         setFilteredResources(filtered);
       }
     }
-  }, [filtered, setFilteredResources]);
+  }, [filtered, setFilteredResources, groupedTags, tags]);
 
   return (
     <List
       id='stem-begroot-resource-selections-list'
       columns={resourceListColumns}
       items={
-        (filtered || [])?.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+        (filteredResources || [])?.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
       }
       renderHeader={() => header || <></>}
       renderItem={(resource, index) => {
