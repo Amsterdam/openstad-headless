@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import {
   Carousel,
   Icon,
@@ -71,75 +71,97 @@ export const StemBegrootResourceList = ({
   pageSize: number;
   filterBehavior?: string;
 }) => {
-  // @ts-ignore
-  const intTags = tags.map(tag => parseInt(tag, 10));
-
-  const groupedTags: { [key: string]: number[] } = {};
-
-  intTags.forEach((tagId: any) => {
+  // Memoize intTags to avoid creating new array on every render
+  const intTags = useMemo(() => {
     // @ts-ignore
-    const tag = allTags.find(tag => tag.id === tagId);
-    if (tag) {
-      const tagType = tag.type;
-      if (!groupedTags[tagType]) {
-        groupedTags[tagType] = [];
-      }
-      groupedTags[tagType].push(tagId);
-    }
-  });
+    return tags.map(tag => parseInt(tag, 10));
+  }, [tags]);
 
-  const filtered = resources && (
-    Object.keys(groupedTags).length === 0
-      ? resources
-      : resources.filter((resource: any) => {
-        if (tags.length > 0) {
-          if (filterBehavior === 'and') {
-            return tags.every(tagId =>
-              resource.tags?.some((tag: { id: number }) => tag.id === tagId)
-            );
-          } else {
-            return resource.tags?.some((tag: { id: number }) =>
-              tags.includes(tag.id)
-            );
-          }
+  // Memoize groupedTags to avoid creating new object references on every render
+  const groupedTags = useMemo(() => {
+    const grouped: { [key: string]: number[] } = {};
+
+    intTags.forEach((tagId: any) => {
+      // @ts-ignore
+      const tag = allTags.find(tag => tag.id === tagId);
+      if (tag) {
+        const tagType = tag.type;
+        if (!grouped[tagType]) {
+          grouped[tagType] = [];
         }
-      })
-  )
-    ?.filter((resource: any) => {
-      if (voteType === 'countPerTag' || voteType === 'budgetingPerTag') {
-        if (typeSelector === 'tag') {
-          return resource?.tags?.some((tag: { name: string }) => tag.name === activeTagTab);
-        } else {
-          return resource?.tags?.some((tag: { type: string }) => tag.type === activeTagTab);
-        }
+        grouped[tagType].push(tagId);
       }
-      return true;
-    })
-    ?.filter((resource: any) =>
-      (!statusIdsToLimitResourcesTo || statusIdsToLimitResourcesTo.length === 0) || statusIdsToLimitResourcesTo?.some((statusId) => resource.statuses && Array.isArray(resource.statuses) && resource.statuses?.some((o: { id: number }) => o.id === statusId))
-    )
-    ?.sort((a: any, b: any) => {
-      if (sort === 'createdAt_desc') {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-      if (sort === 'createdAt_asc') {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      }
-      if (sort === 'votes_desc' || sort === 'ranking') {
-        return (b.yes || 0) - (a.yes || 0);
-      }
-      if (sort === 'votes_asc') {
-        return (a.yes || 0) - (b.yes || 0);
-      }
-      if (sort === 'title') {
-        return a.title.localeCompare(b.title);
-      }
-      return 0;
     });
 
-    if ((JSON.stringify(filtered) !== JSON.stringify(filteredResources)) && setFilteredResources) {
-      setFilteredResources(filtered);
+    return grouped;
+  }, [intTags, allTags]);
+
+  // Memoize the filtering and sorting logic to avoid unnecessary recalculations
+  const filtered = useMemo(() => {
+    return resources && (
+      Object.keys(groupedTags).length === 0
+        ? resources
+        : resources.filter((resource: any) => {
+          if (tags.length > 0) {
+            if (filterBehavior === 'and') {
+              return tags.every(tagId =>
+                resource.tags?.some((tag: { id: number }) => tag.id === tagId)
+              );
+            } else {
+              return resource.tags?.some((tag: { id: number }) =>
+                tags.includes(tag.id)
+              );
+            }
+          }
+        })
+    )
+      ?.filter((resource: any) => {
+        if (voteType === 'countPerTag' || voteType === 'budgetingPerTag') {
+          if (typeSelector === 'tag') {
+            return resource?.tags?.some((tag: { name: string }) => tag.name === activeTagTab);
+          } else {
+            return resource?.tags?.some((tag: { type: string }) => tag.type === activeTagTab);
+          }
+        }
+        return true;
+      })
+      ?.filter((resource: any) =>
+        (!statusIdsToLimitResourcesTo || statusIdsToLimitResourcesTo.length === 0) || statusIdsToLimitResourcesTo?.some((statusId) => resource.statuses && Array.isArray(resource.statuses) && resource.statuses?.some((o: { id: number }) => o.id === statusId))
+      )
+      ?.sort((a: any, b: any) => {
+        if (sort === 'createdAt_desc') {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        }
+        if (sort === 'createdAt_asc') {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        if (sort === 'votes_desc' || sort === 'ranking') {
+          return (b.yes || 0) - (a.yes || 0);
+        }
+        if (sort === 'votes_asc') {
+          return (a.yes || 0) - (b.yes || 0);
+        }
+        if (sort === 'title') {
+          return a.title.localeCompare(b.title);
+        }
+        return 0;
+      });
+  }, [resources, tags, sort, statusIdsToLimitResourcesTo, activeTagTab, voteType, typeSelector, filterBehavior, groupedTags]);
+
+  // Use ref to track previous filtered value to avoid infinite loops
+  const prevFilteredRef = useRef<string>('');
+  
+  // Update filtered resources in useEffect to avoid infinite loops
+  useEffect(() => {
+    if (setFilteredResources && filtered) {
+      const currentFilteredString = JSON.stringify(filtered);
+      // Only update if the content has actually changed
+      if (currentFilteredString !== prevFilteredRef.current) {
+        prevFilteredRef.current = currentFilteredString;
+        setFilteredResources(filtered);
+      }
     }
+  }, [filtered, setFilteredResources]);
 
   return (
     <List
