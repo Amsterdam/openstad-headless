@@ -102,14 +102,14 @@ export const StemBegrootResourceList = ({
       Object.keys(groupedTags).length === 0
         ? resources
         : resources.filter((resource: any) => {
-          if (tags.length > 0) {
+          if (intTags.length > 0) {
             if (filterBehavior === 'and') {
-              return tags.every(tagId =>
+              return intTags.every(tagId =>
                 resource.tags?.some((tag: { id: number }) => tag.id === tagId)
               );
             } else {
               return resource.tags?.some((tag: { id: number }) =>
-                tags.includes(tag.id)
+                intTags.includes(tag.id)
               );
             }
           }
@@ -117,6 +117,7 @@ export const StemBegrootResourceList = ({
     )
       ?.filter((resource: any) => {
         if (voteType === 'countPerTag' || voteType === 'budgetingPerTag') {
+          
           if (typeSelector === 'tag') {
             return resource?.tags?.some((tag: { name: string }) => tag.name === activeTagTab);
           } else {
@@ -124,8 +125,7 @@ export const StemBegrootResourceList = ({
           }
         }
         return true;
-      })
-      ?.filter((resource: any) =>
+      })?.filter((resource: any) =>
         (!statusIdsToLimitResourcesTo || statusIdsToLimitResourcesTo.length === 0) || statusIdsToLimitResourcesTo?.some((statusId) => resource.statuses && Array.isArray(resource.statuses) && resource.statuses?.some((o: { id: number }) => o.id === statusId))
       )
       ?.sort((a: any, b: any) => {
@@ -146,26 +146,21 @@ export const StemBegrootResourceList = ({
         }
         return 0;
       });
-  }, [resources, tags, sort, statusIdsToLimitResourcesTo, activeTagTab, voteType, typeSelector, filterBehavior, groupedTags]);
+     
+  }, [resources, intTags, sort, statusIdsToLimitResourcesTo, activeTagTab, voteType, typeSelector, filterBehavior, groupedTags]);
 
-  // Use ref to track previous filtered value to avoid infinite loops
   const prevFilteredRef = useRef<string>('');
    
-  console.log(groupedTags, 'groupedTags in stem-begroot-resource-list.tsx')
-  console.log(tags, 'tags in stem-begroot-resource-list.tsx')
-  console.log(filtered, 'filtered in stem-begroot-resource-list.tsx')
-  // Update filtered resources in useEffect to avoid infinite loops
   useEffect(() => {
     if (setFilteredResources && filtered) {
       const currentFilteredString = JSON.stringify(filtered);
-      // Only update if the content has actually changed
       if (currentFilteredString !== prevFilteredRef.current) {
         prevFilteredRef.current = currentFilteredString;
         setFilteredResources(filtered);
       }
     }
-  }, [filtered, setFilteredResources, groupedTags, tags]);
-
+  }, [filtered, setFilteredResources]);
+  
   return (
     <List
       id='stem-begroot-resource-selections-list'
