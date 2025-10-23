@@ -28,7 +28,7 @@ import { DocumentUploader } from './document-uploader';
 import useTags from '@/hooks/use-tags';
 import useStatuses from '@/hooks/use-statuses';
 import { CheckboxList } from './checkbox-list';
-import { FileDiff, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useProject } from '@/hooks/use-project';
 import MapInput from '@/components/maps/leaflet-input';
 
