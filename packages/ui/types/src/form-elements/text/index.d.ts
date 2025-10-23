@@ -48,13 +48,6 @@ export type TextInputProps = {
         label: string;
     }[];
 };
-type TrixEditorProps = {
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-    value: string;
-    hideBlockTools?: boolean;
-    hideHistoryTools?: boolean;
-};
-declare const TrixEditor: React.FC<TrixEditorProps>;
+
 declare const TextInput: FC<TextInputProps>;
-export { TrixEditor };
 export default TextInput;
