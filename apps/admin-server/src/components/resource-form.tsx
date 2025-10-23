@@ -293,6 +293,7 @@ export default function ResourceForm({ onFormSubmit }: Props) {
     }
   }, [existingData, form, defaults, projectData?.config?.resources?.defaultTagIds, projectData?.config?.resources?.defaultStatusIds]);
 
+  const description = form.watch('description');
   // Wait until both the Trix editor and the form value are loaded in, then set the value in the trix editor
   // Prevents the editor from rendering empty due to async load timing.
   useEffect(() => {
@@ -302,7 +303,7 @@ export default function ResourceForm({ onFormSubmit }: Props) {
     if (trixEditor && formValue) {
       (trixEditor as any).editor?.loadHTML(formValue);
     }
-  }, [form.getValues('description')]);
+  }, [form, description]);
 
   const { fields: imageFields, remove: removeImage } = useFieldArray({
     control: form.control,
