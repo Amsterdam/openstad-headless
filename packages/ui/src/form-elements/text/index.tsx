@@ -9,11 +9,12 @@ import {
     Textbox
 } from "@utrecht/component-library-react";
 import { Spacer } from '@openstad-headless/ui/src';
-import './style.css';
 import { FormValue } from "@openstad-headless/form/src/form";
 
 import "trix";
 import 'trix/dist/trix.css';
+import './style.css';
+
 // Temporary TypeScript declaration for 'trix-editor'
 declare global {
   namespace JSX {
@@ -290,4 +291,5 @@ const TextInput: FC<TextInputProps> = ({
     );
 };
 
+export { TrixEditor };
 export default TextInput;

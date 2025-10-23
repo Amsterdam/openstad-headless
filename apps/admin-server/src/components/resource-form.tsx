@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import dynamic from "next/dynamic";
 import { CodeEditor } from '@/components/ui/code-editor';
 import { Heading } from '@/components/ui/typography';
 import { Separator } from '@/components/ui/separator';
@@ -27,9 +28,17 @@ import { DocumentUploader } from './document-uploader';
 import useTags from '@/hooks/use-tags';
 import useStatuses from '@/hooks/use-statuses';
 import { CheckboxList } from './checkbox-list';
-import { X } from 'lucide-react';
+import { FileDiff, X } from 'lucide-react';
 import { useProject } from '@/hooks/use-project';
 import MapInput from '@/components/maps/leaflet-input';
+
+const TrixEditor = dynamic(
+  () =>
+    import("@openstad-headless/ui/src/form-elements/text/index").then(
+      (mod) => mod.TrixEditor
+    ),
+  { ssr: false }
+);
 
 const onlyNumbersMessage = 'Dit veld mag alleen nummers bevatten';
 const minError = (field: string, nr: number) =>
@@ -284,6 +293,17 @@ export default function ResourceForm({ onFormSubmit }: Props) {
     }
   }, [existingData, form, defaults, projectData?.config?.resources?.defaultTagIds, projectData?.config?.resources?.defaultStatusIds]);
 
+  // Wait until both the Trix editor and the form value are loaded in, then set the value in the trix editor
+  // Prevents the editor from rendering empty due to async load timing.
+  useEffect(() => {
+    const trixEditor = document.querySelector('trix-editor');
+    const formValue = form.getValues('description');
+
+    if (trixEditor && formValue) {
+      (trixEditor as any).editor?.loadHTML(formValue);
+    }
+  }, [form.getValues('description')]);
+
   const { fields: imageFields, remove: removeImage } = useFieldArray({
     control: form.control,
     name: 'images',
@@ -300,7 +320,6 @@ export default function ResourceForm({ onFormSubmit }: Props) {
       form.setValue('location', JSON.stringify({ lat: parseFloat(formatted[0]), lng: parseFloat(formatted[1]) }));
     }
   }, [form]);
-
   return (
     <div className="p-6 bg-white rounded-md">
       <Form {...form}>
@@ -342,7 +361,12 @@ export default function ResourceForm({ onFormSubmit }: Props) {
               <FormItem className="col-span-full sm:col-span-2 md:col-span-2 lg:col-span-2">
                 <FormLabel>Beschrijving</FormLabel>
                 <FormControl>
-                  <Textarea rows={6} {...field} />
+                {typeof window !== 'undefined' && (
+                  <TrixEditor
+                    value={field.value || ''}
+                    onChange={(val) => field.onChange(val)}
+                  />
+                )}
                 </FormControl>
                 <FormMessage />
               </FormItem>

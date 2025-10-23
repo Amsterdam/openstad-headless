@@ -1,8 +1,8 @@
 import React, { FC } from "react";
-import './style.css';
 import { FormValue } from "@openstad-headless/form/src/form";
 import "trix";
 import 'trix/dist/trix.css';
+import './style.css';
 declare global {
     namespace JSX {
         interface IntrinsicElements {
@@ -48,5 +48,10 @@ export type TextInputProps = {
         label: string;
     }[];
 };
+declare const TrixEditor: React.FC<{
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    value: string;
+}>;
 declare const TextInput: FC<TextInputProps>;
+export { TrixEditor };
 export default TextInput;
