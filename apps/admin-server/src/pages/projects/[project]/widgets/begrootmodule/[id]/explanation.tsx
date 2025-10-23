@@ -19,6 +19,15 @@ import { EditFieldProps } from '@/lib/form-widget-helpers/EditFieldProps';
 import { useFieldDebounce } from '@/hooks/useFieldDebounce';
 import { YesNoSelect } from '@/lib/form-widget-helpers';
 import {useProject} from "@/hooks/use-project";
+import dynamic from "next/dynamic";
+
+const TrixEditor = dynamic(
+  () =>
+    import("@openstad-headless/ui/src/form-elements/text/index").then(
+      (mod) => mod.TrixEditor
+    ),
+  { ssr: false }
+);
 
 const formSchema = z.object({
   step0: z.string().optional(),
@@ -114,14 +123,7 @@ export default function BegrootmoduleExplanation(
               <FormItem>
                 <FormLabel>Stap 1: Intro</FormLabel>
                 <FormControl>
-                  <Textarea
-                    rows={5}
-                    {...field}
-                    onChange={(e) => {
-                      onFieldChange(field.name, e.target.value);
-                      field.onChange(e);
-                    }}
-                  />
+                  <TrixEditor onChange={field.onChange} hideBlockTools hideHistoryTools value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,14 +136,7 @@ export default function BegrootmoduleExplanation(
               <FormItem>
                 <FormLabel>Stap 2: Intro</FormLabel>
                 <FormControl>
-                  <Textarea
-                    rows={5}
-                    {...field}
-                    onChange={(e) => {
-                      onFieldChange(field.name, e.target.value);
-                      field.onChange(e);
-                    }}
-                  />
+                  <TrixEditor onChange={field.onChange} hideBlockTools hideHistoryTools value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -154,14 +149,7 @@ export default function BegrootmoduleExplanation(
               <FormItem>
                 <FormLabel>Stap 3: Intro</FormLabel>
                 <FormControl>
-                  <Textarea
-                    rows={5}
-                    {...field}
-                    onChange={(e) => {
-                      onFieldChange(field.name, e.target.value);
-                      field.onChange(e);
-                    }}
-                  />
+                  <TrixEditor onChange={field.onChange} hideBlockTools hideHistoryTools value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -174,14 +162,7 @@ export default function BegrootmoduleExplanation(
               <FormItem>
                 <FormLabel>Succesvolle authenticatie</FormLabel>
                 <FormControl>
-                  <Textarea
-                    rows={5}
-                    {...field}
-                    onChange={(e) => {
-                      onFieldChange(field.name, e.target.value);
-                      field.onChange(e);
-                    }}
-                  />
+                  <TrixEditor onChange={field.onChange} hideBlockTools hideHistoryTools value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -213,14 +194,7 @@ export default function BegrootmoduleExplanation(
               <FormItem>
                 <FormLabel>Bedankt bericht</FormLabel>
                 <FormControl>
-                  <Textarea
-                    rows={5}
-                    {...field}
-                    onChange={(e) => {
-                      onFieldChange(field.name, e.target.value);
-                      field.onChange(e);
-                    }}
-                  />
+                  <TrixEditor onChange={field.onChange} hideBlockTools hideHistoryTools value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
