@@ -1,9 +1,18 @@
-import db from '../src/db.js';
-import { retrieveArg } from './utils.js';
+const db = require('../src/db');
 
 const declaredArgs = {
     indienenProjectId: "indienen-project-id",
     stemmenProjectId: "stemmen-project-id",
+}
+
+export const retrieveArg = (argToRetrieve) => {
+    const givenArgs = process.argv
+    const totalArgWithKeyAndValue = givenArgs.find(arg => arg.startsWith(argToRetrieve))
+    let valueFromArg = null
+    if (totalArgWithKeyAndValue) {
+        valueFromArg = totalArgWithKeyAndValue.split("=")[1]
+    }
+    return valueFromArg
 }
 
 const indienenProjectId = retrieveArg(declaredArgs.indienenProjectId);
