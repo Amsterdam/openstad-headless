@@ -1,6 +1,6 @@
 const mysql = require('mysql2/promise');
 const db = require('../src/db');
-const { retrieveArg, getDbPassword } = require('./utils')
+const { retrieveArg } = require('./utils')
 const { getNewApiUserData, getNewResourceData, getNewVoteData, getNewCommentData } = require('./new-data-format')
 
 const declaredArgs = {
@@ -31,6 +31,16 @@ const sqlQueries = {
 let legacyApiDbConnection;
 let legacyAuthDbConnection;
 let newAuthDbConnection;
+
+export const getDbPassword = async () => {
+    switch(process.env.DB_AUTH_METHOD) {
+        case 'azure-auth-token':
+            const { getAzureAuthToken } = require('../src/util/azure')
+            return await getAzureAuthToken()
+        default:
+            return process.env.DB_PASSWORD
+    }
+}
 
 async function migrateData() {
   try {
