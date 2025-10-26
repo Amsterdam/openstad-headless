@@ -1,5 +1,5 @@
-const db = require('../src/db');
-const { retrieveArg } = require('./utils')
+import db from '../src/db.js';
+import { retrieveArg } from './utils.js';
 
 const declaredArgs = {
     indienenProjectId: "indienen-project-id",

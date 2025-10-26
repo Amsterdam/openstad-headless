@@ -1,7 +1,12 @@
-const mysql = require('mysql2/promise');
-const db = require('../src/db');
-const { retrieveArg } = require('./utils')
-const { getNewApiUserData, getNewResourceData, getNewVoteData, getNewCommentData } = require('./new-data-format')
+import mysql from 'mysql2/promise';
+import db from '../src/db.js';
+import { retrieveArg } from './utils.js';
+import { 
+  getNewApiUserData, 
+  getNewResourceData, 
+  getNewVoteData, 
+  getNewCommentData 
+} from './new-data-format.js';
 
 const declaredArgs = {
     originalSiteId: "original-site-id",
