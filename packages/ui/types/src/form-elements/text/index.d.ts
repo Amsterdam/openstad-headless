@@ -48,6 +48,5 @@ export type TextInputProps = {
         label: string;
     }[];
 };
-
 declare const TextInput: FC<TextInputProps>;
 export default TextInput;

@@ -11,7 +11,7 @@ import {
 import { Spacer } from '@openstad-headless/ui/src';
 import './style.css';
 import { FormValue } from "@openstad-headless/form/src/form";
-import { uniqueId } from 'lodash';
+
 import "trix";
 import 'trix/dist/trix.css';
 // Temporary TypeScript declaration for 'trix-editor'
@@ -57,111 +57,64 @@ export type TextInputProps = {
     fieldOptions?: { value: string; label: string }[];
 }
 
-type TrixEditorProps = {
+const TrixEditor: React.FC<{
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   value: string;
-  hideBlockTools?: boolean;
-  hideHistoryTools?: boolean;
-};
-
-const TrixEditor: React.FC<TrixEditorProps> = ({ 
-  onChange, 
-  value, 
-  hideBlockTools = false,
-  hideHistoryTools = false,
-}) => {
-  const editorRef = useRef<HTMLElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const editorIdRef = useRef(`trix-${uniqueId()}`);
-  const isInitializedRef = useRef(false);
+}> = ({ onChange, value }) => {
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const editorElement = editorRef.current;
-    const inputElement = inputRef.current;
 
-    if (!editorElement || !inputElement) return;
+    const handleTrixInitialize = () => {
+      // Remove the file attachment button from the toolbar
+      const toolbar = document.querySelector('trix-toolbar');
+      if (toolbar) {
+        const fileButton = toolbar.querySelector('[data-trix-action="attachFiles"]');
+        if (fileButton) {
+          fileButton.remove(); // Remove the file attachment button
+        }
+      }
+    };
 
-    const handleTrixChange = (event: Event) => {
-      const target = event.target as any;
-      const editor = target?.editor;
-      
-      if (editor) {
+    if (editorElement) {
+      const inputElement = document.getElementById('trix-editor') as HTMLInputElement;
+
+      if (inputElement) {
+        // Set the initial value of the input element
+        inputElement.value = value;
+
+        // Trigger Trix initialization
+        editorElement.dispatchEvent(new Event('trix-initialize'));
+      }
+
+      // Listen for Trix change events
+      editorElement.addEventListener('trix-change', (event: Event) => {
+        const input = event.target as HTMLInputElement;
+
         const syntheticEvent = {
-          target: { value: inputElement.value },
+          target: { value: input.value },
         } as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
         onChange(syntheticEvent);
-      }
-    };
+      });
 
-    const handleTrixInitialize = () => {
-      // Find the toolbar specifically for this editor
-      const toolbar = (editorElement as any).toolbarElement;
-      if (toolbar) {
-        // Remove unwanted buttons
-        const fileButton = toolbar.querySelector('.trix-button-group--file-tools');
-        fileButton?.remove();
-
-        if (hideBlockTools) {
-          const blockTools = toolbar.querySelector('.trix-button-group--block-tools');
-          const spacer = toolbar.querySelector('.trix-button-group-spacer');
-          blockTools?.remove();
-          spacer?.remove();
-        }
-
-        if (hideHistoryTools) {
-          const historyTools = toolbar.querySelector('.trix-button-group--history-tools');
-          historyTools?.remove();
-        }
-      }
-
-      // Set initial value if not already set
-      if (!isInitializedRef.current) {
-        const editor = (editorElement as any).editor;
-        if (editor && value) {
-          editor.loadHTML(value);
-        }
-        isInitializedRef.current = true;
-      }
-    };
-
-    editorElement.addEventListener('trix-initialize', handleTrixInitialize);
-    editorElement.addEventListener('trix-change', handleTrixChange);
+      // Listen for the Trix initialization event
+      document.addEventListener('trix-initialize', handleTrixInitialize);
+    }
 
     return () => {
-      const element = editorRef.current;
-      if (element) {
-        element.removeEventListener('trix-initialize', handleTrixInitialize);
-        element.removeEventListener('trix-change', handleTrixChange);
+      if (editorElement) {
+        editorElement.removeEventListener('trix-change', () => {});
       }
+      document.removeEventListener('trix-initialize', handleTrixInitialize);
     };
-  }, [onChange, hideBlockTools]);
-
-  // Update editor value when prop changes (but not on every render)
-  useEffect(() => {
-    const editorElement = editorRef.current;
-    if (editorElement && isInitializedRef.current) {
-      const editor = (editorElement as any).editor;
-      if (editor) {
-        const currentHTML = editor.getDocument().toString().trim();
-        const newValue = (value || '').trim();
-        // Only update if values are actually different
-        if (currentHTML !== newValue) {
-          editor.loadHTML(value || '');
-        }
-      }
-    }
-  }, [value]);
+  }, [onChange, value]);
 
   return (
     <div>
-      <input 
-        ref={inputRef}
-        id={editorIdRef.current} 
-        type="hidden" 
-        defaultValue={value}
-      />
-      <trix-editor ref={editorRef} input={editorIdRef.current}></trix-editor>
+      <input id="trix-editor" type="hidden" />
+      <trix-editor ref={editorRef} input="trix-editor"></trix-editor>
     </div>
   );
 };
@@ -337,5 +290,4 @@ const TextInput: FC<TextInputProps> = ({
     );
 };
 
-export { TrixEditor };
 export default TextInput;
