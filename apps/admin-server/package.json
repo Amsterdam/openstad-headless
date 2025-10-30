@@ -58,7 +58,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
-    "eslint": "8.47.0",
+    "eslint": "^8.47.0",
     "eslint-config-next": "^14.2.3",
     "http-proxy-middleware": "^2.0.6",
     "iron-session": "^8.0.1",

@@ -88,7 +88,7 @@ export default function ProjectAuthenticationRequiredFields() {
       buttonText: data?.config?.auth?.provider?.openstad?.config?.requiredFields?.buttonText || '',
       info: data?.config?.auth?.provider?.openstad?.config?.requiredFields?.info || '',
     }),
-    [data?.config]
+    [defaultLabels, data?.config,]
   );
 
   const form = useForm<z.infer<typeof formSchema>>({

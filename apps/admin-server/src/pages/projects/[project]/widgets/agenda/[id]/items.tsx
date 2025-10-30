@@ -148,7 +148,7 @@ export default function WidgetAgendaItems(
   const { onFieldChanged } = props;
   useEffect(() => {
       onFieldChanged('items', items);
-  }, [items]);
+  }, [items, onFieldChanged]);
 
   useEffect(() => {
     if (selectedItem) {

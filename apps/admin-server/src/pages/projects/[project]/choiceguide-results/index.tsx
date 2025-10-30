@@ -38,25 +38,6 @@ export default function ProjectChoiceGuideResults() {
 
   const [totalCount, setTotalCount] = useState(0);
 
-  const fetchResults = async () => {
-    try {
-      const projectNumber = parseInt(project as string);
-
-      if (isNaN(projectNumber) || isNaN(page) || isNaN(pageLimit)) {
-        toast.error('Invalid project');
-        return;
-      }
-
-      let url = `/api/openstad/api/project/${projectNumber}/choicesguide?page=${page}&limit=${pageLimit}`;
-
-      if (selectedWidget?.id && selectedWidget?.id !== '0') {
-        url += `&widgetId=${selectedWidget?.id}`;
-      }
-
-      const response = await fetch(url);
-      return response.json();
-    } catch (error) {}
-  };
 
   const handleDelete = async (id: string | number) => {
     try {
@@ -71,6 +52,26 @@ export default function ProjectChoiceGuideResults() {
   };
 
   useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        const projectNumber = parseInt(project as string);
+
+        if (isNaN(projectNumber) || isNaN(page) || isNaN(pageLimit)) {
+          toast.error('Invalid project');
+          return;
+        }
+
+        let url = `/api/openstad/api/project/${projectNumber}/choicesguide?page=${page}&limit=${pageLimit}`;
+
+        if (selectedWidget?.id && selectedWidget?.id !== '0') {
+          url += `&widgetId=${selectedWidget?.id}`;
+        }
+
+        const response = await fetch(url);
+        return response.json();
+      } catch (error) {}
+    };
+
     fetchResults().then((results) => {
       if (results) {
         const data = results?.data || [];

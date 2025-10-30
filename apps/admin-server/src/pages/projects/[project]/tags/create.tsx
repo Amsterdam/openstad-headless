@@ -54,6 +54,7 @@ export default function ProjectTagCreate({ preset }: { preset?: string }) {
   }
 
   const apiFetchMethodNames = getApiFetchMethodNames();
+  const watchType = form.watch('type');
 
   useEffect(() => {
     const type = form.watch('type');
@@ -66,7 +67,7 @@ export default function ProjectTagCreate({ preset }: { preset?: string }) {
       setDisabled(false);
     }
 
-  }, [ form.watch('type') ] );
+  }, [ form, apiFetchMethodNames, watchType ] );
 
   return (
     <div>

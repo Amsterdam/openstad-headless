@@ -286,7 +286,7 @@ export default function WidgetResourceFormItems(
     const { onFieldChanged } = props;
     useEffect(() => {
         onFieldChanged('items', items);
-    }, [items]);
+    }, [items, onFieldChanged]);
 
     // Sets form to selected item values when item is selected
     useEffect(() => {
@@ -319,7 +319,7 @@ export default function WidgetResourceFormItems(
             setOptions(selectedItem.options || []);
             setMatrixOptions(selectedItem.matrix || matrixDefault);
         }
-    }, [selectedItem, form]);
+    }, [selectedItem, form, firstTagType]);
 
     useEffect(() => {
         if (selectedOption) {
@@ -525,7 +525,7 @@ export default function WidgetResourceFormItems(
 
             setIsFieldKeyUnique(isUnique);
         }
-    }, [form.watch("fieldKey"), selectedItem]);
+    }, [form, items, selectedItem]);
 
     return (
         <div>
