@@ -328,7 +328,7 @@ function StemBegroot({
           await submitVoteAndCleanup();
           setCurrentStep(4);
           // Automatically logout after successful vote submission
-          // currentUser.logout({ url: location.href });
+          currentUser.logout({ url: location.href });
         } catch (err: any) {
           notifyVoteMessage(err.message, true);
         }
