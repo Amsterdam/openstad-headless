@@ -53,6 +53,7 @@ export type StemBegrootWidgetProps = BaseProps &
     showVoteCount: boolean;
     showOriginalResource: boolean;
     originalResourceUrl?: string;
+    originalResourceText?: string;
     displayTagFilters?: boolean;
     tagGroups?: Array<{ type: string; label?: string; multiple: boolean }>;
     displayTagGroupName?: boolean;
@@ -372,6 +373,12 @@ function StemBegroot({
       : null;
   };
 
+  const getOriginalResourceUrlText = () => {
+    if (props.originalResourceText) return props.originalResourceText;
+
+    return "Bekijk het originele ingediende plan";
+  };
+
   // For now only support budgeting and count
   const resourceSelectable = (resource: { id: number; budget: number }) => {
     if (props.votes.voteType === "countPerTag" || props.votes.voteType === "budgetingPerTag") {
@@ -542,6 +549,7 @@ function StemBegroot({
         resourceBtnEnabled={resourceSelectable}
         resourceBtnTextHandler={createItemBtnString}
         defineOriginalUrl={getOriginalResourceUrl}
+        defineOriginalUrlText={getOriginalResourceUrlText}
         openDetailDialog={openDetailDialog}
         setOpenDetailDialog={setOpenDetailDialog}
         isSimpleView={Boolean(props.isSimpleView)}

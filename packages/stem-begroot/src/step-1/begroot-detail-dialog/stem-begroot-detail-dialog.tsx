@@ -27,6 +27,7 @@ export const StemBegrootResourceDetailDialog = ({
   resourceBtnTextHandler,
   resourceBtnEnabled,
   defineOriginalUrl,
+  defineOriginalUrlText,
   displayPriceLabel,
   displayRanking,
   showVoteCount,
@@ -52,6 +53,7 @@ export const StemBegrootResourceDetailDialog = ({
   onPrimaryButtonClick: (resource: any) => void;
   resourceDetailIndex: number;
   defineOriginalUrl: (resource: any) => string | null;
+  defineOriginalUrlText: (resource: any) => string | null;
   resourceBtnTextHandler: (resource: any) => string;
   resourceBtnEnabled: (resource: any) => boolean;
   displayPriceLabel: boolean;
@@ -185,7 +187,7 @@ export const StemBegrootResourceDetailDialog = ({
             const canUseButton = resourceBtnEnabled(resource);
             const primaryButtonText = resourceBtnTextHandler(resource);
             const originalUrl = defineOriginalUrl(resource);
-
+            const originalUrlText = defineOriginalUrlText(resource);
             let defaultImage = '';
 
             interface Tag {
@@ -263,7 +265,7 @@ export const StemBegrootResourceDetailDialog = ({
                           <>
                           <Spacer size={1}/>
                           <Link target="_blank" href={originalUrl} className="ams-standalone-link">
-                            {originalUrl}
+                            {originalUrlText}
                           </Link>
                           </>
                         )}
