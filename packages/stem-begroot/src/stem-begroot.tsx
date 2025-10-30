@@ -25,6 +25,7 @@ import '@utrecht/design-tokens/dist/root.css';
 import { Button, Heading } from '@utrecht/component-library-react';
 import NotificationService from "../../lib/NotificationProvider/notification-service";
 import NotificationProvider from "../../lib/NotificationProvider/notification-provider";
+import { createSuccessStorage } from './utils/succes-storage';
 
 type TagTypeSingle = {
   min: number;
@@ -120,6 +121,10 @@ function StemBegroot({
   filterBehavior = 'or',
   ...props
 }: StemBegrootWidgetProps) {
+  const successStorage = React.useMemo(
+    () => createSuccessStorage(props.projectId),
+    [props.projectId]
+  );
   // Initialize storage instances with project ID
   const votePendingStorage = React.useMemo(
     () => createVotePendingStorage(props.projectId),
@@ -143,6 +148,7 @@ function StemBegroot({
 
   const startingStep = props?.votes?.voteType === "countPerTag" || props?.votes?.voteType === "budgetingPerTag" ? -1 : 0;
 
+  const [success, setSuccess] = useState<boolean>(false);
   const [openDetailDialog, setOpenDetailDialog] = React.useState(false);
   const [resourceDetailIndex, setResourceDetailIndex] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(startingStep);
@@ -242,6 +248,14 @@ function StemBegroot({
     props.votes.requiredUserRole &&
     hasRole(currentUser, props.votes.requiredUserRole);
 
+    useEffect(() => {
+      if (successStorage.getSuccess()) {
+        setSuccess(true);
+      } else {
+        setSuccess(false);
+      }
+    }, [successStorage, setSuccess]);
+
   // Save selectedResources to storage whenever they change
   useEffect(() => {
     if (props.votes.voteType !== "countPerTag" && props.votes.voteType !== "budgetingPerTag") {
@@ -326,6 +340,9 @@ function StemBegroot({
       if (currentStep === 3 && isAllowedToVote) {
         try {
           await submitVoteAndCleanup();
+
+          successStorage.setSuccess(true);
+
           setCurrentStep(4);
           // Automatically logout after successful vote submission
           currentUser.logout({ url: location.href });
@@ -699,6 +716,13 @@ function StemBegroot({
               </div>
             </div>
           )}
+
+          {success ? (
+            <div className="success-message">
+              <h2>Je hebt je stem ingediend</h2>
+              <p>Bedankt voor je stem!</p>
+            </div>
+          ) : null}
 
           {currentStep === 0 ? (
             <>
