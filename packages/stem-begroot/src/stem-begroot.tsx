@@ -148,7 +148,7 @@ function StemBegroot({
 
   const startingStep = props?.votes?.voteType === "countPerTag" || props?.votes?.voteType === "budgetingPerTag" ? -1 : 0;
 
-  const [voteResult, setVoteResult] = useState<boolean>(false);
+  const [voteResult, setVoteResult] = useState<string | boolean>(false);
   const [openDetailDialog, setOpenDetailDialog] = React.useState(false);
   const [resourceDetailIndex, setResourceDetailIndex] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(startingStep);
@@ -253,7 +253,7 @@ function StemBegroot({
     if (voteResultMessage) {
       setVoteResult(voteResultMessage);
     } else {
-      setVoteResult(false);
+      setVoteResult("");
     }
   }, [voteResultStorage, setVoteResult]);
 
@@ -851,13 +851,15 @@ function StemBegroot({
                 thankMessage={props.thankMessage || ''}
                 voteMessage={props.voteMessage || ''}
               />
-            ) : (
+            ) : voteResult != false ? (
               <>
                 <h2>Er gaat iets mis</h2>
                 <p>Het stemmen is helaas niet gelukt, vanwege de volgende reden:</p>
                 <p>{voteResult}</p>
               </>
-            ) : null}
+            ) : (
+              <h2>Bezig met laden...</h2>
+            ): null}
 
           <div className="begroot-step-panel-navigation-section">
             {currentStep > 0 && currentStep < 3 ? (
@@ -956,6 +958,7 @@ function StemBegroot({
                       notifyVoteMessage(err.message, true);
                     }
                   } else if (currentStep === 4) {
+                    voteResultStorage.setVoteResult(false);
                     setVoteResult(false)
                     setCurrentStep(0)
                   } else {
