@@ -25,7 +25,7 @@ import '@utrecht/design-tokens/dist/root.css';
 import { Button, Heading } from '@utrecht/component-library-react';
 import NotificationService from "../../lib/NotificationProvider/notification-service";
 import NotificationProvider from "../../lib/NotificationProvider/notification-provider";
-import { createSuccessStorage } from './utils/succes-storage';
+import { createVoteResultStorage } from './utils/vote-result-storage';
 
 type TagTypeSingle = {
   min: number;
@@ -121,8 +121,8 @@ function StemBegroot({
   filterBehavior = 'or',
   ...props
 }: StemBegrootWidgetProps) {
-  const successStorage = React.useMemo(
-    () => createSuccessStorage(props.projectId),
+  const voteResultStorage = React.useMemo(
+    () => createVoteResultStorage(props.projectId),
     [props.projectId]
   );
   // Initialize storage instances with project ID
@@ -148,7 +148,7 @@ function StemBegroot({
 
   const startingStep = props?.votes?.voteType === "countPerTag" || props?.votes?.voteType === "budgetingPerTag" ? -1 : 0;
 
-  const [success, setSuccess] = useState<boolean>(false);
+  const [voteResult, setVoteResult] = useState<boolean>(false);
   const [openDetailDialog, setOpenDetailDialog] = React.useState(false);
   const [resourceDetailIndex, setResourceDetailIndex] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(startingStep);
@@ -248,13 +248,14 @@ function StemBegroot({
     props.votes.requiredUserRole &&
     hasRole(currentUser, props.votes.requiredUserRole);
 
-    useEffect(() => {
-      if (successStorage.getSuccess()) {
-        setSuccess(true);
-      } else {
-        setSuccess(false);
-      }
-    }, [successStorage, setSuccess]);
+  useEffect(() => {
+    const voteResultMessage = voteResultStorage.getVoteResult()
+    if (voteResultMessage) {
+      setVoteResult(voteResultMessage);
+    } else {
+      setVoteResult(false);
+    }
+  }, [voteResultStorage, setVoteResult]);
 
   // Save selectedResources to storage whenever they change
   useEffect(() => {
@@ -264,8 +265,10 @@ function StemBegroot({
   }, [selectedResources, selectedResourcesStorage, props.votes.voteType]);
 
   useEffect(() => {
-    if (props.isSimpleView && currentStep === 1 && lastStep > currentStep) {
-      setCurrentStep(0); // Skip step 2
+    if (voteResult) {
+      setCurrentStep(4);
+    } else if (props.isSimpleView && currentStep === 1 && lastStep > currentStep) {
+      setCurrentStep(0);
     } else if (props.isSimpleView && currentStep === 1 && lastStep < currentStep) {
       setCurrentStep(2); // Skip step 2
     }
@@ -273,7 +276,7 @@ function StemBegroot({
     if (currentStep !== lastStep) {
       setLastStep(currentStep);
     }
-  }, [props.isSimpleView, currentStep]);
+  }, [props.isSimpleView, currentStep, voteResult]);
 
   // Check the pending state and if there are any resources, hint to  update the selected items
   useEffect(() => {
@@ -341,13 +344,16 @@ function StemBegroot({
         try {
           await submitVoteAndCleanup();
 
-          successStorage.setSuccess(true);
+          voteResultStorage.setVoteResult(`Stemmen is gelukt!`);
 
           setCurrentStep(4);
           // Automatically logout after successful vote submission
           currentUser.logout({ url: location.href });
         } catch (err: any) {
           notifyVoteMessage(err.message, true);
+          voteResultStorage.setVoteResult(`Stemmen is NIET gelukt`);
+          setCurrentStep(4);
+          currentUser.logout({ url: location.href });
         }
       }
     };
@@ -423,9 +429,10 @@ function StemBegroot({
       }
     } else {
       if (selectedResources.length > 0) {
-        await doVote(selectedResources);
+        const result = await doVote(selectedResources);
         votePendingStorage.clearVotePending();
         selectedResourcesStorage.clearSelectedResources();
+        return result
       }
     }
   }
@@ -717,10 +724,10 @@ function StemBegroot({
             </div>
           )}
 
-          {success ? (
-            <div className="success-message">
-              <h2>Je hebt je stem ingediend</h2>
-              <p>Bedankt voor je stem!</p>
+          {voteResult ? (
+            <div className="vote-result-message">
+              <h2>Test-resultaat bericht:</h2>
+              <p>{voteResult}</p>
             </div>
           ) : null}
 
@@ -948,12 +955,16 @@ function StemBegroot({
                       notifyVoteMessage(err.message, true);
                     }
                   } else if (currentStep === 4) {
-                    currentUser.logout({ url: location.href });
+                    setVoteResult(false)
+                    setCurrentStep(0)
                   } else {
                     setCurrentStep(currentStep + 1);
                   }
                 }}
                 disabled={(() => {
+                  if (currentStep === 4) {
+                    return false
+                  }
                   if (props.votes.voteType === "countPerTag" || props.votes.voteType === "budgetingPerTag") {
                     const unmetTags = tagCounter.filter(tagObj => {
                       const key = Object.keys(tagObj)[0];

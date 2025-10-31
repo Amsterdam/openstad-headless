@@ -1,26 +1,26 @@
 // not proud of this one, but need to get it working for now
 
-class SuccessStorage {
+class VoteResultStorage {
   private storageKey: string;
 
   constructor(projectId?: string | number) {
-    this.storageKey = `oscBegrootSuccess_project${projectId}`;
+    this.storageKey = `oscBegrootVoteResult_project${projectId}`;
   }
 
-  getSuccess(): any | null {
+  getVoteResult(): any | null {
     const stored = localStorage.getItem(this.storageKey);
     return stored ? JSON.parse(stored) : null;
   }
 
-  setSuccess(success: any): void {
+  setVoteResult(success: any): void {
     localStorage.setItem(this.storageKey, JSON.stringify(success));
   }
 
-  clearSuccess(): void {
+  clearVoteResult(): void {
     localStorage.removeItem(this.storageKey);
   }
 }
 
-export const createSuccessStorage = (projectId?: string | number): SuccessStorage => {
-  return new SuccessStorage(projectId);
+export const createVoteResultStorage = (projectId?: string | number): VoteResultStorage => {
+  return new VoteResultStorage(projectId);
 };
