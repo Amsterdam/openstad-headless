@@ -344,14 +344,14 @@ function StemBegroot({
         try {
           await submitVoteAndCleanup();
 
-          voteResultStorage.setVoteResult(`Stemmen is gelukt!`);
+          voteResultStorage.setVoteResult("success");
 
           setCurrentStep(4);
           // Automatically logout after successful vote submission
           currentUser.logout({ url: location.href });
         } catch (err: any) {
           notifyVoteMessage(err.message, true);
-          voteResultStorage.setVoteResult(`Stemmen is NIET gelukt`);
+          voteResultStorage.setVoteResult(err.message);
           setCurrentStep(4);
           currentUser.logout({ url: location.href });
         }
@@ -724,13 +724,6 @@ function StemBegroot({
             </div>
           )}
 
-          {voteResult ? (
-            <div className="vote-result-message">
-              <h2>Test-resultaat bericht:</h2>
-              <p>{voteResult}</p>
-            </div>
-          ) : null}
-
           {currentStep === 0 ? (
             <>
               <StemBegrootBudgetList
@@ -850,13 +843,21 @@ function StemBegroot({
 
           <Spacer size={1} />
 
-          {currentStep === 4 ? (
-            <Step4
-              loginUrl={`${props?.login?.url}`}
-              thankMessage={props.thankMessage || ''}
-              voteMessage={props.voteMessage || ''}
-            />
-          ) : null}
+          {currentStep === 4 ? 
+            voteResult == "success" ?
+            (
+              <Step4
+                loginUrl={`${props?.login?.url}`}
+                thankMessage={props.thankMessage || ''}
+                voteMessage={props.voteMessage || ''}
+              />
+            ) : (
+              <>
+                <h2>Er gaat iets mis</h2>
+                <p>Het stemmen is helaas niet gelukt, vanwege de volgende reden:</p>
+                <p>{voteResult}</p>
+              </>
+            ) : null}
 
           <div className="begroot-step-panel-navigation-section">
             {currentStep > 0 && currentStep < 3 ? (
