@@ -350,7 +350,6 @@ function StemBegroot({
           // Automatically logout after successful vote submission
           currentUser.logout({ url: location.href });
         } catch (err: any) {
-          notifyVoteMessage(err.message, true);
           voteResultStorage.setVoteResult(err.message);
           setCurrentStep(4);
           currentUser.logout({ url: location.href });
