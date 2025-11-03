@@ -976,6 +976,9 @@ function StemBegroot({
                   if (currentStep === 4) {
                     return false
                   }
+                  
+                  if (currentStep === 0 && selectedResources.length < props.votes.minResources) return true;
+
                   if (props.votes.voteType === "countPerTag" || props.votes.voteType === "budgetingPerTag") {
                     const unmetTags = tagCounter.filter(tagObj => {
                       const key = Object.keys(tagObj)[0];
