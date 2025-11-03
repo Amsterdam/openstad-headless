@@ -224,7 +224,7 @@ export default function ResourceForm({ onFormSubmit }: Props) {
         originalId: existingData?.extraData?.originalId || undefined,
       },
     }),
-    [existingData]
+    [existingData, projectData?.config?.resources?.defaultStatusIds, projectData?.config?.resources?.defaultTagIds]
   );
   const [extraData, setExtraData] = useState(existingData?.extraData || '');
   const form = useForm<FormType>({

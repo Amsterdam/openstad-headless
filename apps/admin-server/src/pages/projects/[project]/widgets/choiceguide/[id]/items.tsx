@@ -342,6 +342,7 @@ export default function WidgetChoiceGuideItems(
   }, [props?.items]);
 
   const { onFieldChanged } = props;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     onFieldChanged('items', items);
   }, [items]);
@@ -392,7 +393,7 @@ export default function WidgetChoiceGuideItems(
       setMatrixOptions(selectedItem.matrix || matrixDefault);
       setActiveTab('1');
     }
-  }, [selectedItem, form]);
+  }, [selectedItem, form, firstTagType]);
 
   useEffect(() => {
     if (selectedOption) {
@@ -514,7 +515,7 @@ export default function WidgetChoiceGuideItems(
     }
 
     setDimensions( finalDimensions )
-  }, [ form.watch('type') ])
+  }, [ form, widget?.config?.choiceGuide?.choicesType ])
 
   function handleSaveItems() {
     const updatedProps = { ...props };

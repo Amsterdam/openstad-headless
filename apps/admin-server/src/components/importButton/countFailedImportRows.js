@@ -1,4 +1,4 @@
-export default (fileValidationNotifications) => {
+const countFailedImportRows = (fileValidationNotifications) => {
   const apiValidationErrors = fileValidationNotifications.filter(notification => notification['messageType'] === 'apiValidationError');
 
   if(apiValidationErrors){
@@ -7,3 +7,5 @@ export default (fileValidationNotifications) => {
 
   return 0;
 };
+
+export default countFailedImportRows

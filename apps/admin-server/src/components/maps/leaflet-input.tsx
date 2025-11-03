@@ -56,7 +56,7 @@ const MapInput: React.FC<MapComponentProps> = ({ onSelectLocation, field, center
             }
           }
         });
-  }, [field.value, dynamicMarkerIcon]);
+  }, [field, markerPosition, dynamicMarkerIcon]);
 
   useEffect(() => {
     if (markerPosition && onSelectLocation) {

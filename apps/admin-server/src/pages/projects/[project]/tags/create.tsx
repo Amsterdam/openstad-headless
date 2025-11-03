@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
@@ -53,7 +53,8 @@ export default function ProjectTagCreate({ preset }: { preset?: string }) {
     }
   }
 
-  const apiFetchMethodNames = getApiFetchMethodNames();
+  const apiFetchMethodNames = useMemo(() => getApiFetchMethodNames(), []);
+  const watchType = form.watch('type');
 
   useEffect(() => {
     const type = form.watch('type');
@@ -66,7 +67,7 @@ export default function ProjectTagCreate({ preset }: { preset?: string }) {
       setDisabled(false);
     }
 
-  }, [ form.watch('type') ] );
+  }, [ form, watchType, apiFetchMethodNames ] );
 
   return (
     <div>
