@@ -27,6 +27,7 @@ export const StemBegrootResourceDetailDialog = ({
   resourceBtnTextHandler,
   resourceBtnEnabled,
   defineOriginalUrl,
+  defineOriginalUrlText,
   displayPriceLabel,
   displayRanking,
   showVoteCount,
@@ -52,6 +53,7 @@ export const StemBegrootResourceDetailDialog = ({
   onPrimaryButtonClick: (resource: any) => void;
   resourceDetailIndex: number;
   defineOriginalUrl: (resource: any) => string | null;
+  defineOriginalUrlText: (resource: any) => string | null;
   resourceBtnTextHandler: (resource: any) => string;
   resourceBtnEnabled: (resource: any) => boolean;
   displayPriceLabel: boolean;
@@ -185,7 +187,7 @@ export const StemBegrootResourceDetailDialog = ({
             const canUseButton = resourceBtnEnabled(resource);
             const primaryButtonText = resourceBtnTextHandler(resource);
             const originalUrl = defineOriginalUrl(resource);
-
+            const originalUrlText = defineOriginalUrlText(resource);
             let defaultImage = '';
 
             interface Tag {
@@ -259,6 +261,14 @@ export const StemBegrootResourceDetailDialog = ({
                             ?.filter((t) => t.type !== 'status')
                             ?.map((t) => <Pill text={t.name || 'Geen thema'}/>)}
                         </div>
+                        {originalUrl && (
+                          <>
+                          <Spacer size={1}/>
+                          <Link target="_blank" href={originalUrl} className="ams-standalone-link">
+                            {originalUrlText}
+                          </Link>
+                          </>
+                        )}
                       </div>
                     )}
                   </section>
@@ -276,17 +286,6 @@ export const StemBegrootResourceDetailDialog = ({
 
                       <Spacer size={2}/>
 
-                      {originalUrl ? (
-                        <>
-                          <Paragraph className="strong">
-                            Dit een vervolg op het volgende plan:&nbsp;
-                            <Link target="_blank" href={originalUrl}>
-                              {originalUrl}
-                            </Link>
-                          </Paragraph>
-
-                        </>
-                      ) : null}
 
                       <div className="osc-stem-begroot-content-item-footer">
                         {showVoteCount ? (
