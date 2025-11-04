@@ -149,7 +149,7 @@ export default function WidgetAgendaItems(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
       onFieldChanged('items', items);
-  }, [items]);
+  }, [items, onFieldChanged]);
 
   useEffect(() => {
     if (selectedItem) {

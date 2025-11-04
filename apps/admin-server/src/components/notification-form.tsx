@@ -340,7 +340,7 @@ export function NotificationForm({ type, engine, id, label, subject, body }: Pro
 
   const convertMJMLToHTML = useCallback(
     async (data = mailTemplate) => {
-      if ( data === '' ) {
+      if (data === '') {
         setMjmlHtml("<p style='text-align: center;'>Inhoud is leeg.</p>");
         return;
       }

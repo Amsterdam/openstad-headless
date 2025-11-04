@@ -345,7 +345,7 @@ export default function WidgetChoiceGuideItems(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     onFieldChanged('items', items);
-  }, [items]);
+  }, [items, onFieldChanged]);
 
   // Sets form to selected item values when item is selected
   useEffect(() => {
