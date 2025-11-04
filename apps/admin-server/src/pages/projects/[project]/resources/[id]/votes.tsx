@@ -21,7 +21,7 @@ export default function ProjectResourceVotes() {
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
 
     setVotes(loadedVotes);
-  }, [data]);
+  }, [id, data]);
 
   return (
     <div>

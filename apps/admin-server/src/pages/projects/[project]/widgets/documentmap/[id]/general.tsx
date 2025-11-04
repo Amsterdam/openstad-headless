@@ -95,7 +95,7 @@ export default function DocumentGeneral(
     }
 
     setDisabled(shouldDisable);
-  }, [form.watch('minZoom'), form.watch('maxZoom'), form.watch('zoom')]);
+  }, [form]);
 
   return (
     <Form {...form} className="p-6 bg-white rounded-md">
