@@ -50,7 +50,7 @@ export const ImageUploader: React.FC<{
         form.setValue(fieldName, file.url);
         onImageUploaded && onImageUploaded(file);
     }
-  }, [file, form, fieldName, onImageUploaded]);
+  }, [file, form, fieldName, onImageUploaded, fileUrl]);
 
   const acceptAttribute = allowedTypes
     ? allowedTypes.join(',')
