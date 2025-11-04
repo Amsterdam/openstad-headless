@@ -15,6 +15,7 @@ export default defineConfig(({ command }) => {
     return {
       plugins: [react({ jsxRuntime: 'classic' })],
       css: prefix(),
+      define: { 'process.env.NODE_ENV': '"production"' },
       build: {
         lib: {
           formats: ['iife'],
@@ -26,7 +27,7 @@ export default defineConfig(({ command }) => {
           output: {
             globals: {
               react: 'React',
-              'react-dom': 'ReactDOM',
+              'react-dom': 'ReactDOM'
             },
           },
         },
