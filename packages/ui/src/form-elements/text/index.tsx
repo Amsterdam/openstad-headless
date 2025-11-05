@@ -9,9 +9,8 @@ import {
     Textbox
 } from "@utrecht/component-library-react";
 import { Spacer } from '@openstad-headless/ui/src';
-import { FormValue } from "@openstad-headless/form/src/form";
-
 import './style.css';
+import { FormValue } from "@openstad-headless/form/src/form";
 
 // Temporary TypeScript declaration for 'trix-editor'
 declare global {
