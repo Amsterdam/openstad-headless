@@ -48,13 +48,15 @@ const getNewApiUserData = (oldUserData, newAuthUserId, anonymizeUsers, newProjec
 const getNewResourceData = (oldIdeaData, userId, modBreakUserId, oldImageUrlPrefix, newImageUrlPrefix, newProjectId) => {
     let images = []
     
-    oldIdeaData.extraData.images.forEach(imageUrl => {
-        let newImageUrl = imageUrl
-        if (oldImageUrlPrefix && newImageUrlPrefix) {
-            newImageUrl = newImageUrl.replace(oldImageUrlPrefix, newImageUrlPrefix)
-        }
-        images.push({"url": newImageUrl})
-    });
+    if (oldIdeaData.extraData?.images) {
+        oldIdeaData.extraData.images.forEach(imageUrl => {
+            let newImageUrl = imageUrl
+            if (oldImageUrlPrefix && newImageUrlPrefix) {
+                newImageUrl = newImageUrl.replace(oldImageUrlPrefix, newImageUrlPrefix)
+            }
+            images.push({"url": newImageUrl})
+        });
+    }
 
     let location = null
     if (oldIdeaData.location?.x && oldIdeaData.location?.y) {
