@@ -1,7 +1,5 @@
 import React, { FC } from "react";
 import { FormValue } from "@openstad-headless/form/src/form";
-import "trix";
-import 'trix/dist/trix.css';
 import './style.css';
 declare global {
     namespace JSX {
@@ -49,8 +47,8 @@ export type TextInputProps = {
     }[];
 };
 declare const TrixEditor: React.FC<{
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }>;
 declare const TextInput: FC<TextInputProps>;
 export { TrixEditor };
