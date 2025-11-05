@@ -1,3 +1,9 @@
+function isValidPostalCode(postalCode) {
+    // Regular expression to match 4 digits followed by 2 letters, with optional spaces
+    const postalCodeRegex = /^\s*\d{4}\s*[a-zA-Z]{2}\s*$/;
+    return postalCodeRegex.test(postalCode);
+}
+
 const getNewApiUserData = (oldUserData, newAuthUserId, anonymizeUsers, newProjectId) => {
     let firstname = null;
     let lastname = null;
@@ -13,7 +19,9 @@ const getNewApiUserData = (oldUserData, newAuthUserId, anonymizeUsers, newProjec
     }
 
     const newAddress = oldUserData.streetName ? `${oldUserData.streetName} ${oldUserData.houseNumber}${oldUserData.suffix}` : null;
-    const newPostcode = oldUserData.zipCode ? oldUserData.zipCode : oldUserData.postcode;
+    let newPostcode = oldUserData.zipCode ? oldUserData.zipCode : oldUserData.postcode;
+
+    newPostcode = isValidPostalCode(newPostcode) ? newPostcode : null
 
     return {
         projectId: newProjectId,
@@ -50,11 +58,10 @@ const getNewResourceData = (oldIdeaData, userId, modBreakUserId, oldImageUrlPref
     
     if (oldIdeaData.extraData?.images) {
         oldIdeaData.extraData.images.forEach(imageUrl => {
-            let newImageUrl = imageUrl
-            if (oldImageUrlPrefix && newImageUrlPrefix) {
-                newImageUrl = newImageUrl.replace(oldImageUrlPrefix, newImageUrlPrefix)
+            if (oldImageUrlPrefix && newImageUrlPrefix && imageUrl != null) {
+                const newImageUrl = imageUrl.replace(oldImageUrlPrefix, newImageUrlPrefix)
+                images.push({"url": newImageUrl})
             }
-            images.push({"url": newImageUrl})
         });
     }
 
