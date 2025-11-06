@@ -17,11 +17,10 @@ export default function useUser() {
       console.error('Invalid base64 string');
     }
   }
-  console.log(userId)
+
   if (userDecode) {
     const match = userDecode.match(/^(.+)-\*-(.+)$/);
     if (match) {
-      console.log("f")
       url = `/api/openstad/api/user?byIdpUser[identifier]=${encodeURIComponent(match[2])}&byIdpUser[provider]=${encodeURIComponent(match[1])}`;
     } else {
       url = `/api/openstad/api/user/${encodeURIComponent(userDecode)}`;

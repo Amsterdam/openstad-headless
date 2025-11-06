@@ -342,7 +342,7 @@ export default function WidgetChoiceGuideItems(
   }, [props?.items]);
 
   const { onFieldChanged } = props;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     onFieldChanged('items', items);
   }, [items, onFieldChanged]);

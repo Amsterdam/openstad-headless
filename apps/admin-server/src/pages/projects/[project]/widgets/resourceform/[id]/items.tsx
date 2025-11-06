@@ -512,7 +512,6 @@ export default function WidgetResourceFormItems(
 
             form.setValue('fieldKey', recommendedFieldKey);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [form.watch("type")]);
 
     useEffect(() => {

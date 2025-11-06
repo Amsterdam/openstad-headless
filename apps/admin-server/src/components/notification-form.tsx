@@ -354,12 +354,12 @@ export function NotificationForm({ type, engine, id, label, subject, body }: Pro
         setError('Er is een fout opgetreden bij het renderen van de template.');
       }
     },
-    [mailTemplate]
+    []
   );
 
   useEffect(() => {
     convertMJMLToHTML();
-  }, [mailContext, convertMJMLToHTML]);
+  }, [mailContext]);
 
   const handleOnChange = (e: any, field: any) => {
     if (e.target.value.length > 0) {

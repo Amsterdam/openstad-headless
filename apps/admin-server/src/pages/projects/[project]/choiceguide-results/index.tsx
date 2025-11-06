@@ -56,7 +56,7 @@ export default function ProjectChoiceGuideResults() {
       try {
         const projectNumber = parseInt(project as string);
 
-        if (isNaN(projectNumber) || isNaN(page) || isNaN(pageLimit)) {
+        if (isNaN(projectNumber)) {
           toast.error('Invalid project');
           return;
         }
