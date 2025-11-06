@@ -58,11 +58,16 @@ router
       return next(new Error('Invalid widget type'));
     }
 
+    const config = {
+      ...(widgetDefinition.defaultConfig || {}),
+      projectId,
+    };
+
     const createdWidget = await db.Widget.create({
       projectId,
       description: widget.description,
       type: widget.type,
-      config: widgetDefinition.defaultConfig || {},
+      config,
     });
 
     return res.json(createdWidget);
@@ -148,9 +153,9 @@ router
                 widgets.map((widget) => {
                     return db.Widget.create({
                         projectId,
-                        description: widget?.description || '',
+                        description: widget.description || '',
                         type: widget.type,
-                        config: widget?.config || '{}',
+                        config: widget.config || '{}',
                     });
                 })
             );
