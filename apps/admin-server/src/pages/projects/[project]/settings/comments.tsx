@@ -70,7 +70,7 @@ export default function ProjectSettingsComments() {
   useEffect(() => {
     form.reset(defaults());
     setShowCommentSettings(data?.config?.comments?.canComment)
-  }, [form, defaults]);
+  }, [form, defaults, data?.config?.comments?.canComment]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {

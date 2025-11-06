@@ -91,7 +91,7 @@ export default function WidgetDistributionModuleItems(
   const { onFieldChanged } = props;
   useEffect(() => {
     onFieldChanged('items', items);
-  }, [items]);
+  }, [items, onFieldChanged]);
 
   // Sets form to selected item values when item is selected
   useEffect(() => {

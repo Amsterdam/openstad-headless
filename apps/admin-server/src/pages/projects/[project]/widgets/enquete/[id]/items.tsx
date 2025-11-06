@@ -335,7 +335,7 @@ export default function WidgetEnqueteItems(
   const { onFieldChanged } = props;
   useEffect(() => {
     onFieldChanged('items', items);
-  }, [items]);
+  }, [items, onFieldChanged]);
 
   // Sets form to selected item values when item is selected
   useEffect(() => {
@@ -551,7 +551,7 @@ export default function WidgetEnqueteItems(
 
       setIsFieldKeyUnique(isUnique);
     }
-  }, [form.watch("fieldKey"), selectedItem]);
+  }, [form, items, selectedItem]);
 
   return (
     <div>
@@ -846,7 +846,7 @@ export default function WidgetEnqueteItems(
 
                             {!!form.getValues(`options.${activeOption}.titles.0.image`) && (
                               <div style={{ position: 'relative' }}>
-                                <img src={form.getValues(`options.${activeOption}.titles.0.image`)} />
+                                <img src={form.getValues(`options.${activeOption}.titles.0.image`)} alt=""/>
                               </div>
                             )}
 
@@ -1200,7 +1200,7 @@ export default function WidgetEnqueteItems(
 
                         {!!form.getValues('image') && (
                           <div style={{ position: 'relative' }}>
-                            <img src={form.getValues('image')} />
+                            <img src={form.getValues('image')} alt=""/>
                           </div>
                         )}
 

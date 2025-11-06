@@ -17,7 +17,7 @@ export default function ProjectNotifications() {
       | 'new enquete - admin'
       | 'new enquete - user';
 
-  const defaultDefinitions: { [type in NotificationType]: any[] } = {
+  const defaultDefinitions = React.useMemo<{ [type in NotificationType]: any[] }>(() => ({
     "login email": [],
     "login sms": [],
     "new published resource - user feedback": [],
@@ -25,8 +25,8 @@ export default function ProjectNotifications() {
     "updated resource - user feedback": [],
     "user account about to expire": [],
     "new enquete - admin": [],
-    "new enquete - user": []
-  };
+    "new enquete - user": [],
+  }), []);
 
   const [typeDefinitions, setTypeDefinitions] = React.useState<{ [type in NotificationType]: any[] }>(defaultDefinitions);
 
@@ -62,7 +62,7 @@ export default function ProjectNotifications() {
 
       setTypeDefinitions(currentTypeDefinitions);
     }
-  }, [data]);
+  }, [defaultDefinitions, data]);
 
   return (
     <div>
