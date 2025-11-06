@@ -24,7 +24,6 @@ let moduleDefinitions = {
       noLabel: "Nee",
       variant: "medium",
       yesLabel: "Ja",
-      projectId: null,
       hideCounters: false,
       displayDislike: false,
       showProgressBar: true,
@@ -54,10 +53,8 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessEnquete',
     componentName: 'Enquete',
     defaultConfig: {
-      projectId: null,
       items: [],
       title: "",
-      projectId: null,
       description: "",
       confirmation: {},
       displayTitle: false,
@@ -79,7 +76,6 @@ let moduleDefinitions = {
     componentName: 'RawResource',
     defaultConfig: {
       rawInput: "",
-      projectId: null,
       resourceId: null
     },
   },
@@ -91,7 +87,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessResourceOverview',
     componentName: 'ResourceOverview',
     defaultConfig: {
-      projectId: null,
       sorting: [
         {
           label: "Titel",
@@ -101,7 +96,6 @@ let moduleDefinitions = {
       itemLink: "/resource?openstadResourceId=[id]",
       rawInput: "",
       applyText: "Toepassen",
-      projectId: null,
       resetText: "Reset",
       displayMap: false,
       displayTags: true,
@@ -157,9 +151,7 @@ let moduleDefinitions = {
     css: ['dist/multi-project-resource-overview.css'],
     functionName: 'OpenstadHeadlessMultiProjectResourceOverview',
     componentName: 'MultiProjectResourceOverview',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   resourcedetail: {
     packageName: '@openstad-headless/resource-detail',
@@ -168,9 +160,7 @@ let moduleDefinitions = {
     css: ['dist/resource-detail.css'],
     functionName: 'OpenstadHeadlessResourceDetail',
     componentName: 'ResourceDetail',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   datecountdownbar: {
     packageName: '@openstad-headless/date-countdown-bar',
@@ -180,7 +170,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessDateCountdownBar',
     componentName: 'DateCountdownBar',
     defaultConfig: {
-      projectId: null,
       afterText: "",
       direction: "horizontal",
       beforeText: ""
@@ -194,7 +183,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessCounter',
     componentName: 'Counter',
     defaultConfig: {
-      projectId: null,
       counterType: 'resource',
       label: 'Hoeveelheid',
       url: '',
@@ -212,9 +200,7 @@ let moduleDefinitions = {
     css: ['dist/base-map/base-map.css'],
     functionName: 'OpenstadHeadlessBaseMap',
     componentName: 'BaseMap',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   choiceguide: {
     packageName: '@openstad-headless/choiceguide',
@@ -223,9 +209,7 @@ let moduleDefinitions = {
     css: ['dist/choiceguide.css'],
     functionName: 'OpenstadHeadlessChoiceGuide',
     componentName: 'ChoiceGuide',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   choiceguideResults: {
     packageName: '@openstad-headless/choiceguide-results',
@@ -234,9 +218,7 @@ let moduleDefinitions = {
     css: ['dist/choiceguide-results.css'],
     functionName: 'OpenstadHeadlessChoiceGuideResults',
     componentName: 'ChoiceGuideResults',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   editormap: {
     packageName: '@openstad-headless/leaflet-map',
@@ -245,9 +227,7 @@ let moduleDefinitions = {
     css: ['dist/editor-map/editor-map.css'],
     functionName: 'OpenstadHeadlessEditorMap',
     componentName: 'EditorMap',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   resourcesmap: {
     packageName: '@openstad-headless/leaflet-map',
@@ -257,14 +237,12 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessResourceOverviewMap',
     componentName: 'ResourceOverviewMap',
     defaultConfig: {
-      projectId: null,
       width: "",
       height: "",
       ctaButton: {
         show: false
       },
       customUrl: "",
-      projectId: null,
       categorize: {},
       clustering: {},
       markerHref: "",
@@ -284,9 +262,7 @@ let moduleDefinitions = {
     css: ['dist/resource-detail-map/resource-detail-map.css'],
     functionName: 'OpenstadHeadlessResourceDetailMap',
     componentName: 'ResourceDetailMap',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   resourceform: {
     packageName: '@openstad-headless/resource-form',
@@ -295,9 +271,7 @@ let moduleDefinitions = {
     css: ['dist/resource-form.css'],
     functionName: 'OpenstadHeadlessResourceForm',
     componentName: 'ResourceFormWidget',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   begrootmodule: {
     packageName: '@openstad-headless/stem-begroot',
@@ -307,7 +281,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessStemBegroot',
     componentName: 'StemBegroot',
     defaultConfig: {
-      projectId: null,
       displayRanking: false,
       displayPriceLabel: false,
       showVoteCount: false,
@@ -361,13 +334,11 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessSimpleVoting',
     componentName: 'SimpleVoting',
     defaultConfig: {
-      projectId: null,
       step1Add: "Voeg toe",
       step1Tab: "Kies",
       step2Tab: "Overzicht",
       step3Tab: "Stemcode",
       step4Tab: "Stem",
-      projectId: null,
       panelTitle: "",
       step1Title: "Uw selecties",
       step2Title: "Overzicht van mijn selectie",
@@ -412,8 +383,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessResourceOverviewWithMap',
     componentName: 'ResourceOverviewWithMap',
     defaultConfig: {
-      projectId: null,
-      
         sorting: [
           {
             label: "Titel",
@@ -423,7 +392,6 @@ let moduleDefinitions = {
         itemLink: "/resource?openstadResourceId=[id]",
         rawInput: "",
         applyText: "Toepassen",
-        projectId: null,
       resetText: "Reset",
       displayMap: false,
       displayTags: true,
@@ -478,7 +446,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessResourceDetailWithMap',
     componentName: 'ResourceDetailWithMap',
     defaultConfig: {
-      projectId: null,
       width: "",
       height: "",
       marker: {},
@@ -518,7 +485,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessDocumentMap',
     componentName: 'DocumentMap',
     defaultConfig: {
-      projectId: null,
       zoom: 1,
       maxZoom: 10,
       minZoom: -6,
@@ -577,7 +543,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessActivity',
     componentName: 'Activity',
     defaultConfig: {
-      projectId: null,
       otherTitle: "Activiteit op andere websites",
       currentTitle: "Activiteit op deze website",
       noActivityTextOther: "U heeft geen activiteit op andere websites.",
@@ -591,9 +556,7 @@ let moduleDefinitions = {
     css: ['dist/account.css'],
     functionName: 'OpenstadHeadlessAccount',
     componentName: 'Account',
-    defaultConfig: {
-      projectId: null,
-    },
+    defaultConfig: {},
   },
   distributionmodule: {
     packageName: '@openstad-headless/distribution-module',
@@ -603,7 +566,6 @@ let moduleDefinitions = {
     functionName: 'OpenstadHeadlessDistributionModule',
     componentName: 'DistributionModule',
     defaultConfig: {
-      projectId: null,
       items: [],
       title: "",
       total: 30000,
