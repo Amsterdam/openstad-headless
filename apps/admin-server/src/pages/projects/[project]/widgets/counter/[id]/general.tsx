@@ -87,8 +87,8 @@ export default function CounterDisplay(
       label: props?.label || 'Hoeveelheid',
       url: props?.url || '',
       opinion: props?.opinion || '',
-      widgetToFetchId: props?.widgetToFetchId,
-      resourceId: props?.resourceId,
+      widgetToFetchId: props?.widgetToFetchId || '',
+      resourceId: props?.resourceId || '',
       includeOrExclude: props?.includeOrExclude || 'include',
       onlyIncludeOrExcludeTagIds: props?.onlyIncludeOrExcludeTagIds || '',
       rigCounter: props?.rigCounter || '0',
@@ -101,9 +101,9 @@ export default function CounterDisplay(
         Instellingen
       </Heading>
       <Separator className="mb-4" />
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-2 lg:w-full grid grid-cols-1" style={{gap: '2.5rem'}}>
+       <form
+         onSubmit={form.handleSubmit(onSubmit)}
+         className="space-y-2 lg:w-full grid grid-cols-1" style={{gap: '2.5rem'}}>
           <div className="space-y-4 lg:w-1/2">
         <FormField
           control={form.control}
