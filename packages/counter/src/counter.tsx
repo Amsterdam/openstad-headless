@@ -15,14 +15,14 @@ export type CounterWidgetProps = BaseProps &
 
 export type CounterProps = {
   counterType:
-  | 'resource'
-  | 'vote'
-  | 'votedUsers'
-  | 'static'
-  | 'argument'
-  | 'enqueteResults'
-  | 'choiceGuideResults'
-  | 'votedUsersPerProject';
+    | 'resource'
+    | 'vote'
+    | 'votedUsers'
+    | 'static'
+    | 'argument'
+    | 'enqueteResults'
+    | 'choiceGuideResults'
+    | 'votedUsersPerProject';
   label?: string;
   url?: string;
   opinion?: string;
@@ -49,14 +49,26 @@ function Counter({
   const resourceId =
     urlParams.get('openstadResourceId') || props.resourceId || '';
 
+  if (counterType === 'votedUsers' && !resourceId) {
+    console.error(
+      'Error: counterType "votedUsers" requires a resourceId. Please provide a resourceId prop or ensure the page has an "openstadResourceId" query parameter.'
+    );
+  }
+
   const datastore: any = new DataStore({
     projectId: props.projectId,
     api: props.api,
   });
 
-  const tagIds = !!onlyIncludeOrExcludeTagIds && onlyIncludeOrExcludeTagIds.startsWith(',') ? onlyIncludeOrExcludeTagIds.substring(1) : onlyIncludeOrExcludeTagIds;
+  const tagIds =
+    !!onlyIncludeOrExcludeTagIds && onlyIncludeOrExcludeTagIds.startsWith(',')
+      ? onlyIncludeOrExcludeTagIds.substring(1)
+      : onlyIncludeOrExcludeTagIds;
 
-  const tagIdsArray = tagIds.split(',').map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
+  const tagIdsArray = tagIds
+    .split(',')
+    .map((id) => parseInt(id.trim(), 10))
+    .filter((id) => !isNaN(id));
 
   const { data: resources } = datastore.useResources({
     projectId: props.projectId,
@@ -64,18 +76,28 @@ function Counter({
     includeTags: '',
   });
 
-  const filteredResources = resources && resources?.records && tagIdsArray && Array.isArray(tagIdsArray) && tagIdsArray.length > 0
+  const filteredResources =
+    resources &&
+    resources?.records &&
+    tagIdsArray &&
+    Array.isArray(tagIdsArray) &&
+    tagIdsArray.length > 0
       ? resources?.records?.filter((resource: any) => {
-        if (includeOrExclude === 'exclude') {
-          const hasExcludedTag = resource.tags?.some((tag: { id: number }) =>
-            tagIdsArray.includes(tag.id)
-          );
+          if (includeOrExclude === 'exclude') {
+            const hasExcludedTag = resource.tags?.some((tag: { id: number }) =>
+              tagIdsArray.includes(tag.id)
+            );
 
-          return !hasExcludedTag;
-        } else {
-          return tagIdsArray.some((tag) => resource.tags && Array.isArray(resource.tags) && resource.tags.find((o: { id: number }) => o.id === tag));
-        }
-      })
+            return !hasExcludedTag;
+          } else {
+            return tagIdsArray.some(
+              (tag) =>
+                resource.tags &&
+                Array.isArray(resource.tags) &&
+                resource.tags.find((o: { id: number }) => o.id === tag)
+            );
+          }
+        })
       : resources?.records;
 
   const { data: resource } = datastore.useResource({
@@ -99,17 +121,13 @@ function Counter({
       counterType === 'choiceGuideResults' ? props.widgetToFetchId : undefined,
   });
 
-  const {
-    data: enqueteResults
-  } = datastore.useEnqueteResultCount({
+  const { data: enqueteResults } = datastore.useEnqueteResultCount({
     projectId: props.projectId,
     widgetToFetchId:
       counterType === 'enqueteResults' ? props.widgetToFetchId : undefined,
   });
 
-  const {
-    data: projectVotedUsersCount
-  } = datastore.useProjectVotedUsersCount({
+  const { data: projectVotedUsersCount } = datastore.useProjectVotedUsersCount({
     projectId: props.projectId,
   });
 
@@ -152,7 +170,9 @@ function Counter({
   }
 
   if (counterType !== 'static' && rigCounter !== '0' && amountDisplayed !== 0) {
-    const currAmount = isNaN(Number(amountDisplayed)) ? 0 : Number(amountDisplayed);
+    const currAmount = isNaN(Number(amountDisplayed))
+      ? 0
+      : Number(amountDisplayed);
     const rigCounterNumber = isNaN(Number(rigCounter)) ? 0 : Number(rigCounter);
 
     amountDisplayed = currAmount + rigCounterNumber;
@@ -160,13 +180,18 @@ function Counter({
 
   const content = () => {
     const renderAmount = (e: number) => {
-      return e.toString().split('').map((item, index) => <span className="amount-item" key={index}><span>{item}</span></span>);
+      return e
+        .toString()
+        .split('')
+        .map((item, index) => (
+          <span className="amount-item" key={index}>
+            <span>{item}</span>
+          </span>
+        ));
     };
     return (
       <Paragraph>
-        <span className="amount">
-          {renderAmount(amountDisplayed || 0)}
-        </span>
+        <span className="amount">{renderAmount(amountDisplayed || 0)}</span>
         {label ? <span className="label">{label}</span> : null}
       </Paragraph>
     );
