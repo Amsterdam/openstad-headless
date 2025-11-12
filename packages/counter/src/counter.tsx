@@ -62,11 +62,7 @@ function Counter({
     projectId: props.projectId,
     pageSize: 999999,
     includeTags: '',
-  });  
-
-  // Get the number of votes for a project
-  const votesForProject = 10;
-
+  });
 
   const filteredResources = resources && resources?.records && tagIdsArray && Array.isArray(tagIdsArray) && tagIdsArray.length > 0
       ? resources?.records?.filter((resource: any) => {
