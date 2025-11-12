@@ -61,11 +61,15 @@ router.route('/total')
 
 router.route('/no-of-users')
 
-    // count votes
+    // count unique users who voted
     // -----------
     .get( rateLimiter(), function(req, res, next) {
 
-        let query = "SELECT count(votes.id) AS counted FROM votes LEFT JOIN resources ON votes.resourceId = resources.id WHERE resources.projectId=? AND votes.deletedAt  IS NULL AND  (votes.checked IS NULL OR votes.checked = 1)  AND resources.deletedAt IS NULL GROUP BY votes.userId";
+        let isViewable = req.project && req.project.config && req.project.config.votes && req.project.config.votes.isViewable;
+        isViewable = isViewable || hasRole( req.user, 'editor')
+        if (!isViewable) return next(createError(401, 'Je kunt deze stats niet bekijken'));
+
+        let query = "SELECT count(DISTINCT votes.userId) AS counted FROM votes LEFT JOIN resources ON votes.resourceId = resources.id WHERE resources.projectId=? AND votes.deletedAt IS NULL AND (votes.checked IS NULL OR votes.checked = 1) AND resources.deletedAt IS NULL";
         let bindvars = [req.params.projectId]
 
         pool
@@ -73,7 +77,7 @@ router.route('/no-of-users')
             .query(query, bindvars)
             .then( ([rows,fields]) => {
                 console.log(rows);
-                let counted = rows && rows.length || -1;
+                let counted = rows && rows[0] && rows[0].counted || 0;
                 res.json({count: counted})
             })
             .catch(err => {
