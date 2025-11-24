@@ -31,9 +31,6 @@ RUN npm config set fetch-timeout 300000
 ARG BUILD_ENV=production
 ENV BUILD_ENV=${BUILD_ENV}
 
-RUN npx cypress cache clear || true
-RUN rm -rf /root/.cache/Cypress || true
-
 RUN npm ci --legacy-peer-deps -ws
 
 FROM builder AS base
