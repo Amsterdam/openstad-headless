@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -297,7 +297,7 @@ export function NotificationForm({ type, engine, id, label, subject, body }: Pro
       subject: subject || "",
       body: defaultValueBody
     }),
-    [engine, label, subject, body]
+    [defaultValueBody, engine, label, subject]
   )
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -338,21 +338,24 @@ export function NotificationForm({ type, engine, id, label, subject, body }: Pro
 
   const [error, setError] = useState<string | null>(null);
 
-  async function convertMJMLToHTML(data = mailTemplate) {
-    if ( data === '' ) {
-      setMjmlHtml("<p style='text-align: center;'>Inhoud is leeg.</p>");
-      return;
-    }
+  const convertMJMLToHTML = useCallback(
+    async (data = mailTemplate) => {
+      if (data === '') {
+        setMjmlHtml("<p style='text-align: center;'>Inhoud is leeg.</p>");
+        return;
+      }
 
-    try {
-      const mjml2html = (await import('mjml-browser')).default;
-      const htmlOutput = mjml2html(data).html;
-      setMjmlHtml(htmlOutput);
-      setError(null);
-    } catch (err) {
-      setError('Er is een fout opgetreden bij het renderen van de template.');
-    }
-  }
+      try {
+        const mjml2html = (await import('mjml-browser')).default;
+        const htmlOutput = mjml2html(data).html;
+        setMjmlHtml(htmlOutput);
+        setError(null);
+      } catch (err) {
+        setError('Er is een fout opgetreden bij het renderen van de template.');
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     convertMJMLToHTML();
@@ -376,7 +379,7 @@ export function NotificationForm({ type, engine, id, label, subject, body }: Pro
         setError('Er is een fout opgetreden bij het renderen van de template.');
       }
     }
-  }, [fieldValue]);
+  }, [fieldValue, convertMJMLToHTML, mailContext]);
 
   return (
     <div>

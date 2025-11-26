@@ -121,7 +121,7 @@ export default function ProjectTagEdit({ preset }: { preset?: string }) {
     if (!useDifferentSubmitAddress) {
       form.setValue('newSubmitAddress', '');
     }
-  }, [form.watch('useDifferentSubmitAddress')]);
+  }, [form]);
 
   useEffect(() => {
     form.reset(defaults());

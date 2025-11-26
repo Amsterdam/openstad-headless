@@ -370,6 +370,7 @@ export default function WidgetMultiProjectSettings(
                               <img
                                 src={form.getValues(`selectedProjects.${field.value?.findIndex(p => p.id === project.id) ?? 0}.overviewMarkerIcon`)}
                                 style={{position: "relative", width: "auto", height: "auto", maxHeight: "100%"}}
+                                alt = "Project tegel inzendingen overzicht"
                               />
                               <Button
                                 color="red"
@@ -390,6 +391,7 @@ export default function WidgetMultiProjectSettings(
                               <img
                                 src={form.getValues(`selectedProjects.${field.value?.findIndex(p => p.id === project.id) ?? 0}.overviewImage`)}
                                 style={{position: "relative", width: "auto", height: "auto", maxHeight: "100%"}}
+                                alt=""
                               />
                               <Button
                                 color="red"

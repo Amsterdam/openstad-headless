@@ -59,7 +59,7 @@ export default function ProjectSettingsMap() {
         autoZoomAndCenter: data?.config?.map?.autoZoomAndCenter || 'area',
       }
     },
-    [data, areas]
+    [data]
   );
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -105,7 +105,7 @@ export default function ProjectSettingsMap() {
       form.clearErrors(['minZoom', 'maxZoom'])
       setDisabled(false);
     }
-  }, [ form.watch('minZoom'), form.watch('maxZoom') ] );
+  }, [ form ] );
 
   const tileLayerOptions = [
     { value: 'nlmaps', label: 'Nederlandse Kaart' },

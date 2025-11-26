@@ -158,9 +158,17 @@ async function migrateData() {
 
     try {
         const writenewApiUsersPromises = oldUsers.map(async (oldUser) => {
-            const authUserId = oldUser.email && !anonymizeUsers ? await getAuthUserId(oldUser) : null;
-            const newUser = await db.User.create(getNewApiUserData(oldUser, authUserId, anonymizeUsers, newProjectId));
-            return { newUser, oldUser };
+            try {
+                const authUserId = oldUser.email && !anonymizeUsers ? await getAuthUserId(oldUser) : null;
+                const newUser = await db.User.create(getNewApiUserData(oldUser, authUserId, anonymizeUsers, newProjectId));
+                return { newUser, oldUser };
+            } catch (err) {
+                console.error("Failed to create new user for oldUser:", {
+                    id: oldUser.id
+                });
+                console.error("Error details:", err);
+                throw err;
+            }
         })
         const results = await Promise.all(writenewApiUsersPromises);
         newApiUsers = results.map(result => result.newUser)
@@ -185,17 +193,26 @@ async function migrateData() {
     let oldIdeaToNewResourceIdMap
     try {
         const writeNewResourcesPromises = oldIdeas.map(async (oldIdea) => {
-            const newResource = await db.Resource.create(
-                getNewResourceData(
-                    oldIdea,
-                    oldToNewApiUserIdMap.get(oldIdea.userId),
-                    oldToNewApiUserIdMap.get(oldIdea.modBreakUserId),
-                    oldImageUrlPrefix,
-                    newImageUrlPrefix,
-                    newProjectId
+            try {
+                const newResource = await db.Resource.create(
+                    getNewResourceData(
+                        oldIdea,
+                        oldToNewApiUserIdMap.get(oldIdea.userId),
+                        oldToNewApiUserIdMap.get(oldIdea.modBreakUserId),
+                        oldImageUrlPrefix,
+                        newImageUrlPrefix,
+                        newProjectId
+                    )
                 )
-            )
-            return { newResource, oldIdea }
+                return { newResource, oldIdea }
+            } catch (err) {
+                console.error("Failed to create resource for oldIdea:", {
+                    id: oldIdea.id,
+                    title: oldIdea.title
+                });
+                console.error("Error details:", err);
+                throw err;
+            }
         })
         const results = await Promise.all(writeNewResourcesPromises);
         newResources = results.map(result => result.newResource)
@@ -216,14 +233,22 @@ async function migrateData() {
     let newVotes
     try {
         const writeNewVotesPromises = oldVotes.map(async (oldVote) => {
-            const newVote = await db.Vote.create(
-                getNewVoteData(
-                    oldVote,
-                    oldIdeaToNewResourceIdMap.get(oldVote.ideaId),
-                    oldToNewApiUserIdMap.get(oldVote.userId)
+            try {
+                const newVote = await db.Vote.create(
+                    getNewVoteData(
+                        oldVote,
+                        oldIdeaToNewResourceIdMap.get(oldVote.ideaId),
+                        oldToNewApiUserIdMap.get(oldVote.userId)
+                    )
                 )
-            )
-            return newVote
+                return newVote
+            } catch (err) {
+                console.error("Failed to create newVote for oldVote:", {
+                    id: oldVote.id
+                });
+                console.error("Error details:", err);
+                throw err;
+            }
         })
         newVotes = await Promise.all(writeNewVotesPromises)
     } catch (err) {
@@ -248,14 +273,22 @@ async function migrateData() {
         // First, write all new comments
         
         const writeNewCommentsPromises = oldArguments.map(async (oldArgument) => {
-            const newComment = await db.Comment.create(
-                getNewCommentData(
-                    oldArgument,
-                    oldIdeaToNewResourceIdMap.get(oldArgument.ideaId),
-                    oldToNewApiUserIdMap.get(oldArgument.userId)
+            try {
+                const newComment = await db.Comment.create(
+                    getNewCommentData(
+                        oldArgument,
+                        oldIdeaToNewResourceIdMap.get(oldArgument.ideaId),
+                        oldToNewApiUserIdMap.get(oldArgument.userId)
+                    )
                 )
-            )
-            return { newComment, oldArgument }
+                return { newComment, oldArgument }
+            } catch (err) {
+                console.error("Failed to create newComment for oldArgument:", {
+                    id: oldArgument.id
+                });
+                console.error("Error details:", err);
+                throw err;
+            }
         })
         results = await Promise.all(writeNewCommentsPromises)
         newComments = results.map(result => result.newComment)
