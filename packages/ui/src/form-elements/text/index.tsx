@@ -12,8 +12,6 @@ import { Spacer } from '@openstad-headless/ui/src';
 import './style.css';
 import { FormValue } from "@openstad-headless/form/src/form";
 
-import "trix";
-import 'trix/dist/trix.css';
 // Temporary TypeScript declaration for 'trix-editor'
 declare global {
   namespace JSX {
@@ -58,15 +56,35 @@ export type TextInputProps = {
 }
 
 const TrixEditor: React.FC<{
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   value: string;
-}> = ({ onChange, value }) => {
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}> = ({ value, onChange }) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const editorInstance = useRef<any>(null);
+
+  const idRef = useRef(`trix-editor-${Math.random().toString(36).substring(2, 9)}`);
 
   useEffect(() => {
-    const editorElement = editorRef.current;
+    (async () => {
+      if (typeof window !== "undefined") {
+        // @ts-expect-error: trix has no types
+        await import("trix");
+        // @ts-expect-error: trix has no types
+        await import("trix/dist/trix.css");
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const editorEl = editorRef.current;
+    const inputEl = inputRef.current;
+    if (!editorEl || !inputEl) return;
 
     const handleTrixInitialize = () => {
+      editorInstance.current = (editorEl as any).editor;
+
       // Remove the file attachment button from the toolbar
       const toolbar = document.querySelector('trix-toolbar');
       if (toolbar) {
@@ -75,49 +93,50 @@ const TrixEditor: React.FC<{
           fileButton.remove(); // Remove the file attachment button
         }
       }
-    };
 
-    if (editorElement) {
-      const inputElement = document.getElementById('trix-editor') as HTMLInputElement;
-
-      if (inputElement) {
-        // Set the initial value of the input element
-        inputElement.value = value;
-
-        // Trigger Trix initialization
-        editorElement.dispatchEvent(new Event('trix-initialize'));
+      // Load initial content
+      if (value && editorInstance.current) {
+        editorInstance.current.loadHTML(value);
       }
 
-      // Listen for Trix change events
-      editorElement.addEventListener('trix-change', (event: Event) => {
-        const input = event.target as HTMLInputElement;
+      // Listen for changes and send synthetic change event
+      editorEl.addEventListener("trix-change", () => {
+        if (editorInstance.current && inputEl) {
+          const html = inputEl.value;
 
-        const syntheticEvent = {
-          target: { value: input.value },
-        } as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
+          // Create a synthetic React-like ChangeEvent
+          const syntheticEvent = {
+            target: { value: html },
+          } as React.ChangeEvent<HTMLInputElement>;
 
-        onChange(syntheticEvent);
+          onChange(syntheticEvent);
+        }
       });
-
-      // Listen for the Trix initialization event
-      document.addEventListener('trix-initialize', handleTrixInitialize);
-    }
-
-    return () => {
-      if (editorElement) {
-        editorElement.removeEventListener('trix-change', () => {});
-      }
-      document.removeEventListener('trix-initialize', handleTrixInitialize);
     };
-  }, [onChange, value]);
+
+    editorEl.addEventListener("trix-initialize", handleTrixInitialize);
+    return () => {
+      editorEl.removeEventListener("trix-initialize", handleTrixInitialize);
+    };
+  }, [onChange]);
+
+  // Keep editor content in sync with external value
+  useEffect(() => {
+    if (!editorInstance.current || !inputRef.current) return;
+    const currentHTML = inputRef.current.value;
+    if (currentHTML !== value) {
+      editorInstance.current.loadHTML(value || "");
+    }
+  }, [value]);
 
   return (
     <div>
-      <input id="trix-editor" type="hidden" />
-      <trix-editor ref={editorRef} input="trix-editor"></trix-editor>
+      <input ref={inputRef} type="hidden" id={idRef.current} />
+      <trix-editor ref={editorRef} input={idRef.current}></trix-editor>
     </div>
   );
 };
+
 
 const TextInput: FC<TextInputProps> = ({
     title,
@@ -290,4 +309,5 @@ const TextInput: FC<TextInputProps> = ({
     );
 };
 
+export { TrixEditor };
 export default TextInput;
