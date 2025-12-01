@@ -34,7 +34,9 @@ RUN npm config set fetch-timeout 300000
 ARG BUILD_ENV=production
 ENV BUILD_ENV=${BUILD_ENV}
 
-RUN npm ci --legacy-peer-deps -ws
+RUN npm i -g @aikidosec/safe-chain && \
+ safe-chain setup-ci && \
+ npm ci --legacy-peer-deps -ws
 
 FROM builder AS base
 
