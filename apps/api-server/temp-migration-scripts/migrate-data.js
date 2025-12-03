@@ -10,6 +10,7 @@ const declaredArgs = {
     newImageUrlPrefix: "new-image-url-prefix",
     anonymizeUsers: "anonymize-users",
     newAuthDbName: "new-auth-db-name",
+    batchSize: "batch-size",
 }
 
 const originalSiteId = retrieveArg(declaredArgs.originalSiteId);
@@ -18,6 +19,7 @@ const oldImageUrlPrefix = retrieveArg(declaredArgs.oldImageUrlPrefix);
 const newImageUrlPrefix = retrieveArg(declaredArgs.newImageUrlPrefix);
 const anonymizeUsers = retrieveArg(declaredArgs.anonymizeUsers) == "no" ? false : true;
 const newAuthDbName = retrieveArg(declaredArgs.newAuthDbName) || "auth";
+const batchSize = parseInt(retrieveArg(declaredArgs.batchSize)) || 100;
 
 const sqlQueries = {
     getApiUsers: `SELECT * FROM users WHERE siteId = ? AND deletedAt IS NULL`,
@@ -230,27 +232,36 @@ async function migrateData() {
     console.log("// //////");
     console.log("")
 
-    let newVotes
+    let newVotes = []
     try {
-        const writeNewVotesPromises = oldVotes.map(async (oldVote) => {
-            try {
-                const newVote = await db.Vote.create(
-                    getNewVoteData(
-                        oldVote,
-                        oldIdeaToNewResourceIdMap.get(oldVote.ideaId),
-                        oldToNewApiUserIdMap.get(oldVote.userId)
+        for (let i = 0; i < oldVotes.length; i += batchSize) {
+            const batch = oldVotes.slice(i, i + batchSize);
+            console.log(`Processing batch ${Math.ceil(i / batchSize) + 1} of ${Math.ceil(oldVotes.length / batchSize)}...`);
+            
+            const writeNewVotesPromises = batch.map(async (oldVote) => {
+                try {
+                    const newVote = await db.Vote.create(
+                        getNewVoteData(
+                            oldVote,
+                            oldIdeaToNewResourceIdMap.get(oldVote.ideaId),
+                            oldToNewApiUserIdMap.get(oldVote.userId)
+                        )
                     )
-                )
-                return newVote
-            } catch (err) {
-                console.error("Failed to create newVote for oldVote:", {
-                    id: oldVote.id
-                });
-                console.error("Error details:", err);
-                throw err;
-            }
-        })
-        newVotes = await Promise.all(writeNewVotesPromises)
+                    return newVote
+                } catch (err) {
+                    console.error("Failed to create newVote for oldVote:", {
+                        id: oldVote.id
+                    });
+                    console.error("Error details:", err);
+                    throw err;
+                }
+            })
+
+            const batchNewVotes = await Promise.all(writeNewVotesPromises);
+            newVotes = newVotes.concat(batchNewVotes);
+
+            console.log(`Batch ${Math.ceil(i / batchSize) + 1} completed. Total votes migrated so far: ${newVotes.length}`);
+        }
     } catch (err) {
         console.error("Error writing new votes to the new database:", err.message);
         throw err;
