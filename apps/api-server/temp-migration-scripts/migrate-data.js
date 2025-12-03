@@ -10,6 +10,7 @@ const declaredArgs = {
     newImageUrlPrefix: "new-image-url-prefix",
     anonymizeUsers: "anonymize-users",
     newAuthDbName: "new-auth-db-name",
+    batchSize: "batch-size",
 }
 
 const originalSiteId = retrieveArg(declaredArgs.originalSiteId);
@@ -18,6 +19,7 @@ const oldImageUrlPrefix = retrieveArg(declaredArgs.oldImageUrlPrefix);
 const newImageUrlPrefix = retrieveArg(declaredArgs.newImageUrlPrefix);
 const anonymizeUsers = retrieveArg(declaredArgs.anonymizeUsers) == "no" ? false : true;
 const newAuthDbName = retrieveArg(declaredArgs.newAuthDbName) || "auth";
+const batchSize = parseInt(retrieveArg(declaredArgs.batchSize)) || 100;
 
 const sqlQueries = {
     getApiUsers: `SELECT * FROM users WHERE siteId = ? AND deletedAt IS NULL`,
@@ -131,8 +133,8 @@ async function migrateData() {
     console.log("// //////");
     console.log("")
 
-    let newApiUsers
-    let oldToNewApiUserIdMap
+    let newApiUsers = [];
+    let oldToNewApiUserIdMap = new Map();
     const existingNewAuthUsers = []
     const createdNewAuthUsers = []
 
@@ -157,22 +159,30 @@ async function migrateData() {
     }
 
     try {
-        const writenewApiUsersPromises = oldUsers.map(async (oldUser) => {
-            try {
-                const authUserId = oldUser.email && !anonymizeUsers ? await getAuthUserId(oldUser) : null;
-                const newUser = await db.User.create(getNewApiUserData(oldUser, authUserId, anonymizeUsers, newProjectId));
-                return { newUser, oldUser };
-            } catch (err) {
-                console.error("Failed to create new user for oldUser:", {
-                    id: oldUser.id
-                });
-                console.error("Error details:", err);
-                throw err;
-            }
-        })
-        const results = await Promise.all(writenewApiUsersPromises);
-        newApiUsers = results.map(result => result.newUser)
-        oldToNewApiUserIdMap = new Map(results.map(result => [result.oldUser.id, result.newUser.id]))
+        for (let i = 0; i < oldUsers.length; i += batchSize) {
+            const batch = oldUsers.slice(i, i + batchSize);
+            console.log(`Processing batch ${Math.ceil(i / batchSize) + 1} of ${Math.ceil(oldUsers.length / batchSize)}...`);
+            
+            const writenewApiUsersPromises = batch.map(async (oldUser) => {
+                try {
+                    const authUserId = oldUser.email && !anonymizeUsers ? await getAuthUserId(oldUser) : null;
+                    const newUser = await db.User.create(getNewApiUserData(oldUser, authUserId, anonymizeUsers, newProjectId));
+                    return { newUser, oldUser };
+                } catch (err) {
+                    console.error("Failed to create new user for oldUser:", {
+                        id: oldUser.id
+                    });
+                    console.error("Error details:", err);
+                    throw err;
+                }
+            })
+            
+            const results = await Promise.all(writenewApiUsersPromises);
+            newApiUsers = newApiUsers.concat(results.map(result => result.newUser))
+            results.forEach(result => oldToNewApiUserIdMap.set(result.oldUser.id, result.newUser.id))
+            
+            console.log(`Batch ${Math.ceil(i / batchSize) + 1} completed. Total users migrated so far: ${newApiUsers.length}`);
+        }
 
     } catch (err) {
         console.error("Error writing new users to the new database:", err.message);
@@ -230,27 +240,36 @@ async function migrateData() {
     console.log("// //////");
     console.log("")
 
-    let newVotes
+    let newVotes = []
     try {
-        const writeNewVotesPromises = oldVotes.map(async (oldVote) => {
-            try {
-                const newVote = await db.Vote.create(
-                    getNewVoteData(
-                        oldVote,
-                        oldIdeaToNewResourceIdMap.get(oldVote.ideaId),
-                        oldToNewApiUserIdMap.get(oldVote.userId)
+        for (let i = 0; i < oldVotes.length; i += batchSize) {
+            const batch = oldVotes.slice(i, i + batchSize);
+            console.log(`Processing batch ${Math.ceil(i / batchSize) + 1} of ${Math.ceil(oldVotes.length / batchSize)}...`);
+            
+            const writeNewVotesPromises = batch.map(async (oldVote) => {
+                try {
+                    const newVote = await db.Vote.create(
+                        getNewVoteData(
+                            oldVote,
+                            oldIdeaToNewResourceIdMap.get(oldVote.ideaId),
+                            oldToNewApiUserIdMap.get(oldVote.userId)
+                        )
                     )
-                )
-                return newVote
-            } catch (err) {
-                console.error("Failed to create newVote for oldVote:", {
-                    id: oldVote.id
-                });
-                console.error("Error details:", err);
-                throw err;
-            }
-        })
-        newVotes = await Promise.all(writeNewVotesPromises)
+                    return newVote
+                } catch (err) {
+                    console.error("Failed to create newVote for oldVote:", {
+                        id: oldVote.id
+                    });
+                    console.error("Error details:", err);
+                    throw err;
+                }
+            })
+
+            const batchNewVotes = await Promise.all(writeNewVotesPromises);
+            newVotes = newVotes.concat(batchNewVotes);
+
+            console.log(`Batch ${Math.ceil(i / batchSize) + 1} completed. Total votes migrated so far: ${newVotes.length}`);
+        }
     } catch (err) {
         console.error("Error writing new votes to the new database:", err.message);
         throw err;
