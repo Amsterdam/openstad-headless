@@ -53,6 +53,20 @@ const getNewApiUserData = (oldUserData, newAuthUserId, anonymizeUsers, newProjec
     }
 }
 
+const getNewAdminOnApiUserData = (originalOldOpenStadUserId, newProjectId) => {
+    return {
+        projectId: newProjectId,
+        idpUser: {},
+        role: "admin",
+        email: "admin@on.api",
+        name: "Admin",
+        createdAt: Date.now(),
+        extraData: {
+            originalOldOpenStadUserId: originalOldOpenStadUserId,
+        }
+    }
+}
+
 const getNewResourceData = (oldIdeaData, userId, modBreakUserId, oldImageUrlPrefix, newImageUrlPrefix, newProjectId) => {
     let images = []
     
@@ -128,4 +142,4 @@ const getNewCommentData = (oldArgumentData, resourceId, userId, parentId) => {
     }
 }
 
-module.exports = { getNewApiUserData, getNewResourceData, getNewVoteData, getNewCommentData }
+module.exports = { getNewApiUserData, getNewAdminOnApiUserData, getNewResourceData, getNewVoteData, getNewCommentData }

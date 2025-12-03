@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 const db = require('../src/db');
 const { retrieveArg, getDbPassword } = require('./utils')
-const { getNewApiUserData, getNewResourceData, getNewVoteData, getNewCommentData } = require('./new-data-format')
+const { getNewApiUserData, getNewAdminOnApiUserData, getNewResourceData, getNewVoteData, getNewCommentData } = require('./new-data-format')
 
 const declaredArgs = {
     originalSiteId: "original-site-id",
@@ -11,6 +11,7 @@ const declaredArgs = {
     anonymizeUsers: "anonymize-users",
     newAuthDbName: "new-auth-db-name",
     batchSize: "batch-size",
+    oldAdminOnApiUserId: "old-admin-on-api-user-id",
 }
 
 const originalSiteId = retrieveArg(declaredArgs.originalSiteId);
@@ -20,6 +21,7 @@ const newImageUrlPrefix = retrieveArg(declaredArgs.newImageUrlPrefix);
 const anonymizeUsers = retrieveArg(declaredArgs.anonymizeUsers) == "no" ? false : true;
 const newAuthDbName = retrieveArg(declaredArgs.newAuthDbName) || "auth";
 const batchSize = parseInt(retrieveArg(declaredArgs.batchSize)) || 100;
+const oldAdminOnApiUserId = parseInt(retrieveArg(declaredArgs.oldAdminOnApiUserId)) || 2;
 
 const sqlQueries = {
     getApiUsers: `SELECT * FROM users WHERE siteId = ? AND deletedAt IS NULL`,
@@ -183,6 +185,19 @@ async function migrateData() {
             
             console.log(`Batch ${Math.ceil(i / batchSize) + 1} completed. Total users migrated so far: ${newApiUsers.length}`);
         }
+
+        // Create a user that can be used for the old 'Admin on API'-user, which is not linked to the old siteId, and is therefor not migrated and mapped
+        try {
+            const newAdminOnApiUser = await db.User.create(getNewAdminOnApiUserData(oldAdminOnApiUserId, newProjectId))
+            oldToNewApiUserIdMap.set(oldAdminOnApiUserId, newAdminOnApiUser.id)
+            console.log(`Succcesfully created the new 'Admin-on-API'-user, with the new userId of ${newAdminOnApiUser.id}`)
+        } catch (err) {
+            console.error("Failed to create the new 'Admin-on-API'-user.");
+            console.error("Error details:", err);
+            throw err;
+        }
+
+        
 
     } catch (err) {
         console.error("Error writing new users to the new database:", err.message);
