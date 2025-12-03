@@ -49,7 +49,7 @@ export const DocumentUploader: React.FC<{
         form.setValue(fieldName, document.url);
       onDocumentUploaded && onDocumentUploaded(document);
     }
-  }, [document, form, fieldName, onDocumentUploaded]);
+  }, [document, documentUrl, form, fieldName, onDocumentUploaded]);
 
   const acceptAttribute = allowedTypes
     ? allowedTypes.join(',')

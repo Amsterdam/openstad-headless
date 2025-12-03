@@ -149,7 +149,7 @@ export default function WidgetResourceOverviewDisplay(
       form.setValue('dialogTagGroups', allTagGroups);
       props.onFieldChanged('dialogTagGroups', allTagGroups);
     }
-  }, [displayTags, tagGroupNames]);
+  }, [form, props, displayTags, tagGroupNames]);
 
   return (
     <div className="p-6 bg-white rounded-md">

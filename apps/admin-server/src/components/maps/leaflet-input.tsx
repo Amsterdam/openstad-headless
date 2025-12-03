@@ -38,7 +38,7 @@ const MapInput: React.FC<MapComponentProps> = ({ onSelectLocation, field, center
           setDynamicMarkerIcon(icon);
         });
     }
-  }, []);
+  }, [field, markerPosition]);
 
   useEffect(() => {
     import ('leaflet').then((L) => {
@@ -56,7 +56,7 @@ const MapInput: React.FC<MapComponentProps> = ({ onSelectLocation, field, center
             }
           }
         });
-  }, [field.value, dynamicMarkerIcon]);
+  }, [field, markerPosition, dynamicMarkerIcon]);
 
   useEffect(() => {
     if (markerPosition && onSelectLocation) {

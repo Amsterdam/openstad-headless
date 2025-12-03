@@ -61,7 +61,7 @@ export default function WidgetResourcesMapDatalayers(
       form.setValue('datalayer', updatedLayers);
       props.onFieldChanged('datalayer', updatedLayers);
     }
-  }, [form.getValues('enableOnOffSwitching')]);
+  }, [form, props]);
 
     return (
         <div className="p-6 bg-white rounded-md">

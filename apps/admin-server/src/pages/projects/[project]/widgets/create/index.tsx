@@ -90,7 +90,7 @@ export default function CreateWidget({ }: WithApiUrlProps) {
                         {filteredWidgets.map((type, key) => (
                             <Card key={key} className={type[0] === "multiprojectresourceoverview" ? 'beta' : ''}>
                                 <CardHeader>
-                                    <img src={type[1].image} />
+                                    <img src={type[1].image} alt=""/>
                                     <h2 className="text-lg font-regular">
                                         {type[1].name}
                                     </h2>

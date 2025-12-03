@@ -342,9 +342,10 @@ export default function WidgetChoiceGuideItems(
   }, [props?.items]);
 
   const { onFieldChanged } = props;
+
   useEffect(() => {
     onFieldChanged('items', items);
-  }, [items]);
+  }, [items, onFieldChanged]);
 
   // Sets form to selected item values when item is selected
   useEffect(() => {
@@ -392,7 +393,7 @@ export default function WidgetChoiceGuideItems(
       setMatrixOptions(selectedItem.matrix || matrixDefault);
       setActiveTab('1');
     }
-  }, [selectedItem, form]);
+  }, [selectedItem, form, firstTagType]);
 
   useEffect(() => {
     if (selectedOption) {
@@ -514,7 +515,7 @@ export default function WidgetChoiceGuideItems(
     }
 
     setDimensions( finalDimensions )
-  }, [ form.watch('type') ])
+  }, [ form, widget?.config?.choiceGuide?.choicesType ])
 
   function handleSaveItems() {
     const updatedProps = { ...props };

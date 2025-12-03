@@ -2,7 +2,7 @@ import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useProject } from '../../../../hooks/use-project';
 
 import { Button } from '@/components/ui/button';
@@ -73,11 +73,13 @@ export default function ProjectAuthenticationRequiredFields() {
     data,
     updateProject,
   } = useProject(['includeAuthConfig']);
-
-  const defaultLabels = requiredUserFields.reduce((acc: Record<string, string>, field) => {
-    acc[field.id] = '';
-    return acc;
-  }, {});
+  //could also ignore the error
+  const defaultLabels = useMemo(() => {
+    return requiredUserFields.reduce((acc: Record<string, string>, field) => {
+      acc[field.id] = '';
+      return acc;
+    }, {});
+  }, []);
 
   const defaults = useCallback(
     () => ({
@@ -88,7 +90,7 @@ export default function ProjectAuthenticationRequiredFields() {
       buttonText: data?.config?.auth?.provider?.openstad?.config?.requiredFields?.buttonText || '',
       info: data?.config?.auth?.provider?.openstad?.config?.requiredFields?.info || '',
     }),
-    [data?.config]
+    [defaultLabels, data?.config]
   );
 
   const form = useForm<z.infer<typeof formSchema>>({

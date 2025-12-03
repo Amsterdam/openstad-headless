@@ -111,7 +111,7 @@ export default function ProjectSettings() {
       setBasicAuthActive(data?.config?.basicAuth?.active)
       setBasicAuthInitial(false)
     }
-  }, [data, checkboxInitial]);
+  }, [data, checkboxInitial, basicAuthInitial, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
