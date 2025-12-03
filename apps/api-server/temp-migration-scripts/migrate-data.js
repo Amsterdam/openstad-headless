@@ -133,8 +133,8 @@ async function migrateData() {
     console.log("// //////");
     console.log("")
 
-    let newApiUsers
-    let oldToNewApiUserIdMap
+    let newApiUsers = [];
+    let oldToNewApiUserIdMap = new Map();
     const existingNewAuthUsers = []
     const createdNewAuthUsers = []
 
@@ -159,22 +159,30 @@ async function migrateData() {
     }
 
     try {
-        const writenewApiUsersPromises = oldUsers.map(async (oldUser) => {
-            try {
-                const authUserId = oldUser.email && !anonymizeUsers ? await getAuthUserId(oldUser) : null;
-                const newUser = await db.User.create(getNewApiUserData(oldUser, authUserId, anonymizeUsers, newProjectId));
-                return { newUser, oldUser };
-            } catch (err) {
-                console.error("Failed to create new user for oldUser:", {
-                    id: oldUser.id
-                });
-                console.error("Error details:", err);
-                throw err;
-            }
-        })
-        const results = await Promise.all(writenewApiUsersPromises);
-        newApiUsers = results.map(result => result.newUser)
-        oldToNewApiUserIdMap = new Map(results.map(result => [result.oldUser.id, result.newUser.id]))
+        for (let i = 0; i < oldUsers.length; i += batchSize) {
+            const batch = oldUsers.slice(i, i + batchSize);
+            console.log(`Processing batch ${Math.ceil(i / batchSize) + 1} of ${Math.ceil(oldUsers.length / batchSize)}...`);
+            
+            const writenewApiUsersPromises = batch.map(async (oldUser) => {
+                try {
+                    const authUserId = oldUser.email && !anonymizeUsers ? await getAuthUserId(oldUser) : null;
+                    const newUser = await db.User.create(getNewApiUserData(oldUser, authUserId, anonymizeUsers, newProjectId));
+                    return { newUser, oldUser };
+                } catch (err) {
+                    console.error("Failed to create new user for oldUser:", {
+                        id: oldUser.id
+                    });
+                    console.error("Error details:", err);
+                    throw err;
+                }
+            })
+            
+            const results = await Promise.all(writenewApiUsersPromises);
+            newApiUsers = newApiUsers.concat(results.map(result => result.newUser))
+            results.forEach(result => oldToNewApiUserIdMap.set(result.oldUser.id, result.newUser.id))
+            
+            console.log(`Batch ${Math.ceil(i / batchSize) + 1} completed. Total users migrated so far: ${newApiUsers.length}`);
+        }
 
     } catch (err) {
         console.error("Error writing new users to the new database:", err.message);
