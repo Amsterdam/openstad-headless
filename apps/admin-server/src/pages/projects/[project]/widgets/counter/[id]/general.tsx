@@ -170,7 +170,7 @@ export default function CounterDisplay(
                       Aantal gestemde gebruikers per plan
                     </SelectItem>
                     <SelectItem value="votedUsersPerProject">
-                      Aantal gestemde gebruikers per project
+                      Aantal gestemde gebruikers van dit project
                     </SelectItem>
                     <SelectItem value="argument">Aantal reacties</SelectItem>
                     <SelectItem value="choiceGuideResults">
