@@ -6,10 +6,21 @@ const createError = require('http-errors')
 const hasRole = require('../../lib/sequelize-authorization/lib/hasRole');
 const rateLimiter = require("@openstad-headless/lib/rateLimiter");
 
+
+const getDbPassword = async () => {
+	switch(process.env.DB_AUTH_METHOD) {
+		case 'azure-auth-token':
+			const { getAzureAuthToken } = require('../../../src/util/azure')
+			return await getAzureAuthToken()
+		default:
+			return dbConfig.password
+	}
+}
+
 const pool = mysql.createPool({
     host: dbConfig.host,
     user: dbConfig.user,
-    password: dbConfig.password,
+    password: getDbPassword(),
     database: dbConfig.database,
     waitForConnections: true,
     connectionLimit: 10,
@@ -77,6 +88,9 @@ router.route('/no-of-users')
                 res.json({count: counted})
             })
             .catch(err => {
+                console.error(err.stack || err);
+                console.error('Error message:', err.message);
+                console.error('Error code:', err.code);
                 next(err);
             })
 
