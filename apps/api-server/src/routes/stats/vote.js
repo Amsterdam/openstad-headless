@@ -6,6 +6,45 @@ const createError = require('http-errors')
 const hasRole = require('../../lib/sequelize-authorization/lib/hasRole');
 const rateLimiter = require("@openstad-headless/lib/rateLimiter");
 
+const getDbPassword = async () => {
+	switch(process.env.DB_AUTH_METHOD) {
+		case 'azure-auth-token':
+			const { getAzureAuthToken } = require('../../../src/util/azure')
+			return await getAzureAuthToken()
+		default:
+			return process.env.DB_PASSWORD
+	}
+}
+
+console.log('===== DB CONFIG DEBUG =====');
+console.log('DB config present:', !!dbConfig);
+console.log('DB config keys (excluding password):', dbConfig ? Object.keys(dbConfig).filter(k => k !== 'password') : 'missing');
+console.log('DB host:', dbConfig?.host);
+console.log('DB user:', dbConfig?.user);
+console.log('DB database:', dbConfig?.database);
+
+try {
+    const passwordPromise = getDbPassword();
+    if (passwordPromise && typeof passwordPromise.then === 'function') {
+        passwordPromise
+            .then(pw => {
+                const dbPasswordSnippet = dbConfig?.password?.slice(0, 2) || 'N/A';
+                const pwSnippet = pw?.slice(0, 2) || 'N/A';
+                console.log('dbConfig.password first 2 chars:', dbPasswordSnippet);
+                console.log('getDbPassword() first 2 chars:', pwSnippet);
+                console.log('Passwords match (first 2 chars):', dbPasswordSnippet === pwSnippet);
+            })
+            .catch(err => {
+                console.error('getDbPassword() rejected:', err);
+            });
+    } else {
+        console.log('getDbPassword() did not return a promise as expected');
+    }
+} catch (err) {
+    console.error('Error calling getDbPassword():', err);
+}
+console.log('===== END DB CONFIG DEBUG =====');
+
 const pool = mysql.createPool({
     host: dbConfig.host,
     user: dbConfig.user,
