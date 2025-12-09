@@ -90,12 +90,8 @@ router.route('/no-of-users')
                 res.json({count: counted})
             })
             .catch(err => {
-                console.error(err.stack || err);
-                console.error('Error message:', err.message);
-                console.error('Error code:', err.code);
                 next(err);
-            });
-
+            })
 
     })
 
