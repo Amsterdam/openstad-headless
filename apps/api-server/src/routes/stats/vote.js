@@ -26,7 +26,8 @@ const poolPromise = (async () => {
         database: dbConfig.database,
         waitForConnections: true,
         connectionLimit: 10,
-        queueLimit: 0
+        queueLimit: 0,
+        ssl: { rejectUnauthorized: false }
     }).promise();
 })();
 
