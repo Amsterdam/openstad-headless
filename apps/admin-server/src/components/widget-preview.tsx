@@ -28,14 +28,17 @@ export default function WidgetPreview({ type, config, projectId }: Props) {
     }
   }, [sessionData]);
 
-  const randomId = Math.floor(Math.random() * 1000000);
+  const idRef = React.useRef(Math.floor(Math.random() * 1000000));
+  const randomId = idRef.current;
+
+  const stableConfig = React.useMemo(() => config, [JSON.stringify(config)]);
 
   const fetchWidget = useCallback(() => {
     const previewContainer = document.querySelector(
       `#widget-preview-script-holder-${randomId}`
     );
 
-    if (previewContainer && projectId && config) {
+    if (previewContainer && projectId && stableConfig) {
       fetch(`/api/openstad/widget/preview?projectId=${projectId}`, {
         method: 'POST',
         headers: {
@@ -44,7 +47,7 @@ export default function WidgetPreview({ type, config, projectId }: Props) {
         },
         body: JSON.stringify({
           widgetType: type,
-          ...config,
+          ...stableConfig
         }),
       })
         .then((v) => {
@@ -67,7 +70,7 @@ export default function WidgetPreview({ type, config, projectId }: Props) {
         })
         .catch((e) => console.error(e));
     }
-  }, [config, projectId, type, randomId]);
+  }, [stableConfig, projectId, type, randomId]);
 
   useEffect(() => {
     fetchWidget();
