@@ -77,7 +77,7 @@ router.route('/no-of-users')
 
     // count unique users who voted
     // -----------
-    .get( function(req, res, next) {
+    .get( rateLimiter(), function(req, res, next) {
 
         let query = "SELECT count(DISTINCT votes.userId) AS counted FROM votes LEFT JOIN resources ON votes.resourceId = resources.id WHERE resources.projectId=? AND votes.deletedAt IS NULL AND (votes.checked IS NULL OR votes.checked = 1) AND resources.deletedAt IS NULL";
         let bindvars = [req.params.projectId]
