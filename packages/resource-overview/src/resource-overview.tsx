@@ -387,6 +387,20 @@ const defaultItemRenderer = (
 
           <div>
             <Spacer size={1} />
+            {props.displayStatusLabel && (
+              <>
+                <div className='osc-temporary-status-label'>
+                  <Paragraph className="osc-resource-overview-content-item-status">
+                    {
+                      resource.statuses?.map((statusTag: any) => (
+                        <span className={`status-label ${statusClasses}`}>TEST B {statusTag.label}</span>
+                      ))
+                    }
+                  </Paragraph>
+                </div>
+                <Spacer size={1} />
+              </>
+            )}
             {props.displayTitle ? (
               <Heading4>
                 <button className="resource-card--link_trigger" onClick={() => onItemClick && onItemClick()} dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.title, props.titleMaxLength || 20)}}></button>
