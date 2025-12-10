@@ -316,6 +316,17 @@ const defaultItemRenderer = (
               </Heading4>
             ) : null}
 
+            {props.displaySummary ? (
+              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
+            ) : null}
+
+            {props.displayDescription ? (
+              <Paragraph
+              className="osc-resource-overview-content-item-description"
+              dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}
+              />
+            ) : null}
+            
             {(displayOverviewTagGroups && resourceFilteredTags.length > 0) && (
               <>
                 <Spacer size={.5} />
@@ -326,17 +337,6 @@ const defaultItemRenderer = (
                 </div>
               </>
             )}
-
-            {props.displaySummary ? (
-              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
-            ) : null}
-
-            {props.displayDescription ? (
-              <Paragraph
-                className="osc-resource-overview-content-item-description"
-                dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}
-              />
-            ) : null}
           </div>
 
           <div className="osc-resource-overview-content-item-footer">
@@ -421,6 +421,15 @@ const defaultItemRenderer = (
               </Heading4>
             ) : null}
 
+
+            {props.displaySummary ? (
+              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
+            ) : null}
+
+            {props.displayDescription ? (
+              <Paragraph className="osc-resource-overview-content-item-description" dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}/>
+            ) : null}
+            
             {(displayOverviewTagGroups && resourceFilteredTags.length > 0) && (
               <>
                 <Spacer size={.5} />
@@ -431,14 +440,6 @@ const defaultItemRenderer = (
                 </div>
               </>
             )}
-
-            {props.displaySummary ? (
-              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
-            ) : null}
-
-            {props.displayDescription ? (
-              <Paragraph className="osc-resource-overview-content-item-description" dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}/>
-            ) : null}
           </div>
 
           <div className="osc-resource-overview-content-item-footer">
