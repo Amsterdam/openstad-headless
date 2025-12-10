@@ -302,7 +302,7 @@ const defaultItemRenderer = (
                   <Paragraph className="osc-resource-overview-content-item-status">
                     {
                       resource.statuses?.map((statusTag: any) => (
-                        <span className={`status-label ${statusClasses}`}>TEST B {statusTag.label}</span>
+                        <span className={`status-label ${statusClasses}`}>{statusTag.label}</span>
                       ))
                     }
                   </Paragraph>
@@ -407,7 +407,7 @@ const defaultItemRenderer = (
                   <Paragraph className="osc-resource-overview-content-item-status">
                     {
                       resource.statuses?.map((statusTag: any) => (
-                        <span className={`status-label ${statusClasses}`}>TEST B {statusTag.label}</span>
+                        <span className={`status-label ${statusClasses}`}>{statusTag.label}</span>
                       ))
                     }
                   </Paragraph>
