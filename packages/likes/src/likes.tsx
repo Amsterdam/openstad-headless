@@ -40,19 +40,20 @@ function Likes({
   title = '',
   variant = 'large',
   hideCounters,
-  yesLabel = 'Voor',
-  noLabel = 'Tegen',
+  yesLabel = 'Ja',
+  noLabel = 'Nee',
   displayDislike = false,
   showProgressBar = true,
   disabled = false,
   ...props
 }: LikeWidgetProps) {
-
-  let resourceId = String(getResourceId({
-    resourceId: parseInt(props.resourceId || ''),
-    url: document.location.href,
-    targetUrl: props.resourceIdRelativePath,
-  })); // todo: make it a number throughout the code
+  let resourceId = String(
+    getResourceId({
+      resourceId: parseInt(props.resourceId || ''),
+      url: document.location.href,
+      targetUrl: props.resourceIdRelativePath,
+    })
+  ); // todo: make it a number throughout the code
 
   const necessaryVotes = props.resources?.minimumYesVotes || 50;
 
@@ -82,9 +83,8 @@ function Likes({
   ];
 
   if (!displayDislike) {
-      supportedLikeTypes.pop();
+    supportedLikeTypes.pop();
   }
-
 
   useEffect(() => {
     let pending = session.get('osc-resource-vote-pending');
@@ -150,10 +150,8 @@ function Likes({
                 resource?.userVote?.opinion === likeVariant.type
                   ? 'selected'
                   : ''
-                } ${hideCounters ? 'osc-no-counter' : ''}`
-              }
-              disabled={disabled}
-            >
+              } ${hideCounters ? 'osc-no-counter' : ''}`}
+              disabled={disabled}>
               <section className="like-kind">
                 <i className={likeVariant.icon}></i>
                 {variant === 'small' ? null : likeVariant.label}
@@ -184,9 +182,7 @@ function Likes({
           {props?.resources?.minimumYesVotes &&
             showProgressBar &&
             props.progressBarDescription && (
-              <Heading6>
-                {props.progressBarDescription}
-              </Heading6>
+              <Heading6>{props.progressBarDescription}</Heading6>
             )}
         </div>
       </div>
