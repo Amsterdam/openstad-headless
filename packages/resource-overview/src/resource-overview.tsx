@@ -121,6 +121,7 @@ export type ResourceOverviewWidgetProps = BaseProps &
     applyText?: string;
     onFilteredResourcesChange?: (filteredResources: any[]) => void;
     onLocationChange?: (location: PostcodeAutoFillLocation) => void;
+    onMarkerResourceClick?: (resource: any, index: number) => void;
     displayLikeButton?: boolean;
     clickableImage?: boolean;
     displayBudget?: boolean;
@@ -176,6 +177,13 @@ const defaultHeaderRenderer = (
           givenResources={resources}
           selectedProjects={selectedProjects}
           locationProx={location}
+          onMarkerClick={
+            widgetProps.displayType === 'cardgrid'
+              ? (resource, index) => {
+                  widgetProps.onMarkerResourceClick?.(resource, index);
+                }
+              : undefined
+          }
         />
       }
       {displayHeader &&
@@ -956,7 +964,21 @@ function ResourceOverviewInner({
 
       <div className={`osc ${getDisplayVariant(displayVariant)}`}>
 
-        {displayBanner || displayMap ? renderHeader(props, (filteredResources || []), bannerText, displayBanner, (displayMap && !displayAsTabs), selectedProjects, location) : null}
+        {displayBanner || displayMap
+          ? renderHeader(
+              {
+                ...props,
+                displayType,
+                onMarkerResourceClick: onResourceClick,
+              },
+              filteredResources || [],
+              bannerText,
+              displayBanner,
+              displayMap && !displayAsTabs,
+              selectedProjects,
+              location
+            )
+          : null}
 
         <section
           className={`osc-resource-overview-content ${!filterNeccesary ? 'full' : ''

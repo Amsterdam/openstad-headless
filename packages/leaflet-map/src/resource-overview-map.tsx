@@ -32,8 +32,11 @@ const ResourceOverviewMap = ({
   locationProx = undefined,
   givenResources,
   selectedProjects = [],
+  onMarkerClick,
   ...props
-}: PropsWithChildren<ResourceOverviewMapWidgetProps>) => {
+}: PropsWithChildren<ResourceOverviewMapWidgetProps & {
+  onMarkerClick?: (resource: any, index: number) => void;
+}>) => {
   const datastore = new DataStore({
     projectId: props.projectId,
     api: props.api,
@@ -75,7 +78,7 @@ const ResourceOverviewMap = ({
     }
   }
   let currentMarkers =
-    allResources.map((resource: any) => {
+    allResources.map((resource: any, index: number) => {
       // TODO: types/resource does not exist yet
       let marker: MarkerProps = {
         location: resource?.location ? { ...resource.location } : undefined,
@@ -91,9 +94,14 @@ const ResourceOverviewMap = ({
           markerHref = markerHrefUrl;
         }
       }
-
-      if (marker.lat && marker.lng && markerHref) {
-        marker.href = markerHref.replace(/\[id\]/, resource.id);
+      if (marker.lat && marker.lng) {
+        if (onMarkerClick) {
+          marker.onClick = [
+            () => onMarkerClick(resource, index)
+          ];
+        } else if (markerHref) {
+          marker.href = markerHref.replace(/\[id\]/, resource.id);
+        }
       }
 
       if (marker.lat && marker.lng && categorizeByField && categories) {
