@@ -19,6 +19,7 @@ export type ResourceOverviewMapWidgetProps = BaseProps &
       label?: string;
       href?: string;
     }
+    itemLink?: string;
     givenResources?: Array<any>;
     resourceOverviewMapWidget?: dataLayerArray;
     selectedProjects?: Array<any>;

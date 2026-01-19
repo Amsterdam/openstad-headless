@@ -87,20 +87,24 @@ const ResourceOverviewMap = ({
       marker.lat = markerLatLng.lat;
       marker.lng = markerLatLng.lng;
 
-      if ( Array.isArray(selectedProjects) && selectedProjects.length > 0 ) {
-        const markerHrefUrl = selectedProjects.find((project) => project.id === resource.projectId)?.detailPageLink;
+      const projectHref =
+        Array.isArray(selectedProjects) && selectedProjects.length > 0
+          ? selectedProjects.find(
+              (project) => project.id === resource.projectId
+            )?.detailPageLink
+          : undefined;
 
-        if (markerHrefUrl) {
-          markerHref = markerHrefUrl;
-        }
-      }
       if (marker.lat && marker.lng) {
         if (onMarkerClick) {
           marker.onClick = [
             () => onMarkerClick(resource, index)
           ];
         } else if (markerHref) {
-          marker.href = markerHref.replace(/\[id\]/, resource.id);
+            const resolvedHref = projectHref || props.itemLink || markerHref;
+
+            if (resolvedHref) {
+              marker.href = resolvedHref.replace(/\[id\]/, resource.id);
+            }
         }
       }
 
