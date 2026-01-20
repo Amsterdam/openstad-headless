@@ -99,7 +99,7 @@ const ResourceOverviewMap = ({
           marker.onClick = [
             () => onMarkerClick(resource, index)
           ];
-        } else if (markerHref) {
+        } else {
             const resolvedHref = projectHref || props.itemLink || markerHref;
 
             if (resolvedHref) {
