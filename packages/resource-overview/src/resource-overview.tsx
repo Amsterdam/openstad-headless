@@ -304,37 +304,12 @@ const defaultItemRenderer = (
 
           <div>
             <Spacer size={1}/>
-            {props.displayStatusLabel && (
-              <>
-                <div className='osc-temporary-status-label'>
-                  <Paragraph className="osc-resource-overview-content-item-status">
-                    {
-                      resource.statuses?.map((statusTag: any) => (
-                        <span className={`status-label ${statusClasses}`}>{statusTag.label}</span>
-                      ))
-                    }
-                  </Paragraph>
-                </div>
-                <Spacer size={1} />
-              </>
-            )}
             {props.displayTitle ? (
                <Heading4>
                  <a href={getUrl()} className="resource-card--link_trigger" dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.title, props.titleMaxLength || 20)}}/>
               </Heading4>
             ) : null}
 
-            {props.displaySummary ? (
-              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
-            ) : null}
-
-            {props.displayDescription ? (
-              <Paragraph
-              className="osc-resource-overview-content-item-description"
-              dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}
-              />
-            ) : null}
-            
             {(displayOverviewTagGroups && resourceFilteredTags.length > 0) && (
               <>
                 <Spacer size={.5} />
@@ -345,6 +320,17 @@ const defaultItemRenderer = (
                 </div>
               </>
             )}
+
+            {props.displaySummary ? (
+              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
+            ) : null}
+
+            {props.displayDescription ? (
+              <Paragraph
+                className="osc-resource-overview-content-item-description"
+                dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}
+              />
+            ) : null}
           </div>
 
           <div className="osc-resource-overview-content-item-footer">
@@ -409,35 +395,12 @@ const defaultItemRenderer = (
 
           <div>
             <Spacer size={1} />
-            {props.displayStatusLabel && (
-              <>
-                <div className='osc-temporary-status-label'>
-                  <Paragraph className="osc-resource-overview-content-item-status">
-                    {
-                      resource.statuses?.map((statusTag: any) => (
-                        <span className={`status-label ${statusClasses}`}>{statusTag.label}</span>
-                      ))
-                    }
-                  </Paragraph>
-                </div>
-                <Spacer size={1} />
-              </>
-            )}
             {props.displayTitle ? (
               <Heading4>
                 <button className="resource-card--link_trigger" onClick={() => onItemClick && onItemClick()} dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.title, props.titleMaxLength || 20)}}></button>
               </Heading4>
             ) : null}
 
-
-            {props.displaySummary ? (
-              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
-            ) : null}
-
-            {props.displayDescription ? (
-              <Paragraph className="osc-resource-overview-content-item-description" dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}/>
-            ) : null}
-            
             {(displayOverviewTagGroups && resourceFilteredTags.length > 0) && (
               <>
                 <Spacer size={.5} />
@@ -448,6 +411,14 @@ const defaultItemRenderer = (
                 </div>
               </>
             )}
+
+            {props.displaySummary ? (
+              <Paragraph dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.summary, props.summaryMaxLength || 20)}}/>
+            ) : null}
+
+            {props.displayDescription ? (
+              <Paragraph className="osc-resource-overview-content-item-description" dangerouslySetInnerHTML={{__html: elipsizeHTML(resource.description, props.descriptionMaxLength || 30)}}/>
+            ) : null}
           </div>
 
           <div className="osc-resource-overview-content-item-footer">
