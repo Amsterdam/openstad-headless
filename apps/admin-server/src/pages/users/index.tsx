@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDebouncedValue } from 'rooks';
 import { PageLayout } from '../../components/ui/page-layout';
 import { ListHeading, Paragraph } from '../../components/ui/typography';
 import Link from 'next/link';
 import { useUsers, type userType } from '@/hooks/use-users';
-import { Plus, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Plus, ChevronRight, ChevronLeft, Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { sortTable } from '@/components/ui/sortTable';
 import { useRouter } from 'next/router';
 import * as XLSX from 'xlsx';
 
 const PAGE_SIZE = 20;
-const SEARCH_DEBOUNCE_MS = 300;
+const SEARCH_DEBOUNCE_MS = 600;
 
-type mergedType = {
+type MergedType = {
   [key: string]: userType & { key?: string };
 }
 
@@ -23,19 +23,21 @@ export default function Users() {
   const [searchQuery, setSearchQuery] = useState('');
   const [apiSearch] = useDebouncedValue(searchQuery, SEARCH_DEBOUNCE_MS);
 
-  const { data, metadata } = useUsers({ page: currentPage, pageSize: PAGE_SIZE, q: apiSearch || undefined });
+  const { data, metadata, isValidating } = useUsers({ page: currentPage, pageSize: PAGE_SIZE, q: apiSearch || undefined });
+  const lastDataRef = useRef<userType[] | null>(null);
   const [users, setUsers] = useState<userType[]>([]);
 
   useEffect(() => {
     if (!data) return;
-    const merged: mergedType = {};
+    lastDataRef.current = data;
+    const merged: MergedType = {};
     data.forEach((user: userType) => {
       const key = user.idpUser?.identifier && user.idpUser?.provider
         ? `${user.idpUser.provider}-*-${user.idpUser.identifier}`
         : (user.id?.toString() || 'unknown');
       merged[key] = user;
     });
-    setUsers(Object.keys(merged).map((k) => ({ ...merged[k], key: k })));
+    setUsers(Object.keys(merged).map((key) => ({ ...merged[key], key })));
   }, [data]);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function Users() {
     setFilterData(users);
   }, [users]);
 
-  if (!data) return null;
+  if (!data && !lastDataRef.current) return null;
 
   const exportData = (data: any[], fileName: string) => {
     const workbook = XLSX.utils.book_new();
@@ -102,7 +104,12 @@ export default function Users() {
             />
           </div>
 
-          <div className="p-6 bg-white rounded-md clear-right">
+          <div className="p-6 bg-white rounded-md clear-right relative">
+            {isValidating && (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-md z-10">
+                <Loader className="animate-spin" size={32} strokeWidth={2} />
+              </div>
+            )}
             <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 items-center py-2 px-2 border-b border-border">
               <ListHeading className="hidden lg:flex">
                 <button className="filter-button" onClick={(e) => setFilterData(sortTable('email', e, filterData))}>
@@ -151,18 +158,20 @@ export default function Users() {
                 </Paragraph>
                 <div className="flex gap-2">
                   <Button
+                    type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                    onClick={() => setCurrentPage((currentPage) => Math.max(0, currentPage - 1))}
                     disabled={metadata.page <= 0}
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Vorige
                   </Button>
                   <Button
+                    type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage((p) => Math.min(metadata.pageCount - 1, p + 1))}
+                    onClick={() => setCurrentPage((currentPage) => Math.min(metadata.pageCount - 1, currentPage + 1))}
                     disabled={metadata.page >= metadata.pageCount - 1}
                   >
                     Volgende
