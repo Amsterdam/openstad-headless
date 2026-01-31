@@ -3,11 +3,13 @@ import { PageLayout } from '../../components/ui/page-layout';
 import { ListHeading, Paragraph } from '../../components/ui/typography';
 import Link from 'next/link';
 import { useUsers, type userType } from '@/hooks/use-users';
-import { Plus, ChevronRight } from 'lucide-react';
+import { Plus, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { sortTable, searchTable } from '@/components/ui/sortTable';
 import { useRouter } from 'next/router';
 import * as XLSX from 'xlsx';
+
+const PAGE_SIZE = 20;
 
 type mergedType = {
   [key: string]: userType & { key?: string };
@@ -15,7 +17,8 @@ type mergedType = {
 
 export default function Users() {
   const router = useRouter();
-  const { data } = useUsers();
+  const [currentPage, setCurrentPage] = useState(0);
+  const { data, metadata } = useUsers({ page: currentPage, pageSize: PAGE_SIZE });
   const [ users, setUsers ] = useState<userType[]>([]);
 
   useEffect(() => {
@@ -139,6 +142,34 @@ export default function Users() {
                 </Link>
               ))}
             </ul>
+
+            {metadata && metadata.pageCount > 1 && (
+              <div className="flex items-center justify-between border-t border-border pt-4 mt-4">
+                <Paragraph className="text-sm text-muted-foreground">
+                  Pagina {metadata.page + 1} van {metadata.pageCount} ({metadata.totalCount} gebruikers)
+                </Paragraph>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                    disabled={metadata.page <= 0}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Vorige
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.min(metadata.pageCount - 1, p + 1))}
+                    disabled={metadata.page >= metadata.pageCount - 1}
+                  >
+                    Volgende
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </PageLayout>
