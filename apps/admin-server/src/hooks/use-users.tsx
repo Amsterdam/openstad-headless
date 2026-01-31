@@ -9,9 +9,33 @@ type userType = {
   };
 }
 
-function useUsers() {
+export type UsersPaginationOptions = {
+  page?: number;
+  pageSize?: number;
+  q?: string;
+};
 
-  const usersSwr = useSWR('/api/openstad/api/user');
+export type UsersPaginationMetadata = {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  totalCount: number;
+};
+
+function useUsers(options?: UsersPaginationOptions) {
+  const page = options?.page;
+  const pageSize = options?.pageSize ?? 20;
+  const q = options?.q?.trim();
+
+  const url =
+    page !== undefined
+      ? `/api/openstad/api/user?page=${page}&pageSize=${pageSize}${q ? `&q=${encodeURIComponent(q)}` : ''}`
+      : '/api/openstad/api/user';
+  const usersSwr = useSWR(url);
+  const res = usersSwr.data;
+  const paginated = res && !Array.isArray(res) && 'records' in res;
+  const data = paginated ? res.records : res;
+  const metadata = paginated ? res.metadata : undefined;
 
   async function createUser(user:userType) {
     let url = `/api/openstad/api/project/${user.projectId}/user`;
@@ -29,7 +53,7 @@ function useUsers() {
 
   }
 
-  return { ...usersSwr, createUser };
+  return { ...usersSwr, data, metadata, createUser };
 }
 
 export {
