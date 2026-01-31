@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useDebouncedValue } from 'rooks';
 import { PageLayout } from '../../components/ui/page-layout';
 import { ListHeading, Paragraph } from '../../components/ui/typography';
 import Link from 'next/link';
 import { useUsers, type userType } from '@/hooks/use-users';
 import { Plus, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { sortTable, searchTable } from '@/components/ui/sortTable';
+import { sortTable } from '@/components/ui/sortTable';
 import { useRouter } from 'next/router';
 import * as XLSX from 'xlsx';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 type mergedType = {
   [key: string]: userType & { key?: string };
@@ -18,27 +20,33 @@ type mergedType = {
 export default function Users() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
-  const { data, metadata } = useUsers({ page: currentPage, pageSize: PAGE_SIZE });
-  const [ users, setUsers ] = useState<userType[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [apiSearch] = useDebouncedValue(searchQuery, SEARCH_DEBOUNCE_MS);
+
+  const { data, metadata } = useUsers({ page: currentPage, pageSize: PAGE_SIZE, q: apiSearch || undefined });
+  const [users, setUsers] = useState<userType[]>([]);
 
   useEffect(() => {
-    // merge users
     if (!data) return;
-    let merged:mergedType = {};
-    data.map((user:userType) => {
-      let key = user.idpUser?.identifier && user.idpUser?.provider ? `${user.idpUser.provider}-*-${user.idpUser.identifier}` : ( user.id?.toString() || 'unknown' );
+    const merged: mergedType = {};
+    data.forEach((user: userType) => {
+      const key = user.idpUser?.identifier && user.idpUser?.provider
+        ? `${user.idpUser.provider}-*-${user.idpUser.identifier}`
+        : (user.id?.toString() || 'unknown');
       merged[key] = user;
-    })
-    setUsers( Object.keys(merged).map(key => ({ ...merged[key], key })) );
+    });
+    setUsers(Object.keys(merged).map((k) => ({ ...merged[k], key: k })));
   }, [data]);
 
-  const [filterData, setFilterData] = useState(data);
-  const [filterSearchType, setFilterSearchType] = useState<string>('');
-  const debouncedSearchTable = searchTable(setFilterData, filterSearchType);
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [apiSearch]);
+
+  const [filterData, setFilterData] = useState<userType[]>([]);
 
   useEffect(() => {
     setFilterData(users);
-  }, [users])
+  }, [users]);
 
   if (!data) return null;
 
@@ -83,21 +91,14 @@ export default function Users() {
         <div className="container py-6">
 
           <div className="float-right mb-4 flex gap-4">
-            <p className="text-xs font-medium text-muted-foreground self-center">Filter op:</p>
-            <select
-              className="p-2 rounded"
-              onChange={(e) => setFilterSearchType(e.target.value)}
-            >
-              <option value="">Alles</option>
-              <option value="email">E-mail</option>
-              <option value="name">Naam</option>
-              <option value="postcode">Postcode</option>
-            </select>
+            <p className="text-xs font-medium text-muted-foreground self-center">Zoeken (naam, e-mail, postcode):</p>
             <input
               type="text"
-              className='p-2 rounded'
+              className="p-2 rounded"
               placeholder="Zoeken..."
-              onChange={(e) => debouncedSearchTable(e.target.value, filterData, users)}
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
