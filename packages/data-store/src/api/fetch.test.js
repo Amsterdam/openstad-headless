@@ -68,6 +68,21 @@ describe('data-store fetch error enrichment', () => {
     });
   });
 
+  test('does not crash on network errors when window/document are unavailable', async () => {
+    delete global.window;
+    delete global.document;
+    global.fetch = vi.fn().mockRejectedValue(new Error('Failed to fetch'));
+
+    const api = { apiUrl: 'https://api.example.com' };
+    await expect(
+      doFetch.call(api, '/api/project/1/comment', { method: 'POST' })
+    ).rejects.toMatchObject({
+      message: 'Failed to fetch',
+      failureType: 'network_error',
+      clientErrorId: expect.any(String),
+    });
+  });
+
   test('throws invalid_json when success response body is not JSON', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,

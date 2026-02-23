@@ -2,15 +2,40 @@ var createError = require('http-errors');
 var statuses = require('statuses');
 
 module.exports = function (app) {
-  const submitFailureMethods = new Set(['POST', 'PUT', 'DELETE']);
-  const submitFailurePathPattern =
-    /\/api\/project\/\d+\/(resource|submission|comment)(\/|$)/;
+  const submitFailureMatchers = [
+    { method: 'POST', pattern: /^\/api\/project\/\d+\/resource\/?$/ },
+    { method: 'PUT', pattern: /^\/api\/project\/\d+\/resource\/\d+\/?$/ },
+    { method: 'DELETE', pattern: /^\/api\/project\/\d+\/resource\/\d+\/?$/ },
+    {
+      method: 'POST',
+      pattern: /^\/api\/project\/\d+\/resource\/\d+\/comment\/?$/,
+    },
+    {
+      method: 'PUT',
+      pattern: /^\/api\/project\/\d+\/resource\/\d+\/comment\/\d+\/?$/,
+    },
+    {
+      method: 'DELETE',
+      pattern: /^\/api\/project\/\d+\/resource\/\d+\/comment\/\d+\/?$/,
+    },
+    {
+      method: 'POST',
+      pattern:
+        /^\/api\/project\/\d+\/resource\/\d+\/comment\/\d+\/vote\/(yes|no)\/?$/,
+    },
+    { method: 'POST', pattern: /^\/api\/project\/\d+\/submission\/?$/ },
+    { method: 'POST', pattern: /^\/api\/project\/\d+\/choicesguide\/?$/ },
+    { method: 'POST', pattern: /^\/api\/project\/\d+\/vote(\/.*)?$/ },
+  ];
 
   function shouldLogSubmitFailure(req, status) {
     if (!req || status < 400) return false;
-    if (!submitFailureMethods.has(req.method)) return false;
-    const path = req.originalUrl || req.url || '';
-    return submitFailurePathPattern.test(path);
+    const method = req.method || '';
+    const rawPath = req.originalUrl || req.url || '';
+    const path = rawPath.split('?')[0];
+    return submitFailureMatchers.some(
+      (matcher) => matcher.method === method && matcher.pattern.test(path)
+    );
   }
 
   // We only get here when the request has not yet been handled by a route.

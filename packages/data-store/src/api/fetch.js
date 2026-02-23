@@ -28,6 +28,20 @@ function buildEnrichedError({
   return error;
 }
 
+function dispatchOscError(error) {
+  if (
+    typeof window === 'undefined' ||
+    typeof document === 'undefined' ||
+    typeof window.CustomEvent !== 'function' ||
+    typeof document.dispatchEvent !== 'function'
+  ) {
+    return;
+  }
+
+  let event = new window.CustomEvent('osc-error', { detail: error });
+  document.dispatchEvent(event);
+}
+
 export default async function doFetch(url = '', options = {}) {
   let self = this;
   let json;
@@ -61,8 +75,7 @@ export default async function doFetch(url = '', options = {}) {
         method,
         responseBody: null,
       });
-      let event = new window.CustomEvent('osc-error', { detail: error });
-      document.dispatchEvent(event);
+      dispatchOscError(error);
       throw error;
     }
 
@@ -88,8 +101,7 @@ export default async function doFetch(url = '', options = {}) {
         method,
         responseBody: bodyText || null,
       });
-      let event = new window.CustomEvent('osc-error', { detail: error });
-      document.dispatchEvent(event);
+      dispatchOscError(error);
       throw error;
     }
 
@@ -106,8 +118,7 @@ export default async function doFetch(url = '', options = {}) {
         method,
         responseBody: null,
       });
-      let event = new window.CustomEvent('osc-error', { detail: error });
-      document.dispatchEvent(event);
+      dispatchOscError(error);
       throw error;
     }
 
