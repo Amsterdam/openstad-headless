@@ -207,8 +207,14 @@ router
   .get(pagination.init)
   .get(function (req, res, next) {
     let { dbQuery } = req;
+    const hasByIdpUserFilter =
+      req.query.byIdpUser &&
+      req.query.byIdpUser.identifier &&
+      req.query.byIdpUser.provider;
     const shouldDedupeByIdpUser =
-      !req.params.projectId && req.query.uniqueByIdpUser !== '0';
+      !req.params.projectId &&
+      req.query.uniqueByIdpUser !== '0' &&
+      !hasByIdpUserFilter;
     const shouldExcludeAnonymous = req.query.excludeAnonymous === '1';
 
     dbQuery.where = {
@@ -243,8 +249,14 @@ router
     db.User.scope(...req.scope)
       .findAndCountAll(dbQuery)
       .then(function (result) {
+        const hasByIdpUserFilter =
+          req.query.byIdpUser &&
+          req.query.byIdpUser.identifier &&
+          req.query.byIdpUser.provider;
         const shouldDedupeByIdpUser =
-          !req.params.projectId && req.query.uniqueByIdpUser !== '0';
+          !req.params.projectId &&
+          req.query.uniqueByIdpUser !== '0' &&
+          !hasByIdpUserFilter;
         const rows = shouldDedupeByIdpUser
           ? dedupeUsersByIdentity(result.rows)
           : result.rows;
