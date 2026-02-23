@@ -29,7 +29,6 @@ function createReq(method, originalUrl) {
     url: originalUrl,
     params: { projectId: '1' },
     user: { id: 99, role: 'member' },
-    requestId: 'req-test-123',
   };
 }
 
@@ -54,6 +53,7 @@ describe('error handling submit-failure logging', () => {
     ['POST', '/api/project/1/vote'],
     ['POST', '/api/project/1/vote/anything'],
     ['POST', '/api/project/1/resource?nomail=1'],
+    ['DELETE', '/api/project/1/widget/4'],
   ])('logs failed submit for %s %s', (method, url) => {
     const { errorHandler } = createHarness();
     const req = createReq(method, url);
@@ -68,7 +68,6 @@ describe('error handling submit-failure logging', () => {
     expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
     const payload = JSON.parse(consoleErrorSpy.mock.calls[0][0]);
     expect(payload.type).toBe('submit_failure');
-    expect(payload.requestId).toBe('req-test-123');
     expect(payload.method).toBe(method);
     expect(payload.path).toBe(url);
     expect(payload.status).toBe(422);
@@ -76,15 +75,14 @@ describe('error handling submit-failure logging', () => {
     expect(payload.userId).toBe(99);
     expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ requestId: 'req-test-123', status: 422 })
+      expect.objectContaining({ status: 422 })
     );
   });
 
   test.each([
     ['GET', '/api/project/1/resource/2'],
-    ['POST', '/api/project/1/resource/duplicate'],
-    ['POST', '/api/project/1/widget'],
-    ['DELETE', '/api/project/1/comment/delete'],
+    ['POST', '/auth/project/1/login'],
+    ['DELETE', '/health'],
   ])('does not log for excluded endpoint %s %s', (method, url) => {
     const { errorHandler } = createHarness();
     const req = createReq(method, url);
@@ -99,7 +97,7 @@ describe('error handling submit-failure logging', () => {
     expect(consoleErrorSpy).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ requestId: 'req-test-123', status: 500 })
+      expect.objectContaining({ status: 500 })
     );
   });
 });

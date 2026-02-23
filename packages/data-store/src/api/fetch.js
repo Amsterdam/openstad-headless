@@ -2,14 +2,15 @@ function makeLocalErrorId() {
   if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
     return window.crypto.randomUUID();
   }
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  return `${Date.now().toString(36)}-${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
 }
 
 function buildEnrichedError({
   message,
   failureType,
   status,
-  requestId,
   clientErrorId,
   url,
   method,
@@ -19,12 +20,11 @@ function buildEnrichedError({
   error.name = 'OpenStadRequestError';
   error.failureType = failureType;
   error.status = status || null;
-  error.requestId = requestId || null;
   error.clientErrorId = clientErrorId || null;
   error.url = url;
   error.method = method;
   error.responseBody = responseBody || null;
-  error.referenceId = requestId || clientErrorId || null;
+  error.referenceId = clientErrorId || null;
   return error;
 }
 
@@ -48,14 +48,12 @@ export default async function doFetch(url = '', options = {}) {
 
   if (!options.suspense) {
     const method = (options.method || 'GET').toUpperCase();
-    const requestId = makeLocalErrorId();
+    const clientErrorId = makeLocalErrorId();
     const fullUrl = this.apiUrl + url;
 
     options.headers = options.headers || {};
     options.headers['Content-Type'] =
       options.headers['Content-Type'] || 'application/json';
-    options.headers['X-Request-Id'] =
-      options.headers['X-Request-Id'] || requestId;
 
     if (self.currentUserJWT) {
       options.headers['Authorization'] = 'Bearer ' + self.currentUserJWT;
@@ -69,8 +67,7 @@ export default async function doFetch(url = '', options = {}) {
         message: networkError?.message || 'Network request failed',
         failureType: 'network_error',
         status: null,
-        requestId: null,
-        clientErrorId: requestId,
+        clientErrorId,
         url,
         method,
         responseBody: null,
@@ -78,8 +75,6 @@ export default async function doFetch(url = '', options = {}) {
       dispatchOscError(error);
       throw error;
     }
-
-    const responseRequestId = response.headers.get('x-request-id') || requestId;
 
     if (!response.ok) {
       let bodyText = await response.text();
@@ -95,8 +90,7 @@ export default async function doFetch(url = '', options = {}) {
           body.error || body.message || response.statusText || 'Request failed',
         failureType: 'http_error',
         status: response.status,
-        requestId: responseRequestId,
-        clientErrorId: requestId,
+        clientErrorId,
         url,
         method,
         responseBody: bodyText || null,
@@ -112,8 +106,7 @@ export default async function doFetch(url = '', options = {}) {
         message: 'Invalid JSON response',
         failureType: 'invalid_json',
         status: response.status,
-        requestId: responseRequestId,
-        clientErrorId: requestId,
+        clientErrorId,
         url,
         method,
         responseBody: null,

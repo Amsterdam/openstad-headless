@@ -2,40 +2,16 @@ var createError = require('http-errors');
 var statuses = require('statuses');
 
 module.exports = function (app) {
-  const submitFailureMatchers = [
-    { method: 'POST', pattern: /^\/api\/project\/\d+\/resource\/?$/ },
-    { method: 'PUT', pattern: /^\/api\/project\/\d+\/resource\/\d+\/?$/ },
-    { method: 'DELETE', pattern: /^\/api\/project\/\d+\/resource\/\d+\/?$/ },
-    {
-      method: 'POST',
-      pattern: /^\/api\/project\/\d+\/resource\/\d+\/comment\/?$/,
-    },
-    {
-      method: 'PUT',
-      pattern: /^\/api\/project\/\d+\/resource\/\d+\/comment\/\d+\/?$/,
-    },
-    {
-      method: 'DELETE',
-      pattern: /^\/api\/project\/\d+\/resource\/\d+\/comment\/\d+\/?$/,
-    },
-    {
-      method: 'POST',
-      pattern:
-        /^\/api\/project\/\d+\/resource\/\d+\/comment\/\d+\/vote\/(yes|no)\/?$/,
-    },
-    { method: 'POST', pattern: /^\/api\/project\/\d+\/submission\/?$/ },
-    { method: 'POST', pattern: /^\/api\/project\/\d+\/choicesguide\/?$/ },
-    { method: 'POST', pattern: /^\/api\/project\/\d+\/vote(\/.*)?$/ },
-  ];
+  const submitFailureMethods = new Set(['POST', 'PUT', 'DELETE']);
+  const apiPathPattern = /^\/api(\/|$)/;
 
   function shouldLogSubmitFailure(req, status) {
     if (!req || status < 400) return false;
-    const method = req.method || '';
+    const method = (req.method || '').toUpperCase();
+    if (!submitFailureMethods.has(method)) return false;
     const rawPath = req.originalUrl || req.url || '';
     const path = rawPath.split('?')[0];
-    return submitFailureMatchers.some(
-      (matcher) => matcher.method === method && matcher.pattern.test(path)
-    );
+    return apiPathPattern.test(path);
   }
 
   // We only get here when the request has not yet been handled by a route.
@@ -57,13 +33,10 @@ module.exports = function (app) {
     var message = err.message || err.error;
     message = message && message.replace(/Validation error:?\s*/, '');
     var errorStack = showDebug ? stack : '';
-    var requestId = req.requestId || null;
-
     if (shouldLogSubmitFailure(req, status)) {
       console.error(
         JSON.stringify({
           type: 'submit_failure',
-          requestId,
           method: req.method,
           path: req.originalUrl || req.url || '',
           status,
@@ -76,7 +49,6 @@ module.exports = function (app) {
 
     res.status(status);
     res.json({
-      requestId,
       status: status,
       friendlyStatus: friendlyStatus,
       message: message,

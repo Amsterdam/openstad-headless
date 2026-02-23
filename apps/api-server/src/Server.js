@@ -7,7 +7,6 @@ var log = require('debug')('app:http');
 const morgan = require('morgan');
 const db = require('./db');
 const rateLimiter = require('@openstad-headless/lib/rateLimiter');
-const requestIdMiddleware = require('./middleware/request-id');
 
 module.exports = {
   app: undefined,
@@ -24,7 +23,6 @@ module.exports = {
     this.app.set('trust proxy', true);
     this.app.set('view engine', 'njk');
     this.app.set('env', process.env.NODE_APP_INSTANCE || 'development');
-    this.app.use(requestIdMiddleware);
     this.app.use(rateLimiter());
 
     if (process.env.REQUEST_LOGGING === 'ON') {

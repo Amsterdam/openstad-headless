@@ -32,12 +32,11 @@ describe('data-store fetch error enrichment', () => {
     vi.restoreAllMocks();
   });
 
-  test('attaches requestId/status for HTTP errors', async () => {
+  test('attaches client reference/status for HTTP errors', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 422,
       statusText: 'Unprocessable Entity',
-      headers: { get: (key) => (key === 'x-request-id' ? 'req-abc' : null) },
       text: async () => JSON.stringify({ message: 'Validation failed' }),
     });
 
@@ -48,8 +47,8 @@ describe('data-store fetch error enrichment', () => {
       message: 'Validation failed',
       failureType: 'http_error',
       status: 422,
-      requestId: 'req-abc',
-      referenceId: 'req-abc',
+      clientErrorId: 'client-id-123',
+      referenceId: 'client-id-123',
     });
   });
 
@@ -62,7 +61,6 @@ describe('data-store fetch error enrichment', () => {
     ).rejects.toMatchObject({
       message: 'Failed to fetch',
       failureType: 'network_error',
-      requestId: null,
       clientErrorId: 'client-id-123',
       referenceId: 'client-id-123',
     });
@@ -87,7 +85,6 @@ describe('data-store fetch error enrichment', () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      headers: { get: (key) => (key === 'x-request-id' ? 'req-json' : null) },
       json: async () => {
         throw new Error('Unexpected token < in JSON');
       },
@@ -99,8 +96,8 @@ describe('data-store fetch error enrichment', () => {
     ).rejects.toMatchObject({
       message: 'Invalid JSON response',
       failureType: 'invalid_json',
-      requestId: 'req-json',
-      referenceId: 'req-json',
+      clientErrorId: 'client-id-123',
+      referenceId: 'client-id-123',
     });
   });
 });
