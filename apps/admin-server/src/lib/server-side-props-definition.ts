@@ -12,8 +12,6 @@ export const withWhitelistedEmails = (async () => {
     .split(/[\n,]/)
     .map((e) => e.trim())
     .filter(Boolean);
-  console.log('WHITELISTED_EMAILS raw:', process.env.WHITELISTED_EMAILS);
-  console.log('whitelistedEmails parsed:', whitelistedEmails);
   return { props: { whitelistedEmails } };
 }) satisfies GetServerSideProps<{ whitelistedEmails: string[] }>;
 
