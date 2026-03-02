@@ -3,7 +3,7 @@ import {
   Select,
   SelectTrigger,
   SelectValue,
-  SelectContent,
+  SelectContentScrollable,
   SelectItem,
 } from '@/components/ui/select'
 
@@ -18,22 +18,22 @@ export function WhitelistedEmailSelect({ field, whitelistedEmails }: Props) {
   ).filter((email): email is string => Boolean(email))
 
   return (
-    <Select key={field.value} onValueChange={field.onChange} value={field.value}>
+    <Select key={field.value} name={field.name} onValueChange={field.onChange} value={field.value}>
       <SelectTrigger>
         <SelectValue placeholder="" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContentScrollable>
         {emailOptions.map((email) => {
           const isWhitelisted = whitelistedEmails.includes(email)
 
           return (
             <SelectItem key={email} value={email}>
               {email}
-              {!isWhitelisted && " (unwhitelisted)"}
+              {!isWhitelisted && " (Let op: ongeldige afzendadres)"}
             </SelectItem>
           )
         })}
-      </SelectContent>
+      </SelectContentScrollable>
     </Select>
   )
 }
