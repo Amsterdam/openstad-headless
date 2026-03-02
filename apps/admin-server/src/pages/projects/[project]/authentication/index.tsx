@@ -9,7 +9,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { WhitelistedEmailSelect } from '@/components/ui/whitelisted-email-select';
 import InfoDialog from '@/components/ui/info-hover';
 import { Input } from '@/components/ui/input';
 import { PageLayout } from '@/components/ui/page-layout';
@@ -20,9 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { withWhitelistedEmails, WithWhitelistedEmailsProps } from '@/lib/server-side-props-definition';
 import { Separator } from '@/components/ui/separator';
 import { Heading } from '@/components/ui/typography';
+import { WhitelistedEmailSelect } from '@/components/ui/whitelisted-email-select';
+import {
+  WithWhitelistedEmailsProps,
+  withWhitelistedEmails,
+} from '@/lib/server-side-props-definition';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -35,7 +38,7 @@ import * as z from 'zod';
 
 import { useProject } from '../../../../hooks/use-project';
 
-export const getServerSideProps = withWhitelistedEmails
+export const getServerSideProps = withWhitelistedEmails;
 
 const authTypes = [
   {
@@ -77,7 +80,9 @@ const formSchema = z.object({
     .optional(),
 });
 
-export default function ProjectAuthentication({ whitelistedEmails }: WithWhitelistedEmailsProps) {
+export default function ProjectAuthentication({
+  whitelistedEmails,
+}: WithWhitelistedEmailsProps) {
   const router = useRouter();
   const { project } = router.query;
   const { data, updateProject } = useProject(['includeAuthConfig']);
@@ -477,7 +482,7 @@ export default function ProjectAuthentication({ whitelistedEmails }: WithWhiteli
                                 whitelistedEmails={whitelistedEmails}
                               />
                             ) : (
-                                <Input placeholder="" {...field} />
+                              <Input placeholder="" {...field} />
                             )}
                           </FormControl>
                           <FormMessage />

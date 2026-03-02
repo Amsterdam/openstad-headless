@@ -8,12 +8,23 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import InfoDialog from '@/components/ui/info-hover';
 import { Input } from '@/components/ui/input';
 import { PageLayout } from '@/components/ui/page-layout';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Heading } from '@/components/ui/typography';
+import { WhitelistedEmailSelect } from '@/components/ui/whitelisted-email-select';
+import {
+  WithWhitelistedEmailsProps,
+  withWhitelistedEmails,
+} from '@/lib/server-side-props-definition';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -21,12 +32,10 @@ import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as z from 'zod';
-import { withWhitelistedEmails, WithWhitelistedEmailsProps } from '@/lib/server-side-props-definition';
 
 import { useProject } from '../../../../hooks/use-project';
-import { WhitelistedEmailSelect } from '@/components/ui/whitelisted-email-select';
 
-export const getServerSideProps = withWhitelistedEmails
+export const getServerSideProps = withWhitelistedEmails;
 
 const formSchema = z.object({
   fromAddress: z.string().email(),
@@ -34,7 +43,9 @@ const formSchema = z.object({
   fromName: z.string().optional(),
 });
 
-export default function ProjectSettingsNotifications({ whitelistedEmails }: WithWhitelistedEmailsProps) {
+export default function ProjectSettingsNotifications({
+  whitelistedEmails,
+}: WithWhitelistedEmailsProps) {
   const category = 'notifications';
 
   const router = useRouter();
@@ -122,7 +133,7 @@ export default function ProjectSettingsNotifications({ whitelistedEmails }: With
                           whitelistedEmails={whitelistedEmails}
                         />
                       ) : (
-                          <Input placeholder="" {...field} />
+                        <Input placeholder="" {...field} />
                       )}
                     </FormControl>
                     <FormMessage />
