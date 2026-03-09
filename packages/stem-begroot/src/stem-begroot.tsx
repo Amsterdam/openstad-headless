@@ -99,6 +99,7 @@ export type StemBegrootWidgetProps = BaseProps &
     step1Add?: string;
     step1MaxText?: string;
     filterBehavior?: string;
+    redirectAfterVoteUrl?: string;
   };
 
 function StemBegroot({
@@ -120,6 +121,7 @@ function StemBegroot({
   step1Add = 'Voeg toe',
   step1MaxText = '',
   filterBehavior = 'or',
+  redirectAfterVoteUrl = '',
   ...props
 }: StemBegrootWidgetProps) {
   const voteResultStorage = React.useMemo(
@@ -965,9 +967,13 @@ function StemBegroot({
                       notifyVoteMessage(err.message, true);
                     }
                   } else if (currentStep === 4) {
-                    voteResultStorage.setVoteResult(false);
-                    setVoteResult(false)
-                    setCurrentStep(0)
+                    if (redirectAfterVoteUrl) {
+                      window.location.href = redirectAfterVoteUrl;
+                    } else {
+                      voteResultStorage.setVoteResult(false);
+                      setVoteResult(false)
+                      setCurrentStep(0)
+                    }
                   } else {
                     setCurrentStep(currentStep + 1);
                   }
