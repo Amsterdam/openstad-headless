@@ -78,6 +78,7 @@
     "fast-xml-parser": "5.3.8",
     "oembetter": {
       "fast-xml-parser": "$fast-xml-parser"
-    }
+    },
+    "ajv": "^8.18.0"
   }
 }
