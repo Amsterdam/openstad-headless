@@ -90,13 +90,11 @@ export const FilterableResourceGrid = ({
         `${resource?.projectId || ''}:${resource?.title || ''}:${resource?.createdAt || ''}`
     );
 
-  // Memoize intTags to avoid creating new array on every render
   const intTags = useMemo(() => {
     // @ts-ignore
     return tags.map((tag) => parseInt(tag, 10));
   }, [tags]);
 
-  // Memoize groupedTags to avoid creating new object references on every render
   const groupedTags = useMemo(() => {
     const grouped: { [key: string]: number[] } = {};
 
@@ -115,7 +113,6 @@ export const FilterableResourceGrid = ({
     return grouped;
   }, [intTags, allTags]);
 
-  // Memoize the filtering and sorting logic to avoid unnecessary recalculations
   const tagIntegers = tags.map((tag: any) => parseInt(tag, 10));
   const filtered = useMemo(() => {
     return (
@@ -206,10 +203,8 @@ export const FilterableResourceGrid = ({
     groupedTags,
   ]);
 
-  // Use ref to track previous filtered value to avoid infinite loops
   const prevFilteredRef = useRef<string>('');
 
-  // Update filtered resources in useEffect to avoid infinite loops
   useEffect(() => {
     if (setFilteredResources && filtered) {
       const currentFilteredString = JSON.stringify(filtered);

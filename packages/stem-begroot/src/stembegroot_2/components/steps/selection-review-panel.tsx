@@ -11,8 +11,8 @@ import {
 import '@utrecht/design-tokens/dist/root.css';
 import React from 'react';
 
-import type { TagType } from '../types';
-import { BudgetStatusPanel } from './BudgetStatusPanel';
+import type { TagType } from '../../types';
+import { BudgetStatusPanel } from '../budget/budget-status-panel';
 
 type Props = {
   selectedResources: Array<any>;
@@ -30,7 +30,7 @@ type Props = {
   tagCounter?: Array<TagType>;
 };
 
-export const Step2SelectionReview = ({
+export const SelectionReviewPanel = ({
   budgetUsed,
   maxBudget,
   maxNrOfResources,

@@ -106,13 +106,11 @@ export const ResourceDetailModal = ({
     ((index: number) => void) | null
   >(null);
 
-  // Memoize intTags to avoid creating new array on every render
   const intTags = useMemo(() => {
     // @ts-ignore
     return tags.map((tag) => parseInt(tag, 10));
   }, [tags]);
 
-  // Memoize groupedTags to avoid creating new object references on every render
   const groupedTags = useMemo(() => {
     const grouped: { [key: string]: number[] } = {};
 
@@ -131,7 +129,6 @@ export const ResourceDetailModal = ({
     return grouped;
   }, [intTags, allTags]);
 
-  // Memoize the filtering and sorting logic to avoid unnecessary recalculations
   const filtered = useMemo(() => {
     return (
       resources &&
@@ -215,14 +212,11 @@ export const ResourceDetailModal = ({
     groupedTags,
   ]);
 
-  // Use ref to track previous filtered value to avoid infinite loops
   const prevFilteredRef = useRef<string>('');
 
-  // Update filtered resources in useEffect to avoid infinite loops
   useEffect(() => {
     if (setFilteredResources && filtered) {
       const currentFilteredString = JSON.stringify(filtered);
-      // Only update if the content has actually changed
       if (currentFilteredString !== prevFilteredRef.current) {
         prevFilteredRef.current = currentFilteredString;
         setFilteredResources(filtered);
@@ -327,9 +321,6 @@ export const ResourceDetailModal = ({
                         }
                       }}
                     />
-                    {/* <div>
-                    <Button className="osc-begrootmodule-load-map-button"></Button>
-                  </div> */}
                     {isSimpleView === false && (
                       <div className="osc-gridder-resource-detail-budget-theme-bar">
                         <Heading4>Budget</Heading4>

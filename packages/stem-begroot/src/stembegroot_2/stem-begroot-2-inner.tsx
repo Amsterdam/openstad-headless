@@ -12,18 +12,18 @@ import NotificationProvider from '../../../lib/NotificationProvider/notification
 import '../stem-begroot.css';
 import { createSelectedResourcesStorage } from '../utils/selected-resources-storage';
 import { createVotePendingStorage } from '../utils/vote-pending-storage';
-import { BudgetUsedBar } from './components/BudgetUsedBar';
-import { FilterableResourceGrid } from './components/FilterableResourceGrid';
-import { ResourceDetailModal } from './components/ResourceDetailModal';
-import { StemBegrootNavigation } from './components/StemBegrootNavigation';
-import { StemCodeRedirectStep } from './components/StemCodeRedirectStep';
-import { StemCodeSuccessBanner } from './components/StemCodeSuccessBanner';
-import { Step1ChosenResourcesPanel } from './components/Step1ChosenResourcesPanel';
-import { Step2SelectionReview } from './components/Step2SelectionReview';
-import { ThemePickerStep } from './components/ThemePickerStep';
-import { VoteFinishedStep } from './components/VoteFinishedStep';
-import { useStemBegroot2Selections } from './hooks/useStemBegroot2Selections';
-import { useStemBegroot2VoteFlow } from './hooks/useStemBegroot2VoteFlow';
+import { BudgetUsedBar } from './components/budget/budget-used-bar';
+import { StemBegrootNavigation } from './components/navigation/stem-begroot-navigation';
+import { FilterableResourceGrid } from './components/resources/filterable-resource-grid';
+import { ResourceDetailModal } from './components/resources/resource-detail-modal';
+import { ChosenResourcesPanel } from './components/steps/chosen-resources-panel';
+import { SelectionReviewPanel } from './components/steps/selection-review-panel';
+import { StemCodeRedirectStep } from './components/steps/stem-code-redirect-step';
+import { StemCodeSuccessBanner } from './components/steps/stem-code-success-banner';
+import { ThemePickerStep } from './components/steps/theme-picker-step';
+import { VoteFinishedStep } from './components/steps/vote-finished-step';
+import { useStemBegroot2Selections } from './hooks/use-stem-begroot-2-selections';
+import { useStemBegroot2VoteFlow } from './hooks/use-stem-begroot-2-vote-flow';
 import type { StemBegroot2WidgetProps } from './types';
 
 function StemBegroot2Inner({
@@ -257,7 +257,7 @@ function StemBegroot2Inner({
           )}
 
           {currentStep === 0 ? (
-            <Step1ChosenResourcesPanel
+            <ChosenResourcesPanel
               panelTitle={props.panelTitle}
               budgetChosenTitle={props.budgetChosenTitle}
               budgetRemainingTitle={props.budgetRemainingTitle}
@@ -290,7 +290,7 @@ function StemBegroot2Inner({
           {currentStep === 1 ? (
             <>
               <Spacer size={1.5} />
-              <Step2SelectionReview
+              <SelectionReviewPanel
                 panelTitle={props.panelTitle}
                 budgetChosenTitle={props.budgetChosenTitle}
                 budgetRemainingTitle={props.budgetRemainingTitle}

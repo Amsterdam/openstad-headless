@@ -1,7 +1,7 @@
 import { loadWidget } from '@openstad-headless/lib/load-widget';
 import React from 'react';
 
-import { StemBegroot2Inner } from './StemBegroot2Inner';
+import { StemBegroot2Inner } from './stem-begroot-2-inner';
 import type { StemBegroot2WidgetProps } from './types';
 
 export function StemBegroot2(props: StemBegroot2WidgetProps) {

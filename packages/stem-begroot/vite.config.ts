@@ -20,7 +20,7 @@ export default defineConfig(({ command }) => {
       build: {
         lib: {
           formats: ['iife'],
-          entry: 'src/stembegroot_2/StemBegroot2.tsx',
+          entry: 'src/stembegroot_2/stem-begroot-2.tsx',
           name: 'OpenstadHeadlessStemBegroot',
         },
         rollupOptions: {

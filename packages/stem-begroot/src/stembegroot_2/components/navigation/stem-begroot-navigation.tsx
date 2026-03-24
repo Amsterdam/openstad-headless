@@ -5,17 +5,13 @@ import React from 'react';
 
 type Props = {
   currentStep: number;
-
   stemCodeTitleSuccess: string;
   loginUrlForStemCodeSuccess: string;
-
   showNewsletterButton: boolean;
   newsLetterTitle: string;
   newsLetterLink: string;
-
   onPrev: () => void;
   onNext: () => Promise<void>;
-
   nextDisabled: boolean;
   nextLabel: string;
 };
@@ -39,7 +35,6 @@ export function StemBegrootNavigation({
           Vorige
         </Button>
       ) : null}
-
       {currentStep === 3 ? (
         <Button
           appearance="secondary-action-button"
@@ -50,8 +45,6 @@ export function StemBegrootNavigation({
           {stemCodeTitleSuccess}
         </Button>
       ) : null}
-
-      {/* Dont show on voting step if you are on step 2 your not logged in*/}
       {currentStep !== 2 && currentStep !== -1 ? (
         <>
           {currentStep === 4 && showNewsletterButton && (
@@ -62,7 +55,6 @@ export function StemBegrootNavigation({
               {newsLetterTitle}
             </ButtonLink>
           )}
-
           <Button
             appearance="primary-action-button"
             onClick={async () => {

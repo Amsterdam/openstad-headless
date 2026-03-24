@@ -10,11 +10,11 @@ import {
 import '@utrecht/design-tokens/dist/root.css';
 import React, { Dispatch, SetStateAction } from 'react';
 
-import type { TagType } from '../types';
-import { BudgetStatusPanel } from './BudgetStatusPanel';
-import './step1-chosen-resources-panel.css';
+import type { TagType } from '../../types';
+import { BudgetStatusPanel } from '../budget/budget-status-panel';
+import './chosen-resources-panel.css';
 
-export const Step1ChosenResourcesPanel = ({
+export const ChosenResourcesPanel = ({
   introText = '',
   selectedResources = [],
   allResourceInList = [],

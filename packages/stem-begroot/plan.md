@@ -14,3 +14,9 @@ Goal: same behaviour as the original widget, split into clearly named pieces und
 
 - Thin `stem-begroot.tsx` to types + re-exports only and drop the duplicate 1.5k-line implementation.
 - Split `StemBegroot2.tsx` orchestration into hooks (`usePendingVote`, `useSelections`, …) if you want the main file under ~300 lines.
+
+nieuw
+
+stemcode maakt nieuwe gebruiker aan
+je kan dan instellen of de gebruiker nog een keer mag stemmen (melding deze gebruiker heeft al gestemd, dat checkt de api server)
+en of zijn stem wel of niet zijn oude invoer overschrijft
