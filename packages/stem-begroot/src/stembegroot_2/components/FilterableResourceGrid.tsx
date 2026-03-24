@@ -1,0 +1,399 @@
+import { canLikeResource } from '@openstad-headless/lib';
+import { deterministicRandomSort } from '@openstad-headless/lib';
+import { elipsizeHTML } from '@openstad-headless/lib/ui-helpers';
+import {
+  Carousel,
+  Icon,
+  Image,
+  List,
+  Pill,
+  Spacer,
+} from '@openstad-headless/ui/src';
+import '@utrecht/component-library-css';
+import {
+  Button,
+  Heading,
+  Heading5,
+  Link,
+  Paragraph,
+} from '@utrecht/component-library-react';
+import '@utrecht/design-tokens/dist/root.css';
+import React, { useEffect, useMemo, useRef } from 'react';
+
+export const FilterableResourceGrid = ({
+  resources,
+  onResourcePlainClicked,
+  onResourcePrimaryClicked,
+  resourceBtnEnabled,
+  resourceBtnTextHandler,
+  defineOriginalUrl,
+  displayPriceLabel = true,
+  displayRanking = true,
+  showVoteCount = true,
+  resourceListColumns = 3,
+  statusIdsToLimitResourcesTo = [],
+  sort = '',
+  allTags = [],
+  tags = [],
+  activeTagTab = '',
+  voteType = 'likes',
+  typeSelector = 'tag',
+  setFilteredResources,
+  filteredResources = [],
+  hideTagsForResources = false,
+  hideReadMore = false,
+  currentPage = 0,
+  pageSize = 999,
+  filterBehavior = 'or',
+  randomSortSeed = 1,
+  showOriginalResource = true,
+  displayTitle = true,
+  displaySummary = true,
+  header,
+}: {
+  resourceListColumns?: number;
+  resources: Array<any>;
+  selectedResources: Array<any>;
+  statusIdsToLimitResourcesTo?: Array<any>;
+  tagIdsToLimitResourcesTo?: Array<any>;
+  sort?: string;
+  onResourcePlainClicked: (resource: any, index: number) => void;
+  onResourcePrimaryClicked: (resource: any) => void;
+  resourceBtnTextHandler: (resource: any) => string;
+  resourceBtnEnabled: (resource: any) => boolean;
+  defineOriginalUrl: (resource: any) => string | null;
+  displayPriceLabel?: boolean;
+  displayRanking?: boolean;
+  showVoteCount?: boolean;
+  showOriginalResource?: boolean;
+  originalResourceUrl?: string;
+  allTags?: Array<any>;
+  tags?: Array<any>;
+  header?: React.JSX.Element;
+  activeTagTab?: string;
+  typeSelector?: string;
+  voteType?: string;
+  setFilteredResources?: (resources: Array<any>) => void;
+  filteredResources?: Array<any>;
+  hideTagsForResources?: boolean;
+  hideReadMore?: boolean;
+  currentPage: number;
+  pageSize: number;
+  filterBehavior?: string;
+  randomSortSeed?: number;
+  displayTitle?: boolean;
+  displaySummary?: boolean;
+}) => {
+  const getResourceStableKey = (resource: any) =>
+    String(
+      resource?.id ||
+        `${resource?.projectId || ''}:${resource?.title || ''}:${resource?.createdAt || ''}`
+    );
+
+  // Memoize intTags to avoid creating new array on every render
+  const intTags = useMemo(() => {
+    // @ts-ignore
+    return tags.map((tag) => parseInt(tag, 10));
+  }, [tags]);
+
+  // Memoize groupedTags to avoid creating new object references on every render
+  const groupedTags = useMemo(() => {
+    const grouped: { [key: string]: number[] } = {};
+
+    intTags.forEach((tagId: any) => {
+      // @ts-ignore
+      const tag = allTags.find((tag) => tag.id === tagId);
+      if (tag) {
+        const tagType = tag.type;
+        if (!grouped[tagType]) {
+          grouped[tagType] = [];
+        }
+        grouped[tagType].push(tagId);
+      }
+    });
+
+    return grouped;
+  }, [intTags, allTags]);
+
+  // Memoize the filtering and sorting logic to avoid unnecessary recalculations
+  const tagIntegers = tags.map((tag: any) => parseInt(tag, 10));
+  const filtered = useMemo(() => {
+    return (
+      resources &&
+      (Object.keys(groupedTags).length === 0
+        ? resources
+        : resources.filter((resource: any) => {
+            if (tags.length > 0) {
+              if (filterBehavior === 'and') {
+                return tagIntegers.every((tagId) =>
+                  resource.tags?.some((tag: { id: number }) => tag.id === tagId)
+                );
+              } else {
+                return resource.tags?.some((tag: { id: number }) =>
+                  tagIntegers.includes(tag.id)
+                );
+              }
+            }
+          })
+      )
+        ?.filter((resource: any) => {
+          if (voteType === 'countPerTag' || voteType === 'budgetingPerTag') {
+            if (typeSelector === 'tag') {
+              return resource?.tags?.some(
+                (tag: { name: string }) => tag.name === activeTagTab
+              );
+            } else {
+              return resource?.tags?.some(
+                (tag: { type: string }) => tag.type === activeTagTab
+              );
+            }
+          }
+          return true;
+        })
+        ?.filter(
+          (resource: any) =>
+            !statusIdsToLimitResourcesTo ||
+            statusIdsToLimitResourcesTo.length === 0 ||
+            statusIdsToLimitResourcesTo?.some(
+              (statusId) =>
+                resource.statuses &&
+                Array.isArray(resource.statuses) &&
+                resource.statuses?.some(
+                  (o: { id: number }) => o.id === statusId
+                )
+            )
+        )
+        ?.sort((a: any, b: any) => {
+          if (sort === 'createdAt_desc') {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          }
+          if (sort === 'createdAt_asc') {
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+          }
+          if (sort === 'votes_desc' || sort === 'ranking') {
+            return (b.yes || 0) - (a.yes || 0);
+          }
+          if (sort === 'votes_asc') {
+            return (a.yes || 0) - (b.yes || 0);
+          }
+          if (sort === 'title') {
+            return a.title.localeCompare(b.title);
+          }
+          if (sort === 'random') {
+            return deterministicRandomSort(
+              a,
+              b,
+              randomSortSeed,
+              getResourceStableKey
+            );
+          }
+          return 0;
+        })
+    );
+  }, [
+    resources,
+    tags,
+    sort,
+    statusIdsToLimitResourcesTo,
+    activeTagTab,
+    voteType,
+    typeSelector,
+    filterBehavior,
+    groupedTags,
+  ]);
+
+  // Use ref to track previous filtered value to avoid infinite loops
+  const prevFilteredRef = useRef<string>('');
+
+  // Update filtered resources in useEffect to avoid infinite loops
+  useEffect(() => {
+    if (setFilteredResources && filtered) {
+      const currentFilteredString = JSON.stringify(filtered);
+      if (currentFilteredString !== prevFilteredRef.current) {
+        prevFilteredRef.current = currentFilteredString;
+        setFilteredResources(filtered);
+      }
+    }
+  }, [filtered, setFilteredResources]);
+
+  return (
+    <List
+      id="stem-begroot-resource-selections-list"
+      columns={resourceListColumns}
+      items={(filtered || [])?.slice(
+        currentPage * pageSize,
+        (currentPage + 1) * pageSize
+      )}
+      renderHeader={() => header || <></>}
+      renderItem={(resource, index) => {
+        const primaryBtnText = resourceBtnTextHandler(resource);
+        const primaryBtnDisabled = !resourceBtnEnabled(resource);
+        const canVoteByStatus = canLikeResource(resource);
+        const originalUrl = defineOriginalUrl(resource);
+
+        let defaultImage = '';
+
+        interface Tag {
+          name: string;
+          defaultResourceImage?: string;
+        }
+
+        if (Array.isArray(resource?.tags)) {
+          const sortedTags = resource.tags.sort((a: Tag, b: Tag) =>
+            a.name.localeCompare(b.name)
+          );
+          const tagWithImage = sortedTags.find(
+            (tag: Tag) => tag.defaultResourceImage
+          );
+          defaultImage = tagWithImage?.defaultResourceImage || '';
+        }
+
+        const resourceImages =
+          Array.isArray(resource.images) && resource.images.length > 0
+            ? resource.images
+            : [{ url: defaultImage }];
+        const hasImages =
+          Array.isArray(resourceImages) &&
+          resourceImages.length > 0 &&
+          resourceImages[0].url !== ''
+            ? ''
+            : 'resource-has-no-images';
+
+        return (
+          <>
+            <article
+              className={`stem-begroot--container ${hasImages} ${!canVoteByStatus ? 'resource-vote-disabled' : ''}`.trim()}>
+              <Carousel
+                items={resourceImages}
+                buttonText={{
+                  next: 'Volgende afbeelding',
+                  previous: 'Vorige afbeelding',
+                }}
+                itemRenderer={(i) => <Image src={i.url} />}
+              />
+              {!hideTagsForResources && (
+                <section className="stembegroot-content-item-header">
+                  <div className="stembegroot-content-item-header-taglist">
+                    <Heading level={2} appearance="utrecht-heading-6">
+                      Tags
+                    </Heading>
+                    <div className="pill-grid stembegroot">
+                      {(
+                        resource.tags as Array<{
+                          type: string;
+                          name: string;
+                          seqnr?: number;
+                        }>
+                      )
+                        ?.filter((t) => t.type !== 'status')
+                        ?.sort(
+                          (a: { seqnr?: number }, b: { seqnr?: number }) => {
+                            if (a.seqnr === undefined || a.seqnr === null)
+                              return 1;
+                            if (b.seqnr === undefined || b.seqnr === null)
+                              return -1;
+                            return a.seqnr - b.seqnr;
+                          }
+                        )
+                        ?.map((t) => (
+                          <span>{t.name || 'Geen thema'}</span>
+                        ))}
+                    </div>
+                  </div>
+                </section>
+              )}
+              {displayTitle ? (
+                <Heading
+                  level={2}
+                  appearance="utrecht-heading-4"
+                  dangerouslySetInnerHTML={{ __html: resource.title }}
+                />
+              ) : null}
+              {displaySummary ? (
+                <Paragraph
+                  dangerouslySetInnerHTML={{
+                    __html: elipsizeHTML(resource.summary, 100),
+                  }}
+                />
+              ) : null}
+              <Paragraph
+                dangerouslySetInnerHTML={{
+                  __html: elipsizeHTML(resource.description, 200),
+                }}
+              />
+              {showOriginalResource && originalUrl ? (
+                <Paragraph className="strong">
+                  Dit is een vervolg op plan:&nbsp;
+                  <Link target="_blank" href={originalUrl}>
+                    {originalUrl}
+                  </Link>
+                </Paragraph>
+              ) : null}
+
+              <div className="stembegroot--infolabels">
+                {displayPriceLabel ? (
+                  <div className="price">
+                    <Heading level={3} appearance="utrecht-heading-5">
+                      &euro;{resource.budget?.toLocaleString('nl-NL') || 0}
+                    </Heading>
+                  </div>
+                ) : null}
+                {showVoteCount ? (
+                  <div className="osc-stem-begroot-content-item-footer">
+                    <>
+                      <Icon
+                        icon="ri-thumb-up-line"
+                        variant="regular"
+                        text={resource.yes}
+                      />
+                      <Icon
+                        icon="ri-thumb-down-line"
+                        variant="regular"
+                        text={resource.no}
+                      />
+                      {displayRanking && resource.extraData?.ranking ? (
+                        <Icon
+                          icon="ri-trophy-line"
+                          variant="regular"
+                          text={resource.extraData?.ranking}
+                        />
+                      ) : null}
+                    </>
+                  </div>
+                ) : null}
+                <Spacer size={0.5} />
+              </div>
+
+              <div className="osc-stem-begroot-content-item-footer">
+                {!hideReadMore && (
+                  <Button
+                    appearance="secondary-action-button"
+                    className="osc-stem-begroot-item-action-btn"
+                    onClick={(e) => {
+                      onResourcePlainClicked(resource, index);
+                      e.currentTarget.classList.add('active-resource');
+                    }}>
+                    Lees meer
+                  </Button>
+                )}
+                <Button
+                  disabled={primaryBtnDisabled}
+                  className="osc-stem-begroot-item-action-btn"
+                  onClick={() => {
+                    onResourcePrimaryClicked(resource);
+                  }}
+                  appearance="primary-action-button">
+                  {primaryBtnText}
+                </Button>
+              </div>
+            </article>
+          </>
+        );
+      }}
+    />
+  );
+};

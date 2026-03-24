@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Widget embed test · localhost:31410</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, sans-serif;
+        line-height: 1.5;
+      }
+      body {
+        margin: 0 auto;
+        padding: 1.5rem;
+        max-width: 42rem;
+      }
+      code {
+        font-size: 0.9em;
+        padding: 0.15em 0.35em;
+        border-radius: 4px;
+        background: color-mix(in srgb, CanvasText 8%, transparent);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Widget embed test</h1>
+    <p>
+      This page loads the widget script from
+      <code>http://localhost:31410/widget/1</code>. Start your widget server on
+      port 31410, then open this file over HTTP (see below) or refresh after the
+      server is up.
+    </p>
+    <p>
+      <strong>Serve this folder</strong> (avoids file:// quirks):
+      <code>npx serve .</code> from
+      <code>packages/stem-begroot/widget-test</code>
+    </p>
+    <script
+      src="http://localhost:31410/widget/1"
+      type="text/javascript"></script>
+  </body>
+</html>

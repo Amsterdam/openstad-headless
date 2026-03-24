@@ -1,0 +1,492 @@
+import { ResourceDetailMap } from '@openstad-headless/leaflet-map/src/resource-detail-map';
+import { deterministicRandomSort } from '@openstad-headless/lib';
+import {
+  Icon,
+  IconButton,
+  Image,
+  Pill,
+  SecondaryButton,
+  Spacer,
+} from '@openstad-headless/ui/src';
+import { Carousel } from '@openstad-headless/ui/src';
+import { Dialog } from '@openstad-headless/ui/src';
+import '@utrecht/component-library-css';
+import {
+  Button,
+  Heading,
+  Heading1,
+  Heading4,
+  Heading5,
+  Link,
+  Paragraph,
+  Strong,
+} from '@utrecht/component-library-react';
+import '@utrecht/design-tokens/dist/root.css';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+
+import './resource-detail-modal.css';
+
+export const ResourceDetailModal = ({
+  openDetailDialog,
+  setOpenDetailDialog,
+  resourceDetailIndex,
+  resources,
+  onPrimaryButtonClick,
+  resourceBtnTextHandler,
+  resourceBtnEnabled,
+  defineOriginalUrl,
+  displayPriceLabel,
+  displayRanking,
+  showVoteCount,
+  showOriginalResource = true,
+  originalResourceUrl,
+  isSimpleView,
+  areaId,
+  statusIdsToLimitResourcesTo = [],
+  sort = '',
+  allTags = [],
+  tags = [],
+  activeTagTab = '',
+  voteType = 'likes',
+  typeSelector = 'tag',
+  setFilteredResources,
+  filteredResources = [],
+  currentPage = 0,
+  pageSize = 999,
+  filterBehavior = 'or',
+  randomSortSeed = 1,
+  displayModBreak = false,
+  modBreakTitle = '',
+  displayTitle = true,
+  displaySummary = true,
+  displayDescription = true,
+}: {
+  openDetailDialog: boolean;
+  setOpenDetailDialog: (condition: boolean) => void;
+  resources: Array<any>;
+  onPrimaryButtonClick: (resource: any) => void;
+  resourceDetailIndex: number;
+  defineOriginalUrl: (resource: any) => string | null;
+  resourceBtnTextHandler: (resource: any) => string;
+  resourceBtnEnabled: (resource: any) => boolean;
+  displayPriceLabel: boolean;
+  displayRanking: boolean;
+  showVoteCount: boolean;
+  showOriginalResource?: boolean;
+  originalResourceUrl?: string;
+  isSimpleView: boolean;
+  areaId: string;
+  statusIdsToLimitResourcesTo?: Array<any>;
+  tagIdsToLimitResourcesTo?: Array<any>;
+  sort?: string;
+  allTags?: Array<any>;
+  tags?: Array<any>;
+  activeTagTab?: string;
+  typeSelector?: string;
+  voteType?: string;
+  setFilteredResources?: (resources: Array<any>) => void;
+  filteredResources?: Array<any>;
+  currentPage: number;
+  pageSize: number;
+  filterBehavior?: string;
+  randomSortSeed?: number;
+  modBreakTitle?: string;
+  displayModBreak?: boolean;
+  displayTitle?: boolean;
+  displaySummary?: boolean;
+  displayDescription?: boolean;
+}) => {
+  const getResourceStableKey = (resource: any) =>
+    String(
+      resource?.id ||
+        `${resource?.projectId || ''}:${resource?.title || ''}:${resource?.createdAt || ''}`
+    );
+
+  const [carouselIndexSetter, setCarouselIndexSetter] = useState<
+    ((index: number) => void) | null
+  >(null);
+
+  // Memoize intTags to avoid creating new array on every render
+  const intTags = useMemo(() => {
+    // @ts-ignore
+    return tags.map((tag) => parseInt(tag, 10));
+  }, [tags]);
+
+  // Memoize groupedTags to avoid creating new object references on every render
+  const groupedTags = useMemo(() => {
+    const grouped: { [key: string]: number[] } = {};
+
+    intTags.forEach((tagId: any) => {
+      // @ts-ignore
+      const tag = allTags.find((tag) => tag.id === tagId);
+      if (tag) {
+        const tagType = tag.type;
+        if (!grouped[tagType]) {
+          grouped[tagType] = [];
+        }
+        grouped[tagType].push(tagId);
+      }
+    });
+
+    return grouped;
+  }, [intTags, allTags]);
+
+  // Memoize the filtering and sorting logic to avoid unnecessary recalculations
+  const filtered = useMemo(() => {
+    return (
+      resources &&
+      (Object.keys(groupedTags).length === 0
+        ? resources
+        : resources.filter((resource: any) => {
+            return Object.keys(groupedTags).every((tagType) => {
+              return groupedTags[tagType].some(
+                (tagId) =>
+                  resource.tags &&
+                  Array.isArray(resource.tags) &&
+                  resource.tags.some((o: { id: number }) => o.id === tagId)
+              );
+            });
+          })
+      )
+        ?.filter((resource: any) => {
+          if (voteType === 'countPerTag' || voteType === 'budgetingPerTag') {
+            if (typeSelector === 'tag') {
+              return resource.tags?.some(
+                (tag: { name: string }) => tag.name === activeTagTab
+              );
+            } else {
+              return resource.tags?.some(
+                (tag: { type: string }) => tag.type === activeTagTab
+              );
+            }
+          }
+          return true;
+        })
+        ?.filter(
+          (resource: any) =>
+            !statusIdsToLimitResourcesTo ||
+            statusIdsToLimitResourcesTo.length === 0 ||
+            statusIdsToLimitResourcesTo.some(
+              (statusId) =>
+                resource.statuses &&
+                Array.isArray(resource.statuses) &&
+                resource.statuses.some((o: { id: number }) => o.id === statusId)
+            )
+        )
+        ?.sort((a: any, b: any) => {
+          if (sort === 'createdAt_desc') {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          }
+          if (sort === 'createdAt_asc') {
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+          }
+          if (sort === 'votes_desc' || sort === 'ranking') {
+            return (b.yes || 0) - (a.yes || 0);
+          }
+          if (sort === 'votes_asc') {
+            return (a.yes || 0) - (b.yes || 0);
+          }
+          if (sort === 'title') {
+            return a.title.localeCompare(b.title);
+          }
+          if (sort === 'random') {
+            return deterministicRandomSort(
+              a,
+              b,
+              randomSortSeed,
+              getResourceStableKey
+            );
+          }
+          return 0;
+        })
+    );
+  }, [
+    resources,
+    tags,
+    sort,
+    statusIdsToLimitResourcesTo,
+    activeTagTab,
+    voteType,
+    typeSelector,
+    groupedTags,
+  ]);
+
+  // Use ref to track previous filtered value to avoid infinite loops
+  const prevFilteredRef = useRef<string>('');
+
+  // Update filtered resources in useEffect to avoid infinite loops
+  useEffect(() => {
+    if (setFilteredResources && filtered) {
+      const currentFilteredString = JSON.stringify(filtered);
+      // Only update if the content has actually changed
+      if (currentFilteredString !== prevFilteredRef.current) {
+        prevFilteredRef.current = currentFilteredString;
+        setFilteredResources(filtered);
+      }
+    }
+  }, [filtered, setFilteredResources]);
+
+  const handleBeforeIndexChange = () => {
+    if (carouselIndexSetter) {
+      carouselIndexSetter(0);
+    }
+  };
+
+  return (
+    <Dialog
+      open={openDetailDialog}
+      onOpenChange={setOpenDetailDialog}
+      className="begrootmodule-dialog"
+      children={
+        <Carousel
+          startIndex={resourceDetailIndex}
+          buttonText={{
+            next: 'Volgende inzending',
+            previous: 'Vorige inzending',
+          }}
+          items={(filtered || [])?.slice(
+            currentPage * pageSize,
+            (currentPage + 1) * pageSize
+          )}
+          beforeIndexChange={handleBeforeIndexChange}
+          itemRenderer={(resource) => {
+            const canUseButton = resourceBtnEnabled(resource);
+            const primaryButtonText = resourceBtnTextHandler(resource);
+            const originalUrl = defineOriginalUrl(resource);
+
+            let defaultImage = '';
+
+            interface Tag {
+              name: string;
+              defaultResourceImage?: string;
+            }
+
+            if (Array.isArray(resource?.tags)) {
+              const sortedTags = resource.tags.sort((a: Tag, b: Tag) =>
+                a.name.localeCompare(b.name)
+              );
+              const tagWithImage = sortedTags.find(
+                (tag: Tag) => tag.defaultResourceImage
+              );
+              defaultImage = tagWithImage?.defaultResourceImage || '';
+            }
+
+            let resourceImages: any[] = [];
+
+            if (resource?.location) {
+              resourceImages.push({ location: resource?.location });
+            }
+
+            if (
+              Array.isArray(resource?.images) &&
+              resource?.images.length > 0
+            ) {
+              resourceImages = [...resource?.images, ...resourceImages];
+            }
+
+            let hasImages = '';
+
+            if (resourceImages.length === 0) {
+              resourceImages = [{ url: defaultImage || '' }];
+
+              if (!defaultImage) {
+                hasImages = 'resource-has-no-images';
+              }
+            }
+
+            return (
+              <>
+                <div className="osc-begrootmodule-resource-detail">
+                  <section
+                    className={`osc-begrootmodule-resource-detail-photo ${hasImages}`}>
+                    <Carousel
+                      items={resourceImages}
+                      buttonText={{
+                        next: 'Volgende afbeelding',
+                        previous: 'Vorige afbeelding',
+                      }}
+                      setIndexInParent={setCarouselIndexSetter}
+                      itemRenderer={(i) => {
+                        if (i.url) {
+                          return <Image src={i.url} />;
+                        } else if (resource?.location) {
+                          return (
+                            <ResourceDetailMap
+                              resourceId={resource?.id}
+                              {...resource}
+                              center={resource?.location}
+                              map={{ areaId: areaId }}
+                            />
+                          );
+                        } else {
+                          return <></>;
+                        }
+                      }}
+                    />
+                    {/* <div>
+                    <Button className="osc-begrootmodule-load-map-button"></Button>
+                  </div> */}
+                    {isSimpleView === false && (
+                      <div className="osc-gridder-resource-detail-budget-theme-bar">
+                        <Heading4>Budget</Heading4>
+                        <Paragraph>
+                          &euro;{' '}
+                          {resource?.budget > 0
+                            ? resource?.budget?.toLocaleString('nl-NL')
+                            : 0}
+                        </Paragraph>
+                        <Spacer size={1} />
+                        <Heading4>Tags</Heading4>
+                        <Spacer size={0.5} />
+                        <div className="pill-grid">
+                          {(
+                            resource?.tags as Array<{
+                              type: string;
+                              name: string;
+                              seqnr?: number;
+                            }>
+                          )
+                            ?.filter((t) => t.type !== 'status')
+                            ?.sort(
+                              (
+                                a: { seqnr?: number },
+                                b: { seqnr?: number }
+                              ) => {
+                                if (a.seqnr === undefined || a.seqnr === null)
+                                  return 1;
+                                if (b.seqnr === undefined || b.seqnr === null)
+                                  return -1;
+                                return a.seqnr - b.seqnr;
+                              }
+                            )
+                            ?.map((t) => (
+                              <Pill text={t.name || 'Geen thema'} />
+                            ))}
+                        </div>
+                        {showOriginalResource && originalUrl ? (
+                          <>
+                            <Spacer size={1} />
+                            <Link
+                              target="_blank"
+                              href={originalUrl}
+                              className="ams-standalone-link">
+                              {originalUrl}
+                            </Link>
+                          </>
+                        ) : null}
+                      </div>
+                    )}
+                  </section>
+
+                  <section className="osc-begrootmodule-resource-detail-texts-and-actions-container">
+                    <div>
+                      <div>
+                        <div>
+                          {displayTitle ? (
+                            <Heading1
+                              dangerouslySetInnerHTML={{
+                                __html: resource?.title,
+                              }}
+                            />
+                          ) : null}
+                          {displaySummary ? (
+                            <Paragraph
+                              className="strong"
+                              dangerouslySetInnerHTML={{
+                                __html: resource?.summary,
+                              }}
+                            />
+                          ) : null}
+                          {displayDescription ? (
+                            <Paragraph
+                              dangerouslySetInnerHTML={{
+                                __html: resource?.description,
+                              }}
+                            />
+                          ) : null}
+
+                          {displayModBreak && resource.modBreak && (
+                            <div className="resource-detail-modbreak-banner">
+                              <section>
+                                <Heading
+                                  level={2}
+                                  appearance="utrecht-heading-6">
+                                  {modBreakTitle}
+                                </Heading>
+                                <Heading
+                                  level={2}
+                                  appearance="utrecht-heading-6">
+                                  {resource.modBreakDateHumanized}
+                                </Heading>
+                              </section>
+                              <Spacer size={1} />
+                              <Heading level={2} appearance="utrecht-heading-6">
+                                {resource.modBreak}
+                              </Heading>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <Spacer size={2} />
+
+                      {originalUrl && showOriginalResource ? (
+                        <>
+                          <Paragraph className="strong">
+                            Dit een vervolg op het volgende plan:&nbsp;
+                            <Link target="_blank" href={originalUrl}>
+                              {originalUrl}
+                            </Link>
+                          </Paragraph>
+                        </>
+                      ) : null}
+
+                      <div className="osc-stem-begroot-content-item-footer">
+                        {showVoteCount ? (
+                          <>
+                            <Icon
+                              icon="ri-thumb-up-line"
+                              variant="regular"
+                              text={resource?.yes}
+                            />
+                            <Icon
+                              icon="ri-thumb-down-line"
+                              variant="regular"
+                              text={resource?.no}
+                            />
+                          </>
+                        ) : null}
+
+                        {displayRanking ? (
+                          <Icon
+                            icon="ri-trophy-line"
+                            variant="regular"
+                            text={resource?.extraData?.ranking || 0}
+                          />
+                        ) : null}
+                      </div>
+                    </div>
+                    <Spacer size={1} />
+                    <div className="osc-begrootmodule-resource-detail-actions">
+                      <Button
+                        appearance="primary-action-button"
+                        disabled={!canUseButton}
+                        onClick={() => {
+                          onPrimaryButtonClick?.(resource);
+                        }}>
+                        {primaryButtonText}
+                      </Button>
+                    </div>
+                  </section>
+                </div>
+              </>
+            );
+          }}></Carousel>
+      }
+    />
+  );
+};
