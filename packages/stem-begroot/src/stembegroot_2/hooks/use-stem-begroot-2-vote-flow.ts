@@ -2,9 +2,15 @@ import { hasRole } from '@openstad-headless/lib';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import NotificationService from '../../../../lib/NotificationProvider/notification-service';
+import type { StemBegroot2WidgetProps } from '../types';
+
+type VoteFlowPropsSlice = Pick<
+  StemBegroot2WidgetProps,
+  'votes' | 'api' | 'projectId'
+>;
 
 type VoteFlowArgs = {
-  props: any;
+  props: VoteFlowPropsSlice;
   currentUser: any;
 
   // Step navigation
