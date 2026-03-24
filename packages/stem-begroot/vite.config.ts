@@ -1,7 +1,13 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 import { prefix } from '../lib/prefix';
+
+const testConfig = {
+  environment: 'jsdom' as const,
+  include: ['src/**/*.test.{ts,tsx}'],
+  passWithNoTests: false,
+};
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -10,6 +16,7 @@ export default defineConfig(({ command }) => {
     return {
       plugins: [react()],
       css: prefix(),
+      test: testConfig,
     };
     // During build, use the classic runtime and build as an IIFE so we can deliver it to the browser
   } else {
@@ -33,6 +40,7 @@ export default defineConfig(({ command }) => {
           },
         },
       },
+      test: testConfig,
     };
   }
 });
