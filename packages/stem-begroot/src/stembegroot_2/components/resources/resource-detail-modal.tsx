@@ -24,9 +24,9 @@ import {
 import '@utrecht/design-tokens/dist/root.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import './stem-begroot-detail-dialog.css';
+import './resource-detail-modal.css';
 
-export const StemBegrootResourceDetailDialog = ({
+export const ResourceDetailModal = ({
   openDetailDialog,
   setOpenDetailDialog,
   resourceDetailIndex,
@@ -35,7 +35,6 @@ export const StemBegrootResourceDetailDialog = ({
   resourceBtnTextHandler,
   resourceBtnEnabled,
   defineOriginalUrl,
-  defineOriginalUrlText,
   displayPriceLabel,
   displayRanking,
   showVoteCount,
@@ -68,7 +67,6 @@ export const StemBegrootResourceDetailDialog = ({
   onPrimaryButtonClick: (resource: any) => void;
   resourceDetailIndex: number;
   defineOriginalUrl: (resource: any) => string | null;
-  defineOriginalUrlText: (resource: any) => string | null;
   resourceBtnTextHandler: (resource: any) => string;
   resourceBtnEnabled: (resource: any) => boolean;
   displayPriceLabel: boolean;
@@ -101,22 +99,18 @@ export const StemBegrootResourceDetailDialog = ({
   const getResourceStableKey = (resource: any) =>
     String(
       resource?.id ||
-        `${resource?.projectId || ''}:${resource?.title || ''}:${
-          resource?.createdAt || ''
-        }`
+        `${resource?.projectId || ''}:${resource?.title || ''}:${resource?.createdAt || ''}`
     );
 
   const [carouselIndexSetter, setCarouselIndexSetter] = useState<
     ((index: number) => void) | null
   >(null);
 
-  // Memoize intTags to avoid creating new array on every render
   const intTags = useMemo(() => {
     // @ts-ignore
     return tags.map((tag) => parseInt(tag, 10));
   }, [tags]);
 
-  // Memoize groupedTags to avoid creating new object references on every render
   const groupedTags = useMemo(() => {
     const grouped: { [key: string]: number[] } = {};
 
@@ -135,7 +129,6 @@ export const StemBegrootResourceDetailDialog = ({
     return grouped;
   }, [intTags, allTags]);
 
-  // Memoize the filtering and sorting logic to avoid unnecessary recalculations
   const filtered = useMemo(() => {
     return (
       resources &&
@@ -219,14 +212,11 @@ export const StemBegrootResourceDetailDialog = ({
     groupedTags,
   ]);
 
-  // Use ref to track previous filtered value to avoid infinite loops
   const prevFilteredRef = useRef<string>('');
 
-  // Update filtered resources in useEffect to avoid infinite loops
   useEffect(() => {
     if (setFilteredResources && filtered) {
       const currentFilteredString = JSON.stringify(filtered);
-      // Only update if the content has actually changed
       if (currentFilteredString !== prevFilteredRef.current) {
         prevFilteredRef.current = currentFilteredString;
         setFilteredResources(filtered);
@@ -261,7 +251,6 @@ export const StemBegrootResourceDetailDialog = ({
             const canUseButton = resourceBtnEnabled(resource);
             const primaryButtonText = resourceBtnTextHandler(resource);
             const originalUrl = defineOriginalUrl(resource);
-            const originalUrlText = defineOriginalUrlText(resource);
 
             let defaultImage = '';
 
@@ -332,9 +321,6 @@ export const StemBegrootResourceDetailDialog = ({
                         }
                       }}
                     />
-                    {/* <div>
-                    <Button className="osc-begrootmodule-load-map-button"></Button>
-                  </div> */}
                     {isSimpleView === false && (
                       <div className="osc-gridder-resource-detail-budget-theme-bar">
                         <Heading4>Budget</Heading4>
@@ -379,7 +365,7 @@ export const StemBegrootResourceDetailDialog = ({
                               target="_blank"
                               href={originalUrl}
                               className="ams-standalone-link">
-                              {originalUrlText}
+                              {originalUrl}
                             </Link>
                           </>
                         ) : null}
@@ -439,6 +425,17 @@ export const StemBegrootResourceDetailDialog = ({
 
                       <Spacer size={2} />
 
+                      {originalUrl && showOriginalResource ? (
+                        <>
+                          <Paragraph className="strong">
+                            Dit een vervolg op het volgende plan:&nbsp;
+                            <Link target="_blank" href={originalUrl}>
+                              {originalUrl}
+                            </Link>
+                          </Paragraph>
+                        </>
+                      ) : null}
+
                       <div className="osc-stem-begroot-content-item-footer">
                         {showVoteCount ? (
                           <>
@@ -470,9 +467,7 @@ export const StemBegrootResourceDetailDialog = ({
                         appearance="primary-action-button"
                         disabled={!canUseButton}
                         onClick={() => {
-                          onPrimaryButtonClick;
-                          onPrimaryButtonClick &&
-                            onPrimaryButtonClick(resource);
+                          onPrimaryButtonClick?.(resource);
                         }}>
                         {primaryButtonText}
                       </Button>

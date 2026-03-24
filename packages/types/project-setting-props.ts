@@ -1,3 +1,5 @@
+import type { ProjectVotesVoteType } from './project-votes-vote-type';
+
 export type ProjectSettingProps = {
   allowedDomains: Array<string>;
   project: {
@@ -59,7 +61,7 @@ export type ProjectSettingProps = {
     requiredUserRole: string;
     mustConfirm: boolean;
     withExisting: string;
-    voteType: string;
+    voteType: ProjectVotesVoteType;
     voteValues: Array<{ label: string; value: string }>;
     maxResources: number;
     minResources: number;

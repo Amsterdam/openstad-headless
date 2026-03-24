@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { StemBegroot, StemBegrootWidgetProps } from './stem-begroot.js';
+import {
+  StemBegroot2,
+  StemBegroot2WidgetProps,
+} from './stembegroot_2/index.js';
 
-const config: StemBegrootWidgetProps = {
+const config = {
   api: {
     url: import.meta.env.VITE_API_URL,
   },
@@ -57,10 +60,15 @@ const config: StemBegrootWidgetProps = {
   resourceCardTitle: 'Selecteer een plan',
   step2Title: 'Overzicht van mijn selectie',
   stemCodeTitle: 'Vul je stemcode in',
-};
+  showNewsletterButton: false,
+  stemCodeTitleSuccess: 'Opnieuw inloggen',
+  newsLetterTitle: '',
+  newsLetterLink: '',
+  displayRanking: true,
+} as unknown as StemBegroot2WidgetProps;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <StemBegroot {...config} />
+    <StemBegroot2 {...config} />
   </React.StrictMode>
 );
