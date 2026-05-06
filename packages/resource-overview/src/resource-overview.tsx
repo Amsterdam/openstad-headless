@@ -881,10 +881,11 @@ function ResourceOverviewInner({
         filteredResources
           ?.slice(page * pageSize, (page + 1) * pageSize)
           ?.map((resource: any, index: number) => {
+            const absoluteIndex = page * pageSize + index;
             return (
               <React.Fragment key={`resource-item-${resource?.id || resource?.uniqueId}`}>
                 {renderItem(resource, { ...props, displayType, selectedProjects, displayOverviewTagGroups, overviewTagGroups }, () => {
-                  onResourceClick(resource, index);
+                  onResourceClick(resource, absoluteIndex);
                 })}
               </React.Fragment>
             );
