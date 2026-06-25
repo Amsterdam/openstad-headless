@@ -1,13 +1,4 @@
-<<<<<<< HEAD
-let active = false;
-
-export function fireConfetti() {
-  if (active) return;
-  active = true;
-
-=======
 export function fireConfetti(): void {
->>>>>>> 9471af58e (extract fire-confetti)
   const canvas = document.createElement('canvas');
   canvas.style.position = 'fixed';
   canvas.style.top = '0';
@@ -22,18 +13,9 @@ export function fireConfetti(): void {
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-<<<<<<< HEAD
-  if (!ctx) {
-    cleanup();
-    return;
-  }
-
-  let particles: Array<{
-=======
   if (!ctx) return;
 
   const particles: Array<{
->>>>>>> 9471af58e (extract fire-confetti)
     x: number;
     y: number;
     vx: number;
@@ -68,24 +50,10 @@ export function fireConfetti(): void {
     });
   }
 
-<<<<<<< HEAD
-  function cleanup() {
-    active = false;
-    if (document.body.contains(canvas)) {
-      document.body.removeChild(canvas);
-    }
-  }
-
-  const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (const particle of particles) {
-=======
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     particles.forEach((particle, index) => {
->>>>>>> 9471af58e (extract fire-confetti)
       particle.x += particle.vx;
       particle.y += particle.vy;
       particle.vy += 0.1;
@@ -102,38 +70,24 @@ export function fireConfetti(): void {
         particle.size
       );
       ctx.restore();
-<<<<<<< HEAD
-    }
-
-    particles = particles.filter((p) => p.y <= canvas.height + 10);
-=======
 
       if (particle.y > canvas.height + 10) {
         particles.splice(index, 1);
       }
     });
->>>>>>> 9471af58e (extract fire-confetti)
 
     if (particles.length > 0) {
       requestAnimationFrame(animate);
     } else {
-<<<<<<< HEAD
-      cleanup();
-=======
       document.body.removeChild(canvas);
->>>>>>> 9471af58e (extract fire-confetti)
     }
   };
 
   animate();
 
-<<<<<<< HEAD
-  setTimeout(cleanup, 8000);
-=======
   setTimeout(() => {
     if (document.body.contains(canvas)) {
       document.body.removeChild(canvas);
     }
   }, 8000);
->>>>>>> 9471af58e (extract fire-confetti)
 }
