@@ -72,6 +72,10 @@ RUN npm cache clean --force
 # Remove all folders from ./apps except the one specified by APP
 RUN find ./apps -mindepth 1 -maxdepth 1 -type d ! -name "${APP}" -exec rm -rf {} +
 RUN npm prune --ws
+RUN if [ "${APP}" = "auth-server" ]; then \
+  npm explore bcrypt -- npm run install && \
+  node -e "require('bcrypt')"; \
+    fi
 RUN if [ "${APP}" = "image-server" ]; then \
       SHARP_VERSION="$(node -p "require('./package-lock.json').packages['node_modules/sharp'].version")"; \
       BUILD_ARCH="$(uname -m)"; \
@@ -116,6 +120,10 @@ ENV OPENSTAD_VERSION=$OPENSTAD_VERSION
 ENV NEXT_PUBLIC_OPENSTAD_VERSION=$OPENSTAD_VERSION
 RUN npm run build --if-present -w $WORKSPACE
 RUN npm prune --ws --production
+RUN if [ "${APP}" = "auth-server" ]; then \
+  npm explore bcrypt -- npm run install && \
+  node -e "require('bcrypt')"; \
+    fi
 RUN if [ "${APP}" = "image-server" ]; then \
       SHARP_VERSION="$(node -p "require('./package-lock.json').packages['node_modules/sharp'].version")"; \
       BUILD_ARCH="$(uname -m)"; \
