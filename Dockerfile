@@ -39,14 +39,12 @@ ENV BUILD_ENV=${BUILD_ENV}
 # set Cypress cache to a writable temp path (avoids issues with /root/.cache)
 ENV CYPRESS_CACHE_FOLDER=/tmp/CypressCache
 
-RUN npm ci --include=optional --safe-chain-skip-minimum-package-age
+RUN npm ci --include=optional
 
 # Minimal target for update-lock. It only serves to update the lock file.
 FROM node:24-slim AS update-lock
 WORKDIR /opt/openstad-headless
 RUN npm update -g npm
-# Install safe-chain so --safe-chain-skip-minimum-package-age is recognized when updating the lock file
-RUN npm i -g @aikidosec/safe-chain && safe-chain setup-ci
 CMD ["sh", "-lc", "rm -rf node_modules && npm run update-lock"]
 
 # Build plugin-loader (TypeScript → dist/) before app builds need it
