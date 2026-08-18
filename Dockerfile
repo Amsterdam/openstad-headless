@@ -20,6 +20,10 @@ RUN npm update -g npm
 
 # Install safe-chain to prevent installing malware through npm
 RUN npm i -g @aikidosec/safe-chain && safe-chain setup-ci
+# setup-ci only wires PATH via GITHUB_PATH/TF_BUILD/BASH_ENV, which don't exist inside
+# a docker build. Add the shims dir manually so npm routes through safe-chain and its
+# --safe-chain-* flags are consumed (otherwise npm 12 fails them with EUNKNOWNCONFIG).
+ENV PATH="/root/.safe-chain/shims:/root/.safe-chain/bin:${PATH}"
 
 # Install app dependencies
 COPY --chown=node:node package*.json .
@@ -32,6 +36,12 @@ RUN npm config set fetch-retry-maxtimeout 300000
 RUN npm config set fetch-retry-mintimeout 60000
 RUN npm config set fetch-timeout 300000
 RUN npm config set legacy-peer-deps true
+# npm 12 defaults allow-git to "none", blocking git dependencies (e.g. image-steam).
+# "root" allows only git deps declared in our own workspace package.json files.
+RUN npm config set allow-git root
+# npm 12 blocks dependency install scripts by default; native builds (sharp, sqlite3,
+# bcrypt, ...) need them. Run all scripts like npm 11 did; safe-chain still scans for malware.
+RUN npm config set dangerously-allow-all-scripts true
 
 ARG BUILD_ENV=production
 ENV BUILD_ENV=${BUILD_ENV}
@@ -39,14 +49,12 @@ ENV BUILD_ENV=${BUILD_ENV}
 # set Cypress cache to a writable temp path (avoids issues with /root/.cache)
 ENV CYPRESS_CACHE_FOLDER=/tmp/CypressCache
 
-RUN npm ci --include=optional --safe-chain-skip-minimum-package-age
+RUN npm ci --include=optional
 
 # Minimal target for update-lock. It only serves to update the lock file.
 FROM node:24-slim AS update-lock
 WORKDIR /opt/openstad-headless
 RUN npm update -g npm
-# Install safe-chain so --safe-chain-skip-minimum-package-age is recognized when updating the lock file
-RUN npm i -g @aikidosec/safe-chain && safe-chain setup-ci
 CMD ["sh", "-lc", "rm -rf node_modules && npm run update-lock"]
 
 # Build plugin-loader (TypeScript → dist/) before app builds need it
@@ -63,7 +71,7 @@ RUN npm cache clean --force
 
 # Remove all folders from ./apps except the one specified by APP
 RUN find ./apps -mindepth 1 -maxdepth 1 -type d ! -name "${APP}" -exec rm -rf {} +
-RUN npm prune -ws
+RUN npm prune --ws
 RUN if [ "${APP}" = "image-server" ]; then \
       SHARP_VERSION="$(node -p "require('./package-lock.json').packages['node_modules/sharp'].version")"; \
       BUILD_ARCH="$(uname -m)"; \
@@ -107,7 +115,7 @@ ARG OPENSTAD_VERSION
 ENV OPENSTAD_VERSION=$OPENSTAD_VERSION
 ENV NEXT_PUBLIC_OPENSTAD_VERSION=$OPENSTAD_VERSION
 RUN npm run build --if-present -w $WORKSPACE
-RUN npm prune -ws --production
+RUN npm prune --ws --production
 RUN if [ "${APP}" = "image-server" ]; then \
       SHARP_VERSION="$(node -p "require('./package-lock.json').packages['node_modules/sharp'].version")"; \
       BUILD_ARCH="$(uname -m)"; \
