@@ -52,7 +52,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "mysql2": "^3.17.0",
+    "mysql2": "^3.23.1",
     "prettier": "^3.8.1",
     "vitest": "^4.1.8"
   },
@@ -63,7 +63,7 @@
     "fast-xml-parser": "5.7.2",
     "knox": "file:vendor/knox-0.9.3.tar.gz",
     "react-leaflet": "^4.2.1",
-    "tar": "7.5.19",
+    "tar": "7.5.21",
     "uuid": "^14.0.0"
   },
   "overrides": {
@@ -72,7 +72,7 @@
     },
     "parse-node-version": "^1.0.1",
     "vega-lite": "^5.23.0",
-    "tar": "7.5.19",
+    "tar": "7.5.21",
     "sqlite3": {
       "tar": "$tar"
     },
