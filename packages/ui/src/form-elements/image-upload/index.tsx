@@ -11,6 +11,7 @@ import {
   AccordionProvider,
   FormField,
   FormFieldDescription,
+  FormLabel,
   Paragraph,
 } from '@utrecht/component-library-react';
 import {
@@ -396,11 +397,13 @@ const ImageUploadField: FC<ImageUploadProps> = ({
         <Paragraph
           className="utrecht-form-field__label"
           id={`${randomId}_label`}>
-          <RteContent
-            content={title}
-            unwrapSingleRootDiv={true}
-            forceInline={true}
-          />
+          <FormLabel htmlFor={randomId}>
+            <RteContent
+              content={title}
+              unwrapSingleRootDiv={true}
+              forceInline={true}
+            />
+          </FormLabel>
         </Paragraph>
       )}
 
