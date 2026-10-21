@@ -64,7 +64,7 @@
     "knox": "file:vendor/knox-0.9.3.tar.gz",
     "react-leaflet": "^4.2.1",
     "tar": "7.5.22",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.3"
   },
   "overrides": {
     "ajv-draft-04": {
